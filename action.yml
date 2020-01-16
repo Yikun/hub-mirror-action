@@ -1,0 +1,15 @@
+name: "Mirror the Github organization repos to Gitee."
+description: "Mirror the Github organization repos to Gitee."
+author: "yikun"
+branding:
+  icon: "upload-cloud"
+  color: "gray-dark"
+inputs:
+  private_key:
+    description: "private SSH key"
+    required: true
+runs:
+  using: "docker"
+  image: "Dockerfile"
+  args:
+    - ${{ inputs.private_key }}
