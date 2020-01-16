@@ -1,0 +1,13 @@
+on: push
+name: Ubuntu
+jobs:
+  ssh:
+    name: Connect to gitee
+    runs-on: ubuntu-latest
+    steps:
+    - name: Mirror the Github organization repos to Gitee.
+      uses: Yikun/gitee-mirror-action@dev
+      with:
+        private_key: ${{ secrets.GITEE_PRIVATE_KEY }}
+        github_org: kunpengcompute
+        gitee_org: kunpengcompute
