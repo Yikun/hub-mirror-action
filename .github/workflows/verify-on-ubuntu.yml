@@ -1,8 +1,8 @@
 on: push
 name: (Ubuntu) Test the gitee mirror action
 jobs:
-  ssh:
-    name: Connect to gitee
+  run:
+    name: Run
     runs-on: ubuntu-latest
     steps:
     - name: Mirror the Github organization repos to Gitee.
