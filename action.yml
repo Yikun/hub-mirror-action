@@ -8,8 +8,16 @@ inputs:
   private_key:
     description: "private SSH key"
     required: true
+  github_org:
+    description: "org name in Github. Such as `kunpengcompute`."
+    required: true
+  gitee_org:
+    description: "org name in Gitee. Such as `kunpengcompute`."
+    required: true
 runs:
   using: "docker"
   image: "Dockerfile"
   args:
     - ${{ inputs.private_key }}
+    - ${{ inputs.github_org }}
+    - ${{ inputs.gitee_org }}
