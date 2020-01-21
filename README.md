@@ -10,9 +10,10 @@ steps:
 - name: Mirror the Github organization repos to Gitee.
   uses: Yikun/gitee-mirror-action@master
   with:
-    private_key: ${{ secrets.GITEE_PRIVATE_KEY }}
-    github_org: kunpengcompute
-    gitee_org: kunpengcompute
+    src: github/kunpengcompute
+    dst: gitee/kunpengcompute
+    dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
+    dst_token:  ${{ secrets.GITEE_TOKEN }}
 ```
 
 As above, the action will do mirror update from github/kunpengcompute to gitee/kunpengcompute.
