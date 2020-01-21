@@ -5,6 +5,8 @@ mkdir -p /root/.ssh
 echo "${INPUT_DST_KEY}" > /root/.ssh/id_rsa
 chmod 600 /root/.ssh/id_rsa
 
+DST_TOKEN="${INPUT_DST_TOKEN}"
+
 SRC_HUB="${INPUT_SRC}"
 DST_HUB="${INPUT_DST}"
 
@@ -48,6 +50,15 @@ function cd_src_repo
 
 function add_remote_repo
 {
+  # Auto create non-existing repo
+  has_repo=`curl $DST_REPO_API | jq '.[] | select(.name=="'$1'").name' | wc -l`
+  if [ $has_repo == 0 ]; then
+    if [[ "$DST_TYPE" == "github" ]]; then
+      curl -H "Authorization: token $2" --data '{"name":"'$1'"}' $DST_REPO_API
+    elif [[ "$DST_TYPE" == "gitee" ]]; then
+      curl -X POST --header 'Content-Type: application/json;charset=UTF-8' $DST_REPO_API -d '{"name": "'$1'","access_token": "'$2'"}'
+    fi
+  fi
   git remote add $DST_TYPE git@$DST_TYPE.com:$DST_ACCOUNT/$1.git
 }
 
@@ -70,7 +81,7 @@ for repo in $SRC_REPOS
 
   cd_src_repo $repo
 
-  add_remote_repo $repo
+  add_remote_repo $repo $DST_TOKEN
 
   update_repo
 

@@ -8,6 +8,9 @@ inputs:
   dst_key:
     description: "The private SSH key which is used to to push code in destination hub."
     required: true
+  dst_token:
+    description: "The app token which is used to  create repo in destination hub."
+    required: true
   dst:
     description: "Destination name. Such as `gitee/kunpengcompute`."
     required: true
@@ -19,5 +22,6 @@ runs:
   image: "Dockerfile"
   args:
     - ${{ inputs.dst_key }}
+    - ${{ inputs.dst_token }}
     - ${{ inputs.src }}
     - ${{ inputs.dst }}

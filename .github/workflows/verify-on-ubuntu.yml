@@ -13,3 +13,4 @@ jobs:
         src: github/kunpengcompute
         dst: gitee/kunpengcompute
         dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
+        dst_token:  ${{ secrets.GITEE_TOKEN }}
