@@ -1,13 +1,15 @@
 on: push
-name: (Ubuntu) Test the gitee mirror action
+name: Hub Action test
 jobs:
   run:
     name: Run
     runs-on: ubuntu-latest
     steps:
-    - name: Mirror the Github organization repos to Gitee.
-      uses: Yikun/gitee-mirror-action@master
+    - name: Checkout source codes
+      uses: actions/checkout@v1
+    - name: Mirror Github to Gitee
+      uses: ./.
       with:
-        private_key: ${{ secrets.GITEE_PRIVATE_KEY }}
-        github_org: kunpengcompute
-        gitee_org: kunpengcompute
+        src: github/kunpengcompute
+        dst: gitee/kunpengcompute
+        dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
