@@ -2,23 +2,53 @@
 
 set -x
 mkdir -p /root/.ssh
-echo "${INPUT_PRIVATE_KEY}" > /root/.ssh/id_rsa
+echo "${INPUT_DST_KEY}" > /root/.ssh/id_rsa
 chmod 600 /root/.ssh/id_rsa
 
-repos=`curl https://api.github.com/orgs/kunpengcompute/repos | jq '.[] | .name' |  sed 's/"//g'`
-github_org="${INPUT_GITHUB_ORG}"
-gitee_org="${INPUT_GITEE_ORG}"
+SRC_HUB="${INPUT_SRC}"
+DST_HUB="${INPUT_DST}"
 
-function clone_and_cd_repo
+SRC_TYPE=`dirname $SRC_HUB`
+DST_TYPE=`dirname $DST_HUB`
+
+SRC_ACCOUNT=`basename $SRC_HUB`
+DST_ACCOUNT=`basename $DST_HUB`
+
+if [[ "$SRC_TYPE" == "github" ]]; then
+  SRC_REPO_LIST_API=https://api.github.com/orgs/$SRC_ACCOUNT/repos
+  SRC_REPO_BASE_URL=https://github.com
+elif [[ "$SRC_TYPE" == "gitee" ]]; then
+  SRC_REPO_LIST_API=https://gitee.com/api/v5/orgs/$SRC_ACCOUNT/repos
+  SRC_REPO_BASE_URL=https://gitee.com
+else
+  echo "Unknown src args, the `src` should be `[github|gittee]/account`"
+  exit 1
+fi
+
+SRC_REPOS=`curl $SRC_REPO_LIST_API | jq '.[] | .name' |  sed 's/"//g'`
+
+if [[ "$DST_TYPE" == "github" ]]; then
+  DST_REPO_API=https://api.github.com/orgs/$DST_ACCOUNT/repos
+elif [[ "$DST_TYPE" == "gitee" ]]; then
+  DST_REPO_API=https://gitee.com/api/v5/orgs/$DST_ACCOUNT/repos
+else
+  echo "Unknown dst args, the `dst` should be `[github|gittee]/account`"
+  exit 1
+fi
+
+
+function cd_src_repo
 {
   echo -e "\033[31m(0/3)\033[0m" "Downloading..."
-  if [ ! -d "$2" ]; then
-    git clone https://github.com/$1/$2.git
-    cd $2
-    git remote add gitee git@gitee.com:$gitee_org/$2.git
-  else
-    cd $2
+  if [ ! -d "$1" ]; then
+    git clone $SRC_REPO_BASE_URL/$SRC_ACCOUNT/$1.git
   fi
+  cd $1
+}
+
+function add_remote_repo
+{
+  git remote add $DST_TYPE git@$DST_TYPE.com:$DST_ACCOUNT/$1.git
 }
 
 function update_repo
@@ -31,14 +61,16 @@ function import_repo
 {
   echo -e "\033[31m(2/3)\033[0m" "Importing..."
   git remote set-head origin -d
-  git push gitee refs/remotes/origin/*:refs/heads/* --tags --prune
+  git push $DST_TYPE refs/remotes/origin/*:refs/heads/* --tags --prune
 }
 
-for repo in $repos
+for repo in $SRC_REPOS
 {
   echo -e "\n\033[31mBackup $repo ...\033[0m"
 
-  clone_and_cd_repo $github_org $repo
+  cd_src_repo $repo
+
+  add_remote_repo $repo
 
   update_repo
 
@@ -50,3 +82,4 @@ for repo in $repos
 
   cd ..
 }
+

@@ -1,23 +1,23 @@
-name: "Mirror the Github organization repos to Gitee."
-description: "Mirror the Github organization repos to Gitee."
+name: "Mirror Hub Action."
+description: "Mirror the organization repos between hub (github/gitee)."
 author: "yikun"
 branding:
   icon: "upload-cloud"
   color: "gray-dark"
 inputs:
-  private_key:
-    description: "private SSH key"
+  dst_key:
+    description: "The private SSH key which is used to to push code in destination hub."
     required: true
-  github_org:
-    description: "org name in Github. Such as `kunpengcompute`."
+  dst:
+    description: "Destination name. Such as `gitee/kunpengcompute`."
     required: true
-  gitee_org:
-    description: "org name in Gitee. Such as `kunpengcompute`."
+  src:
+    description: "Source name. Such as `github/kunpengcompute`."
     required: true
 runs:
   using: "docker"
   image: "Dockerfile"
   args:
-    - ${{ inputs.private_key }}
-    - ${{ inputs.github_org }}
-    - ${{ inputs.gitee_org }}
+    - ${{ inputs.dst_key }}
+    - ${{ inputs.src }}
+    - ${{ inputs.dst }}
