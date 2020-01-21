@@ -1,4 +1,4 @@
-name: "Mirror Hub Action."
+name: "Hub Mirror Action."
 description: "Mirror the organization repos between hub (github/gitee)."
 author: "yikun"
 branding:
