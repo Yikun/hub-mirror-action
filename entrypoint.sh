@@ -18,6 +18,8 @@ DST_TYPE=`dirname $DST_HUB`
 SRC_ACCOUNT=`basename $SRC_HUB`
 DST_ACCOUNT=`basename $DST_HUB`
 
+CLONE_STYLE="ssh"
+
 if [[ "$ACCOUNT_TYPE" == "org" ]]; then
   SRC_LIST_URL_SUFFIX=orgs/$SRC_ACCOUNT/repos
   DST_LIST_URL_SUFFIX=orgs/$DST_ACCOUNT/repos
@@ -33,10 +35,18 @@ fi
 
 if [[ "$SRC_TYPE" == "github" ]]; then
   SRC_REPO_LIST_API=https://api.github.com/$SRC_LIST_URL_SUFFIX
-  SRC_REPO_BASE_URL=https://github.com
+  if [[ "$CLONE_STYLE" == "ssh" ]]; then
+    SRC_REPO_BASE_URL=git@github.com:
+  elif [[ "$CLONE_STYLE" == "https" ]]; then
+    SRC_REPO_BASE_URL=https://github.com/
+  fi
 elif [[ "$SRC_TYPE" == "gitee" ]]; then
   SRC_REPO_LIST_API=https://gitee.com/api/v5/$SRC_LIST_URL_SUFFIX
-  SRC_REPO_BASE_URL=https://gitee.com
+  if [[ "$CLONE_STYLE" == "ssh" ]]; then
+    SRC_REPO_BASE_URL=git@gitee.com:
+  elif [[ "$CLONE_STYLE" == "https" ]]; then
+    SRC_REPO_BASE_URL=https://gitee.com/
+  fi
 else
   echo "Unknown src args, the `src` should be `[github|gittee]/account`"
   exit 1
@@ -60,7 +70,7 @@ function cd_src_repo
 {
   echo -e "\033[31m(0/3)\033[0m" "Downloading..."
   if [ ! -d "$1" ]; then
-    git clone $SRC_REPO_BASE_URL/$SRC_ACCOUNT/$1.git
+    git clone $SRC_REPO_BASE_URL$SRC_ACCOUNT/$1.git
   fi
   cd $1
 }
