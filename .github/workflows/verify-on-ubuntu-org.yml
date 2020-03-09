@@ -1,5 +1,5 @@
 on: push
-name: Hub Action test
+name: Hub Action test for org account
 jobs:
   run:
     name: Run
@@ -13,4 +13,5 @@ jobs:
         src: github/kunpengcompute
         dst: gitee/kunpengcompute
         dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
-        dst_token:  ${{ secrets.GITEE_TOKEN }}
+        dst_token: ${{ secrets.GITEE_TOKEN }}
+        account_type: org

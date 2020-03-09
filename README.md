@@ -14,6 +14,7 @@ steps:
     dst: gitee/kunpengcompute
     dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
     dst_token:  ${{ secrets.GITEE_TOKEN }}
+    account_type: org
 ```
 
 As above, the action will do mirror update from github/kunpengcompute to gitee/kunpengcompute.
