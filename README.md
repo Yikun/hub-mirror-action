@@ -24,9 +24,13 @@ You could take a look on the [verify workflow](https://github.com/Yikun/hub-mirr
 # Note
 
 - For gittee as destination：
-dst_key: https://gitee.com/profile/sshkeys
-dst_token: https://gitee.com/profile/personal_access_tokens
+
+  - dst_key: https://gitee.com/profile/sshkeys
+
+  - dst_token: https://gitee.com/profile/personal_access_tokens
 
 - For github as destination：
-dst_key: https://github.com/settings/keys
-dst_token: https://github.com/settings/tokens
+
+  - dst_key: https://github.com/settings/keys
+
+  - dst_token: https://github.com/settings/tokens
