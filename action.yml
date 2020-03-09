@@ -17,6 +17,9 @@ inputs:
   src:
     description: "Source name. Such as `github/kunpengcompute`."
     required: true
+  account_type:
+    description: "The account type. Such as org, user."
+    default: 'user'
 runs:
   using: "docker"
   image: "Dockerfile"
@@ -25,3 +28,4 @@ runs:
     - ${{ inputs.dst_token }}
     - ${{ inputs.src }}
     - ${{ inputs.dst }}
+    - ${{ inputs.account_type }}

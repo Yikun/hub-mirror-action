@@ -10,17 +10,32 @@ DST_TOKEN="${INPUT_DST_TOKEN}"
 SRC_HUB="${INPUT_SRC}"
 DST_HUB="${INPUT_DST}"
 
+ACCOUNT_TYPE="${INPUT_ACCOUNT_TYPE}"
+
 SRC_TYPE=`dirname $SRC_HUB`
 DST_TYPE=`dirname $DST_HUB`
 
 SRC_ACCOUNT=`basename $SRC_HUB`
 DST_ACCOUNT=`basename $DST_HUB`
 
+if [[ "$ACCOUNT_TYPE" == "org" ]]; then
+  SRC_LIST_URL_SUFFIX=orgs/$SRC_ACCOUNT/repos
+  DST_LIST_URL_SUFFIX=orgs/$DST_ACCOUNT/repos
+  DST_CREATE_URL_SUFFIX=orgs/$DST_ACCOUNT/repos
+elif [[ "$ACCOUNT_TYPE" == "user" ]]; then
+  SRC_LIST_URL_SUFFIX=users/$SRC_ACCOUNT/repos
+  DST_LIST_URL_SUFFIX=users/$DST_ACCOUNT/repos
+  DST_CREATE_URL_SUFFIX=user/repos
+else
+  echo "Unknown account type, the `account_type` should be `user` or `org`"
+  exit 1
+fi
+
 if [[ "$SRC_TYPE" == "github" ]]; then
-  SRC_REPO_LIST_API=https://api.github.com/orgs/$SRC_ACCOUNT/repos
+  SRC_REPO_LIST_API=https://api.github.com/$SRC_LIST_URL_SUFFIX
   SRC_REPO_BASE_URL=https://github.com
 elif [[ "$SRC_TYPE" == "gitee" ]]; then
-  SRC_REPO_LIST_API=https://gitee.com/api/v5/orgs/$SRC_ACCOUNT/repos
+  SRC_REPO_LIST_API=https://gitee.com/api/v5/$SRC_LIST_URL_SUFFIX
   SRC_REPO_BASE_URL=https://gitee.com
 else
   echo "Unknown src args, the `src` should be `[github|gittee]/account`"
@@ -30,9 +45,11 @@ fi
 SRC_REPOS=`curl $SRC_REPO_LIST_API | jq '.[] | .name' |  sed 's/"//g'`
 
 if [[ "$DST_TYPE" == "github" ]]; then
-  DST_REPO_API=https://api.github.com/orgs/$DST_ACCOUNT/repos
+  DST_REPO_CREATE_API=https://api.github.com/$DST_CREATE_URL_SUFFIX
+  DST_REPO_LIST_API=https://api.github.com/$DST_LIST_URL_SUFFIX
 elif [[ "$DST_TYPE" == "gitee" ]]; then
-  DST_REPO_API=https://gitee.com/api/v5/orgs/$DST_ACCOUNT/repos
+  DST_REPO_CREATE_API=https://gitee.com/api/v5/$DST_CREATE_URL_SUFFIX
+  DST_REPO_LIST_API=https://gitee.com/api/v5/$DST_LIST_URL_SUFFIX
 else
   echo "Unknown dst args, the `dst` should be `[github|gittee]/account`"
   exit 1
@@ -51,12 +68,12 @@ function cd_src_repo
 function add_remote_repo
 {
   # Auto create non-existing repo
-  has_repo=`curl $DST_REPO_API | jq '.[] | select(.name=="'$1'").name' | wc -l`
+  has_repo=`curl $DST_REPO_LIST_API | jq '.[] | select(.full_name=="'$DST_ACCOUNT'/'$1'").name' | wc -l`
   if [ $has_repo == 0 ]; then
     if [[ "$DST_TYPE" == "github" ]]; then
-      curl -H "Authorization: token $2" --data '{"name":"'$1'"}' $DST_REPO_API
+      curl -H "Authorization: token $2" --data '{"name":"'$1'"}' $DST_REPO_CREATE_API
     elif [[ "$DST_TYPE" == "gitee" ]]; then
-      curl -X POST --header 'Content-Type: application/json;charset=UTF-8' $DST_REPO_API -d '{"name": "'$1'","access_token": "'$2'"}'
+      curl -X POST --header 'Content-Type: application/json;charset=UTF-8' $DST_REPO_CREATE_API -d '{"name": "'$1'","access_token": "'$2'"}'
     fi
   fi
   git remote add $DST_TYPE git@$DST_TYPE.com:$DST_ACCOUNT/$1.git
