@@ -20,6 +20,9 @@ inputs:
   account_type:
     description: "The account type. Such as org, user."
     default: 'user'
+  clone_style:
+    description: "The git clone style, https or ssh."
+    default: 'https'
 runs:
   using: "docker"
   image: "Dockerfile"
@@ -29,3 +32,4 @@ runs:
     - ${{ inputs.src }}
     - ${{ inputs.dst }}
     - ${{ inputs.account_type }}
+    - ${{ inputs.clone_style }}

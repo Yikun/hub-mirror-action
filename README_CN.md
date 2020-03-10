@@ -25,9 +25,10 @@ You could take a look on the [verify workflow](https://github.com/Yikun/hub-mirr
 
 - `src` 需要被同步的源端账户名，例如Github的kunpengcompute组织，为github/kunpengcompute。
 - `dst` 需要同步到的目的端账户名，例如Gitee的kunpengcompute组织，为gitee/kunpengcompute。
-- `account_type` 源和目的的账户类型，可以设置为org（组织）或者user（用户），目前仅支持同类型账户的同步。
-- `dst_key` 用于目的端上传代码的SSH key，Github可以在[这里](https://gitee.com/profile/sshkeys)找到，Gitee可以[这里](https://github.com/settings/keys)找到
-- `dst_token` 用于创建仓库的API tokens，Github可以在[这里](https://github.com/settings/tokens)找到，Gitee可以在[这里](https://gitee.com/profile/personal_access_tokens)找到
+- `dst_key` 用于目的端上传代码的SSH key，用于上传代码，Github可以在[这里](https://gitee.com/profile/sshkeys)找到，Gitee可以[这里](https://github.com/settings/keys)找到
+- `dst_token` 创建仓库的API tokens， 用于自动创建不存在的仓库，Github可以在[这里](https://github.com/settings/tokens)找到，Gitee可以在[这里](https://gitee.com/profile/personal_access_tokens)找到。
+- `account_type` 可选参数，默认为user，源和目的的账户类型，可以设置为org（组织）或者user（用户），目前仅支持同类型账户的同步。
+- `clone_style` 可选参数，默认为https，可以设置为ssh或者https。
 
 ### 快速启用指南
 ```yaml
