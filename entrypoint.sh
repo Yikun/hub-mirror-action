@@ -18,7 +18,7 @@ DST_TYPE=`dirname $DST_HUB`
 SRC_ACCOUNT=`basename $SRC_HUB`
 DST_ACCOUNT=`basename $DST_HUB`
 
-CLONE_STYLE="ssh"
+CLONE_STYLE="${INPUT_CLONE_STYLE}"
 
 if [[ "$ACCOUNT_TYPE" == "org" ]]; then
   SRC_LIST_URL_SUFFIX=orgs/$SRC_ACCOUNT/repos

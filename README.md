@@ -1,4 +1,7 @@
 # Hub Mirror Action
+
+English | [简体中文](./README_CN.md)
+
 The action to mirror the organization repos between hub(github/gitee).
 
 # Usage
