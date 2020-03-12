@@ -1,5 +1,5 @@
 on: push
-name: Hub Action test for user account
+name: Tests / test-user-mirror
 jobs:
   run:
     name: Run

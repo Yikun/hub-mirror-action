@@ -1,5 +1,5 @@
 on: push
-name: Hub Action test for org account
+name: Tests / test-org-mirror
 jobs:
   run:
     name: Run

@@ -23,6 +23,9 @@ inputs:
   clone_style:
     description: "The git clone style, https or ssh."
     default: 'https'
+  cache_path:
+    description: "The path to cache the source repos code."
+    default: '/github/workspace/hub-mirror-cache'
 runs:
   using: "docker"
   image: "Dockerfile"
@@ -33,3 +36,4 @@ runs:
     - ${{ inputs.dst }}
     - ${{ inputs.account_type }}
     - ${{ inputs.clone_style }}
+    - ${{ inputs.cache_path }}

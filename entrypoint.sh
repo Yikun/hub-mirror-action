@@ -20,6 +20,8 @@ DST_ACCOUNT=`basename $DST_HUB`
 
 CLONE_STYLE="${INPUT_CLONE_STYLE}"
 
+CACHE_PATH="${INPUT_CACHE_PATH}"
+
 if [[ "$ACCOUNT_TYPE" == "org" ]]; then
   SRC_LIST_URL_SUFFIX=orgs/$SRC_ACCOUNT/repos
   DST_LIST_URL_SUFFIX=orgs/$DST_ACCOUNT/repos
@@ -101,6 +103,11 @@ function import_repo
   git remote set-head origin -d
   git push $DST_TYPE refs/remotes/origin/*:refs/heads/* --tags --prune
 }
+
+if [ ! -d "$CACHE_PATH" ]; then
+  mkdir -p $CACHE_PATH
+fi
+cd $CACHE_PATH
 
 for repo in $SRC_REPOS
 {
