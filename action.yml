@@ -26,6 +26,12 @@ inputs:
   cache_path:
     description: "The path to cache the source repos code."
     default: '/github/workspace/hub-mirror-cache'
+  black_list:
+    description: "Hight priority, the back list of mirror repo. like 'repo1,repo2,repo3'"
+    default: ''
+  white_list:
+    description: "Low priority, the white list of mirror repo. like 'repo1,repo2,repo3'"
+    default: ''
 runs:
   using: "docker"
   image: "Dockerfile"
@@ -37,3 +43,5 @@ runs:
     - ${{ inputs.account_type }}
     - ${{ inputs.clone_style }}
     - ${{ inputs.cache_path }}
+    - ${{ inputs.black_list }}
+    - ${{ inputs.white_list }}

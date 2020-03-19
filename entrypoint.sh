@@ -22,6 +22,9 @@ CLONE_STYLE="${INPUT_CLONE_STYLE}"
 
 CACHE_PATH="${INPUT_CACHE_PATH}"
 
+WHITE_LIST="${INPUT_WHITE_LIST}"
+BLACK_LIST="${INPUT_BLACK_LIST}"
+
 if [[ "$ACCOUNT_TYPE" == "org" ]]; then
   SRC_LIST_URL_SUFFIX=orgs/$SRC_ACCOUNT/repos
   DST_LIST_URL_SUFFIX=orgs/$DST_ACCOUNT/repos
@@ -104,6 +107,33 @@ function import_repo
   git push $DST_TYPE refs/remotes/origin/*:refs/heads/* --tags --prune
 }
 
+function _check_in_list () {
+  local e match="$1"
+  shift
+  for e; do [[ "$e" == "$match" ]] && return 0; done
+  return 1
+}
+
+function test_black_white_list
+{
+  WHITE_ARR=(`echo $WHITE_LIST | tr ',' ' '`)
+  BLACK_ARR=(`echo $BLACK_LIST | tr ',' ' '`)
+  _check_in_list $1 "${WHITE_ARR[@]}";in_white_list=$?
+  _check_in_list $1 "${BLACK_ARR[@]}";in_back_list=$?
+  
+  if [[ $in_back_list -ne 0 ]] ; then
+    if [[ -z $WHITE_LIST ]] || [[ $in_white_list -eq 0 ]] ; then
+      return 0
+    else
+      echo "Skip, "$1" not in non-empty white list"$WHITE_LIST
+      return 1
+    fi
+  else
+    echo "Skip, "$1 "in black list: "$BLACK_LIST
+    return 1
+  fi
+}
+
 if [ ! -d "$CACHE_PATH" ]; then
   mkdir -p $CACHE_PATH
 fi
@@ -111,20 +141,21 @@ cd $CACHE_PATH
 
 for repo in $SRC_REPOS
 {
-  echo -e "\n\033[31mBackup $repo ...\033[0m"
+  if test_black_white_list $repo ; then
+    echo -e "\n\033[31mBackup $repo ...\033[0m"
 
-  cd_src_repo $repo
+    cd_src_repo $repo
 
-  add_remote_repo $repo $DST_TOKEN
+    add_remote_repo $repo $DST_TOKEN
 
-  update_repo
+    update_repo
 
-  if [ $? -eq 0 ]; then
-    import_repo
-  else
-    echo -e "\033[31mUpdate failed.\033[0m" ""
+    if [ $? -eq 0 ]; then
+      import_repo
+    else
+      echo -e "\033[31mUpdate failed.\033[0m" ""
+    fi
+
+    cd ..
   fi
-
-  cd ..
 }
-

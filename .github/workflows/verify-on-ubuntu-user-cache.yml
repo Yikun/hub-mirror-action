@@ -19,7 +19,7 @@ jobs:
       if: steps.cache.outputs.cache-hit == 'true'
       run: echo "Cached successfully."
 
-    - name: Mirror Github to Gitee
+    - name: Mirror Github to Gitee with white list and cache
       uses: ./.
       with:
         src: github/Yikun
@@ -27,6 +27,7 @@ jobs:
         dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
         dst_token:  ${{ secrets.GITEE_TOKEN }}
         cache_path: /github/workspace/hub-mirror-cache
+        white_list: 'hub-mirror-action, hexo-migrator-github-issue'
 
     - name: Print cache path
       run: |
