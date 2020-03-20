@@ -7,10 +7,11 @@ jobs:
     steps:
     - name: Checkout source codes
       uses: actions/checkout@v1
-    - name: Mirror Github to Gitee
+    - name: Mirror Github to Gitee with white list
       uses: ./.
       with:
         src: github/Yikun
         dst: gitee/yikunkero
         dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
         dst_token:  ${{ secrets.GITEE_TOKEN }}
+        white_list: 'hub-mirror-action'
