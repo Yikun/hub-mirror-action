@@ -18,7 +18,9 @@ steps:
     account_type: org
 ```
 
-Here is a workflow to mirror all repos from **Github/kunpengcompute organization** to **Gitee/kunpengcompute organization**. You can see more real workflows in [here](https://github.com/Yikun/hub-mirror-action/tree/master/.github/workflows).
+Here is a workflow to mirror all repos from **Github/kunpengcompute organization** to **Gitee/kunpengcompute organization**.
+
+You can see more real workflows in [here](https://github.com/Yikun/hub-mirror-action/tree/master/.github/workflows).
 
 ## Usage
 
