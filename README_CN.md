@@ -1,10 +1,8 @@
-## Hub Mirror Action
+# Hub Mirror Action
 
 一个用于在hub间（例如Github，Gitee）账户代码仓库同步的action
 
-### 用法
-
-一个完整的组织仓库同步的配置可以参考：
+## 用法
 
 ```yaml
 steps:
@@ -17,16 +15,12 @@ steps:
     dst_token:  ${{ secrets.GITEE_TOKEN }}
     account_type: org
 ```
-下面是添加secrets的方法，也可以参考[secrets官方文档](https://help.github.com/en/actions/configuring-and-managing-workflows/creating-and-storing-encrypted-secrets)了解更多：
-1. **获取Token和Key**，分别获取[ssh key](https://gitee.com/profile/sshkeys)和[token](https://gitee.com/profile/personal_access_tokens)。
-2. **增加Secrets配置**，在配置仓库的Setting-Secrets中新增Secrets，例如GITEE_PRIVATE_KEY、GITEE_TOKEN
-3. **增加workflow文件**，在配置仓库新增workflow文件，如上。
 
-上面的配置执行后，将完成**Github**的**kunpengcompute组织**下所有仓库到**Gitee**的同步。
+你可以用上面的workflow完成**Github**的**kunpengcompute组织**下所有仓库到**Gitee**的同步。
 
 你可以在[测试和demo](https://github.com/Yikun/hub-mirror-action/tree/master/.github/workflows)找到更多的使用方法。
 
-### 参数详解
+## 参数详解
 
 - `src` 需要被同步的源端账户名，如github/kunpengcompute，表示Github的kunpengcompute账户。
 - `dst` 需要同步到的目的端账户名，如gitee/kunpengcompute，表示Gitee的kunpengcompute账户。
@@ -38,7 +32,7 @@ steps:
 - `black_list` (optional) 配置后，黑名单中的repos将不会被同步，如“repo1,repo2,repo3”。
 - `white_list` (optional) 配置后，仅同步白名单中的repos，如“repo1,repo2,repo3”。
 
-### 举些例子
+## 举些例子
 
 #### 组织同步，同步Github的kunpengcompute组织到Gitee
 ```yaml
@@ -99,3 +93,15 @@ steps:
     dst_token: ${{ secrets.GITEE_TOKEN }}
     cache_path: /github/workspace/hub-mirror-cache
 ```
+
+## FAQ
+
+- 如何在secrets添加dst_token和dst_key？
+  下面是添加secrets的方法，也可以参考[secrets官方文档](https://help.github.com/en/actions/configuring-and-managing-workflows/creating-and-storing-encrypted-secrets)了解更多：
+  1. **获取Token和Key**，分别获取[ssh key](https://gitee.com/profile/sshkeys)和[token](https://gitee.com/profile/personal_access_tokens)。
+  2. **增加Secrets配置**，在配置仓库的Setting-Secrets中新增Secrets，例如GITEE_PRIVATE_KEY、GITEE_TOKEN
+  3. **在Workflow中引用**， 可以用过类似`${{ secrets.GITEE_PRIVATE_KEY }}`来访问
+  
+## 最后
+
+喜欢的话点个Star哦，你的Star是我更新代码的动力！：）
