@@ -31,6 +31,7 @@ steps:
 - `cache_path` (optional) 将代码缓存在指定目录，用于与actions/cache配合以加速镜像过程。
 - `black_list` (optional) 配置后，黑名单中的repos将不会被同步，如“repo1,repo2,repo3”。
 - `white_list` (optional) 配置后，仅同步白名单中的repos，如“repo1,repo2,repo3”。
+- `static_list` (optional) 配置后，仅同步静态列表，不会再动态获取需同步列表（黑白名单机制依旧生效），如“repo1,repo2,repo3”。
 
 ## 举些例子
 

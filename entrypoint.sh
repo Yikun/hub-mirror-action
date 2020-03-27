@@ -24,6 +24,7 @@ CACHE_PATH="${INPUT_CACHE_PATH}"
 
 WHITE_LIST="${INPUT_WHITE_LIST}"
 BLACK_LIST="${INPUT_BLACK_LIST}"
+STATIC_LIST="${INPUT_STATIC_LIST}"
 
 if [[ "$ACCOUNT_TYPE" == "org" ]]; then
   SRC_LIST_URL_SUFFIX=orgs/$SRC_ACCOUNT/repos
@@ -57,7 +58,11 @@ else
   exit 1
 fi
 
-SRC_REPOS=`curl $SRC_REPO_LIST_API | jq '.[] | .name' |  sed 's/"//g'`
+if [[ -z $STATIC_LIST ]]; then
+  SRC_REPOS=`curl $SRC_REPO_LIST_API | jq '.[] | .name' |  sed 's/"//g'`
+else
+  SRC_REPOS=`echo $STATIC_LIST | tr ',' ' '`
+fi
 
 if [[ "$DST_TYPE" == "github" ]]; then
   DST_REPO_CREATE_API=https://api.github.com/$DST_CREATE_URL_SUFFIX

@@ -14,4 +14,4 @@ jobs:
         dst: gitee/yikunkero
         dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
         dst_token:  ${{ secrets.GITEE_TOKEN }}
-        white_list: 'hub-mirror-action'
+        static_list: 'hub-mirror-action,hashes,simple-spring'
