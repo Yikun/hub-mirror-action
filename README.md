@@ -33,6 +33,7 @@ You can see more real workflows in [here](https://github.com/Yikun/hub-mirror-ac
 - `cache_path` (optional) let code clone in specific path, can be used with actions/cache to speed up mirror.
 - `black_list` (optional) the black list, such as “repo1,repo2,repo3”.
 - `white_list` (optional) the white list, such as “repo1,repo2,repo3”.
+- `static_list` (optional) Only mirror repos in the static list, but don't get list from repo api dynamically (the white/black list is still available). like 'repo1,repo2,repo3'
 
 ## Scenarios
 

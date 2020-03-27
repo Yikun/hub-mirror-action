@@ -32,6 +32,9 @@ inputs:
   white_list:
     description: "Low priority, the white list of mirror repo. like 'repo1,repo2,repo3'"
     default: ''
+  static_list:
+    description: "Only mirror repo in the static list, but don't get from repo api (the white/black list is still available). like 'repo1,repo2,repo3'"
+    default: ''
 runs:
   using: "docker"
   image: "Dockerfile"
@@ -45,3 +48,4 @@ runs:
     - ${{ inputs.cache_path }}
     - ${{ inputs.black_list }}
     - ${{ inputs.white_list }}
+    - ${{ inputs.static_list }}
