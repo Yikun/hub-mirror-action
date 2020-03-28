@@ -7,11 +7,12 @@ jobs:
     steps:
     - name: Checkout source codes
       uses: actions/checkout@v1
-    - name: Mirror Github to Gitee with white list
+    - name: submodule sync test.
       uses: ./.
       with:
-        src: github/Yikun
-        dst: gitee/yikunkero
+        src: gitee/yikunkero1
+        dst: github/hub-mirror-action
         dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
         dst_token:  ${{ secrets.GITEE_TOKEN }}
-        static_list: 'hub-mirror-action,hashes,simple-spring'
+        account_type: org
+        static_list: 'submodule_test'
