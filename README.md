@@ -14,7 +14,7 @@ steps:
     src: github/kunpengcompute
     dst: gitee/kunpengcompute
     dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
-    dst_token:  ${{ secrets.GITEE_TOKEN }}
+    dst_token: ${{ secrets.GITEE_TOKEN }}
     account_type: org
 ```
 
@@ -26,7 +26,7 @@ You can see more real workflows in [here](https://github.com/Yikun/hub-mirror-ac
 
 - `src` source account, such as `github/kunpengcompute`, is the Github kunpengcompute account.
 - `dst` Destination account, such as `/kunpengcompute`, is the Gitee kunpengcompute account.
-- `dst_key` the ssh key to push code in destination account,You can get the Github sshkeys in [here](https://gitee.com/profile/sshkeys)，the Gitee ssh key in [here](https://github.com/settings/keys).
+- `dst_key` the ssh key to push code in destination account,You can get the Github sshkeys in [here](https://github.com/settings/keys)，the Gitee ssh key in [here](https://gitee.com/profile/sshkeys).
 - `dst_token` the API token to create non-existent repo, You can get Github token in [here](https://github.com/settings/tokens), and the Gitee in [here](https://gitee.com/profile/personal_access_tokens).
 - `account_type` (optional) default is `user`, the account type of src and dst account, can be set to `org` or `user`，only support mirror between same account type (that is "org to org" or "user to user").
 - `clone_style` (optional) default is `https`, can be set to `ssh` or `https`.
@@ -100,7 +100,7 @@ You can see more real workflows in [here](https://github.com/Yikun/hub-mirror-ac
 ## FAQ
 - How to use `secrets` to add token and key?
   
-  You can use below steps to add secrets, you can also see more in [Secrets]((https://help.github.com/en/actions/configuring-and-managing-workflows/creating-and-storing-encrypted-secrets)) 
+  You can use below steps to add secrets, you can also see more in [Secrets](https://help.github.com/en/actions/configuring-and-managing-workflows/creating-and-storing-encrypted-secrets).
 
   1. **Get Token and Key**，you can get them in [ssh key](https://gitee.com/profile/sshkeys) and [token](https://gitee.com/profile/personal_access_tokens).
   2. **Add Secrets**，add settings-secrets in repo，like `GITEE_PRIVATE_KEY`、`GITEE_TOKEN`

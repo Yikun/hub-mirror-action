@@ -12,7 +12,7 @@ steps:
     src: github/kunpengcompute
     dst: gitee/kunpengcompute
     dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
-    dst_token:  ${{ secrets.GITEE_TOKEN }}
+    dst_token: ${{ secrets.GITEE_TOKEN }}
     account_type: org
 ```
 
@@ -24,7 +24,7 @@ steps:
 
 - `src` 需要被同步的源端账户名，如github/kunpengcompute，表示Github的kunpengcompute账户。
 - `dst` 需要同步到的目的端账户名，如gitee/kunpengcompute，表示Gitee的kunpengcompute账户。
-- `dst_key` 用于目的端上传代码的SSH key，用于上传代码，Github可以在[这里](https://gitee.com/profile/sshkeys)找到，Gitee可以[这里](https://github.com/settings/keys)找到
+- `dst_key` 用于目的端上传代码的SSH key，用于上传代码，Github可以在[这里](https://github.com/settings/keys)找到，Gitee可以[这里](https://gitee.com/profile/sshkeys)找到
 - `dst_token` 创建仓库的API tokens， 用于自动创建不存在的仓库，Github可以在[这里](https://github.com/settings/tokens)找到，Gitee可以在[这里](https://gitee.com/profile/personal_access_tokens)找到。
 - `account_type` (optional) 默认为user，源和目的的账户类型，可以设置为org（组织）或者user（用户），目前仅支持**同类型账户**（即组织到组织，或用户到用户）的同步。
 - `clone_style` (optional) 默认为https，可以设置为ssh或者https。
