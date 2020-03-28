@@ -38,7 +38,7 @@ steps:
 #### 组织同步，同步Github的kunpengcompute组织到Gitee
 ```yaml
 - name: Organization mirror
-  uses: Yikun/hub-mirror-action
+  uses: Yikun/hub-mirror-action@master
   with:
     src: github/kunpengcompute
     dst: gitee/kunpengcompute
@@ -50,7 +50,7 @@ steps:
 #### 白名单，仅同步Github的Yikun账户的hub-mirror-action这个repo到Gittee
 ```yaml
 - name: Single repo mirror
-  uses: Yikun/hub-mirror-action
+  uses: Yikun/hub-mirror-action@master
   with:
     src: github/Yikun
     dst: gitee/yikunkero
@@ -62,7 +62,7 @@ steps:
 #### 黑名单，同步除了hub-mirror-action和hashes之外的所有repos
 ```yaml
 - name: Black list
-  uses: Yikun/hub-mirror-action
+  uses: Yikun/hub-mirror-action@master
   with:
     src: github/Yikun
     dst: gitee/yikunkero
@@ -74,7 +74,7 @@ steps:
 #### clone方式，使用ssh方式进行clone
 ```yaml
 - name: ssh clone style
-  uses: Yikun/hub-mirror-action
+  uses: Yikun/hub-mirror-action@master
   with:
     src: github/Yikun
     dst: gitee/yikunkero
@@ -86,7 +86,7 @@ steps:
 #### 指定目录cache
 ```yaml
 - name: Mirror with specific cache
-  uses: Yikun/hub-mirror-action
+  uses: Yikun/hub-mirror-action@master
   with:
     src: github/Yikun
     dst: gitee/yikunkero

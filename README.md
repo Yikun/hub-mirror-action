@@ -40,7 +40,7 @@ You can see more real workflows in [here](https://github.com/Yikun/hub-mirror-ac
 #### Organization mirror, mirror the Github/kunpengcompute to Gitee/kunpengcompute
 ```yaml
 - name: Organization mirror
-  uses: Yikun/hub-mirror-action
+  uses: Yikun/hub-mirror-action@master
   with:
     src: github/kunpengcompute
     dst: gitee/kunpengcompute
@@ -52,7 +52,7 @@ You can see more real workflows in [here](https://github.com/Yikun/hub-mirror-ac
 #### White list, only mirror the Yikun/hub-mirror-action
 ```yaml
 - name: Single repo mirror
-  uses: Yikun/hub-mirror-action
+  uses: Yikun/hub-mirror-action@master
   with:
     src: github/Yikun
     dst: gitee/yikunkero
@@ -64,7 +64,7 @@ You can see more real workflows in [here](https://github.com/Yikun/hub-mirror-ac
 #### Black list, only mirror the repos excepts `hub-mirror-action` and `hashes`
 ```yaml
 - name: Black list
-  uses: Yikun/hub-mirror-action
+  uses: Yikun/hub-mirror-action@master
   with:
     src: github/Yikun
     dst: gitee/yikunkero
@@ -76,7 +76,7 @@ You can see more real workflows in [here](https://github.com/Yikun/hub-mirror-ac
 #### clone style, use `ssh` clone style
 ```yaml
 - name: ssh clone style
-  uses: Yikun/hub-mirror-action
+  uses: Yikun/hub-mirror-action@master
   with:
     src: github/Yikun
     dst: gitee/yikunkero
@@ -88,7 +88,7 @@ You can see more real workflows in [here](https://github.com/Yikun/hub-mirror-ac
 #### set sepecific cache
 ```yaml
 - name: Mirror with specific cache
-  uses: Yikun/hub-mirror-action
+  uses: Yikun/hub-mirror-action@master
   with:
     src: github/Yikun
     dst: gitee/yikunkero
