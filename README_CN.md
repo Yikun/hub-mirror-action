@@ -95,6 +95,18 @@ steps:
     cache_path: /github/workspace/hub-mirror-cache
 ```
 
+#### 强制更新
+```yaml
+- name: Mirror with force push (git push -f)
+  uses: Yikun/hub-mirror-action@master
+  with:
+    src: github/Yikun
+    dst: gitee/yikunkero
+    dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
+    dst_token: ${{ secrets.GITEE_TOKEN }}
+    force_update: true
+```
+
 ## FAQ
 
 - 如何在secrets添加dst_token和dst_key？

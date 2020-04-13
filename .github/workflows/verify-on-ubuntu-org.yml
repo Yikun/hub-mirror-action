@@ -17,4 +17,5 @@ jobs:
         account_type: org
         # Only sync Kunpeng
         black_list: 'KAE'
-        white_list: 'KAE,Kunpeng'
+        white_list: 'KAE,Kunpeng,kunpengcompute.github.io'
+        force_update: true
