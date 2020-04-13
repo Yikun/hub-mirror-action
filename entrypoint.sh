@@ -26,6 +26,8 @@ WHITE_LIST="${INPUT_WHITE_LIST}"
 BLACK_LIST="${INPUT_BLACK_LIST}"
 STATIC_LIST="${INPUT_STATIC_LIST}"
 
+FORCE_UPDATE="${INPUT_FORCE_UPDATE}"
+
 if [[ "$ACCOUNT_TYPE" == "org" ]]; then
   SRC_LIST_URL_SUFFIX=orgs/$SRC_ACCOUNT/repos
   DST_LIST_URL_SUFFIX=orgs/$DST_ACCOUNT/repos
@@ -109,7 +111,11 @@ function import_repo
 {
   echo -e "\033[31m(2/3)\033[0m" "Importing..."
   git remote set-head origin -d
-  git push $DST_TYPE refs/remotes/origin/*:refs/heads/* --tags --prune
+  if [[ "$FORCE_UPDATE" == "true" ]]; then
+    git push -f $DST_TYPE refs/remotes/origin/*:refs/heads/* --tags --prune
+  else
+    git push $DST_TYPE refs/remotes/origin/*:refs/heads/* --tags --prune
+  fi
 }
 
 function _check_in_list () {

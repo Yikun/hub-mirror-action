@@ -34,6 +34,7 @@ You can see more real workflows in [here](https://github.com/Yikun/hub-mirror-ac
 - `black_list` (optional) the black list, such as “repo1,repo2,repo3”.
 - `white_list` (optional) the white list, such as “repo1,repo2,repo3”.
 - `static_list` (optional) Only mirror repos in the static list, but don't get list from repo api dynamically (the white/black list is still available). like 'repo1,repo2,repo3'
+- `force_update` (optional) Force to update the destination repo, use '-f' flag do 'git push'
 
 ## Scenarios
 
@@ -95,6 +96,18 @@ You can see more real workflows in [here](https://github.com/Yikun/hub-mirror-ac
     dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
     dst_token: ${{ secrets.GITEE_TOKEN }}
     cache_path: /github/workspace/hub-mirror-cache
+```
+
+#### Force udpate
+```yaml
+- name: Mirror with force push (git push -f)
+  uses: Yikun/hub-mirror-action@master
+  with:
+    src: github/Yikun
+    dst: gitee/yikunkero
+    dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
+    dst_token: ${{ secrets.GITEE_TOKEN }}
+    force_update: true
 ```
 
 ## FAQ
