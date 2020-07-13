@@ -71,7 +71,7 @@ You can see more real workflows in [here](https://github.com/Yikun/hub-mirror-ac
     dst: gitee/yikunkero
     dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
     dst_token: ${{ secrets.GITEE_TOKEN }}
-    white_list: "hub-mirror-action,hashes"
+    black_list: "hub-mirror-action,hashes"
 ```
 
 #### clone style, use `ssh` clone style
