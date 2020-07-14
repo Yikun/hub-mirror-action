@@ -68,7 +68,7 @@ steps:
     dst: gitee/yikunkero
     dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
     dst_token: ${{ secrets.GITEE_TOKEN }}
-    white_list: "hub-mirror-action,hashes"
+    black_list: "hub-mirror-action,hashes"
 ```
 
 #### clone方式，使用ssh方式进行clone
