@@ -15,3 +15,5 @@ jobs:
         dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
         dst_token:  ${{ secrets.GITEE_TOKEN }}
         static_list: 'hub-mirror-action,hashes,simple-spring'
+        force_update: true
+        debug: true
