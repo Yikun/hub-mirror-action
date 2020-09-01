@@ -19,3 +19,4 @@ jobs:
         black_list: 'KAE'
         white_list: 'KAE,Kunpeng,kunpengcompute.github.io'
         force_update: true
+        debug: true

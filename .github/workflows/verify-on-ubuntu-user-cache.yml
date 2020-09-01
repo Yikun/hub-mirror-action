@@ -28,6 +28,7 @@ jobs:
         dst_token:  ${{ secrets.GITEE_TOKEN }}
         cache_path: /github/workspace/hub-mirror-cache
         white_list: 'hub-mirror-action, hexo-migrator-github-issue'
+        force_update: true
 
     - name: Print cache path
       run: |
