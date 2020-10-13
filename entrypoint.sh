@@ -68,8 +68,31 @@ else
   err_exit "Unknown src args, the `src` should be `[github|gittee]/account`"
 fi
 
+function get_all_repo_names
+{
+  PAGE_NUM=100
+  if [[ "$SRC_TYPE" == "github" ]]; then
+    total=`curl -sI "$SRC_REPO_LIST_API?page=1&per_page=$PAGE_NUM" | sed -nr "s/^[lL]ink:.*page=([0-9]+)&per_page=$PAGE_NUM.*/\1/p"`
+  elif [[ "$SRC_TYPE" == "gitee" ]]; then
+    total=`curl -sI "$SRC_REPO_LIST_API?page=1&per_page=$PAGE_NUM" | grep total_page: |cut -d ' ' -f2 |tr -d '\r'`
+  fi
+
+  # use pagination?
+  if [ -z "$total" ]; then
+      # no - this result has only one page
+      total=1
+  fi
+
+  p=1
+  while [ "$p" -le "$total" ]; do
+    x=`curl -s "$SRC_REPO_LIST_API?page=$p&per_page=$PAGE_NUM" | jq '.[] | .name' |  sed 's/"//g'`
+    echo $x
+    p=$(($p + 1))
+  done
+}
+
 if [[ -z $STATIC_LIST ]]; then
-  SRC_REPOS=`curl $SRC_REPO_LIST_API | jq '.[] | .name' |  sed 's/"//g'`
+  SRC_REPOS=`get_all_repo_names`
 else
   SRC_REPOS=`echo $STATIC_LIST | tr ',' ' '`
 fi
@@ -157,8 +180,12 @@ if [ ! -d "$CACHE_PATH" ]; then
 fi
 cd $CACHE_PATH
 
+all=0
+success=0
+skip=0
 for repo in $SRC_REPOS
 {
+  all=$(($all + 1))
   if test_black_white_list $repo ; then
     echo -e "\n\033[31mBackup $repo ...\033[0m"
 
@@ -171,5 +198,11 @@ for repo in $SRC_REPOS
     import_repo || err_exit "Push failed"
 
     cd ..
+	success=$(($success + 1))
+  else
+    skip=$(($skip + 1))
   fi
 }
+
+echo "Total: $all, skip: $skip, successed: $success"
+
