@@ -11,6 +11,7 @@ echo "${INPUT_DST_KEY}" > /root/.ssh/id_rsa
 chmod 600 /root/.ssh/id_rsa
 
 DST_TOKEN="${INPUT_DST_TOKEN}"
+SRC_TOKEN="${INPUT_SRC_TOKEN}"
 
 SRC_HUB="${INPUT_SRC}"
 DST_HUB="${INPUT_DST}"
@@ -68,8 +69,50 @@ else
   err_exit "Unknown src args, the `src` should be `[github|gittee]/account`"
 fi
 
+function get_all_repo_names
+{
+  if [[ "$SRC_TOKEN" == "" ]]; then
+    if [[ "$SRC_TYPE" == "github" ]]; then
+      total=`curl -sI "$SRC_REPO_LIST_API?page=1&per_page=100" | sed -nr 's/^[lL]ink:.*page=([0-9]+)&per_page=100.*/\1/p'`
+    elif [[ "$SRC_TYPE" == "gitee" ]]; then
+      total=`curl -sI "$SRC_REPO_LIST_API?page=1&per_page=100" |grep total_page: |cut -d ' ' -f2 |tr -d '\r'`
+    fi
+  else
+    if [[ "$SRC_TYPE" == "github" ]]; then
+      total=`curl -H "Authorization: token $SRC_TOKEN" -sI "$SRC_REPO_LIST_API?page=1&per_page=100" | sed -nr 's/^[lL]ink:.*page=([0-9]+)&per_page=50.*/\1/p'`
+    elif [[ "$SRC_TYPE" == "gitee" ]]; then
+      total=`curl -H "Content-Type: application/json;charset=UTF-8" -sI "$SRC_REPO_LIST_API?access_token=$SRC_TOKEN&page=1&per_page=100" | grep total_page: |cut -d ' ' -f2 | tr -d '\r'`
+    fi
+  fi
+
+  # use pagination?
+  if [ -z "$total" ]; then
+      # no - this result has only one page
+      total=1
+  fi
+
+  p=1
+  while [ "$p" -le "$total" ]; do
+    if [[ "$SRC_TOKEN" == "" ]]; then
+      if [[ "$SRC_TYPE" == "github" ]]; then
+        x=`curl -s "$SRC_REPO_LIST_API?page=$p&per_page=100" | jq '.[] | .name' |  sed 's/"//g'`
+      elif [[ "$SRC_TYPE" == "gitee" ]]; then
+        x=``
+      fi
+    else
+      if [[ "$SRC_TYPE" == "github" ]]; then
+        x=`curl -H "Authorization: token $SRC_TOKEN" -s "$SRC_REPO_LIST_API?page=$p&per_page=100" | jq '.[] | .name' |  sed 's/"//g'`
+      elif [[ "$SRC_TYPE" == "gitee" ]]; then
+        x=`curl -H "Content-Type: application/json;charset=UTF-8" -s "$SRC_REPO_LIST_API?access_token=$SRC_TOKEN&page=$p&per_page=100" | jq '.[] | .name' |  sed 's/"//g'`
+      fi
+    fi
+    echo $x
+    p=$(($p + 1))
+  done
+}
+
 if [[ -z $STATIC_LIST ]]; then
-  SRC_REPOS=`curl $SRC_REPO_LIST_API | jq '.[] | .name' |  sed 's/"//g'`
+  SRC_REPOS=`get_all_repo_names`
 else
   SRC_REPOS=`echo $STATIC_LIST | tr ',' ' '`
 fi
