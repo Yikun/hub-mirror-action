@@ -94,11 +94,7 @@ function get_all_repo_names
   p=1
   while [ "$p" -le "$total" ]; do
     if [[ "$SRC_TOKEN" == "" ]]; then
-      if [[ "$SRC_TYPE" == "github" ]]; then
         x=`curl -s "$SRC_REPO_LIST_API?page=$p&per_page=100" | jq '.[] | .name' |  sed 's/"//g'`
-      elif [[ "$SRC_TYPE" == "gitee" ]]; then
-        x=``
-      fi
     else
       if [[ "$SRC_TYPE" == "github" ]]; then
         x=`curl -H "Authorization: token $SRC_TOKEN" -s "$SRC_REPO_LIST_API?page=$p&per_page=100" | jq '.[] | .name' |  sed 's/"//g'`
@@ -200,9 +196,13 @@ if [ ! -d "$CACHE_PATH" ]; then
 fi
 cd $CACHE_PATH
 
+all=0
+sync=0
 for repo in $SRC_REPOS
 {
+  all=$(($all + 1))
   if test_black_white_list $repo ; then
+	sync=$(($sync + 1))
     echo -e "\n\033[31mBackup $repo ...\033[0m"
 
     clone_repo $repo || echo "clone and cd failed"
@@ -216,3 +216,6 @@ for repo in $SRC_REPOS
     cd ..
   fi
 }
+
+echo "Total: $all, success: $sync"
+
