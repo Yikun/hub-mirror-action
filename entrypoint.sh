@@ -33,9 +33,16 @@ STATIC_LIST="${INPUT_STATIC_LIST}"
 
 FORCE_UPDATE="${INPUT_FORCE_UPDATE}"
 
+DELAY_EXIT=false
+
 function err_exit {
   echo -e "\033[31m $1 \033[0m"
   exit 1
+}
+
+function delay_exit {
+  echo -e "\033[31m $1 \033[0m"
+  DELAY_EXIT=true
 }
 
 if [[ "$ACCOUNT_TYPE" == "org" ]]; then
@@ -195,14 +202,17 @@ for repo in $SRC_REPOS
 
     update_repo || echo "Update failed"
 
-    import_repo || err_exit "Push failed"
+    import_repo && success=$(($success + 1)) || delay_exit "Push failed"
 
     cd ..
-	success=$(($success + 1))
   else
     skip=$(($skip + 1))
   fi
 }
 
-echo "Total: $all, skip: $skip, successed: $success"
+failed=$(($all - $skip - $success))
+echo "Total: $all, skip: $skip, successed: $success, failed: $failed."
 
+if [[ "$DELAY_EXIT" == "true" ]]; then
+  exit 1
+fi
