@@ -18,19 +18,22 @@ steps:
     account_type: org
 ```
 
-Here is a workflow to mirror all repos from **Github/kunpengcompute organization** to **Gitee/kunpengcompute organization**.
-
-You can see more real workflows in [here](https://github.com/Yikun/hub-mirror-action/tree/master/.github/workflows).
+Here is a workflow to mirror the kunpengcompute org repos from Github to Gitee, see more complete workflows in [here](https://github.com/Yikun/hub-mirror-action/tree/master/.github/workflows).
 
 ## Who are using?
 <a href="https://github.com/kunpengcompute" > <img src="https://user-images.githubusercontent.com/1736354/95939597-040a1500-0e0f-11eb-99f8-4fc312751681.jpg" width="70"></a> <a href="https://github.com/openeuler-mirror" > <img src="https://user-images.githubusercontent.com/1736354/95939584-feacca80-0e0e-11eb-88cf-bc002ded0bd5.jpg"  width="70"><a href="https://github.com/mindspore-ai" ><img src="https://user-images.githubusercontent.com/1736354/95939590-00768e00-0e0f-11eb-8436-7875a0bb6c92.jpg" width="70"></a> <a href="https://github.com/opengauss-mirror" ><img src="https://user-images.githubusercontent.com/1736354/95939582-fc4a7080-0e0e-11eb-94e6-288c4afd0278.jpg"  width="70"></a> <a href="https://github.com/openlookeng" ><img src="https://user-images.githubusercontent.com/1736354/95939601-05d3d880-0e0f-11eb-86a6-01ef95e7b85e.jpg"  width="70"></a><a href="https://github.com/WeBankFinTech" ><img src="https://user-images.githubusercontent.com/1736354/95939579-fa80ad00-0e0e-11eb-9e44-264b1cf27374.jpg"  width="70"></a><a href="https://github.com/WeBankPartners" ><img src="https://user-images.githubusercontent.com/1736354/95940763-c5c22500-0e11-11eb-9890-c7d1b6fa5aa3.jpg"  width="70"></a><a href="https://github.com/openbiox" ><img src="https://user-images.githubusercontent.com/1736354/95940344-aaa2e580-0e10-11eb-863d-1ff2c5a04cfa.jpg"  width="70"></a><a href="https://github.com/renwu-cool" ><img src="https://user-images.githubusercontent.com/1736354/95940437-eb9afa00-0e10-11eb-9fe2-65a8e68c6698.jpg"  width="70"></a><a><img src="https://user-images.githubusercontent.com/1736354/95940571-42a0cf00-0e11-11eb-9ee2-cd497b50f06a.png"  width="70"></a>
 
+Welcome to star this project, Thanks!
+
 ## Usage
 
+#### Required
 - `src` source account, such as `github/kunpengcompute`, is the Github kunpengcompute account.
 - `dst` Destination account, such as `/kunpengcompute`, is the Gitee kunpengcompute account.
-- `dst_key` the ssh key to push code in destination account,You can get the Github sshkeys in [here](https://github.com/settings/keys)，the Gitee ssh key in [here](https://gitee.com/profile/sshkeys).
+- `dst_key` the private key to push code in destination account (default in ~/.ssh/id_rsa), you can see [generating SSH keys](https://docs.github.com/articles/generating-an-ssh-key/) to generate the pri/pub key, and make sure the pub key has been added in destination. You can set Github ssh key in [here](https://github.com/settings/keys)，set the Gitee ssh key in [here](https://gitee.com/profile/sshkeys).
 - `dst_token` the API token to create non-existent repo, You can get Github token in [here](https://github.com/settings/tokens), and the Gitee in [here](https://gitee.com/profile/personal_access_tokens).
+
+#### Optional
 - `account_type` (optional) default is `user`, the account type of src and dst account, can be set to `org` or `user`，only support mirror between same account type (that is "org to org" or "user to user").
 - `clone_style` (optional) default is `https`, can be set to `ssh` or `https`.
 - `cache_path` (optional) let code clone in specific path, can be used with actions/cache to speed up mirror.
@@ -53,7 +56,7 @@ You can see more real workflows in [here](https://github.com/Yikun/hub-mirror-ac
     account_type: org
 ```
 
-#### White list, only mirror the Yikun/hub-mirror-action
+#### White/Black list, only mirror the Yikun/hub-mirror-action but not Yikun/hashes
 ```yaml
 - name: Single repo mirror
   uses: Yikun/hub-mirror-action@master
@@ -63,9 +66,10 @@ You can see more real workflows in [here](https://github.com/Yikun/hub-mirror-ac
     dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
     dst_token: ${{ secrets.GITEE_TOKEN }}
     white_list: "hub-mirror-action"
+    white_list: "hashes"
 ```
 
-#### Black list, only mirror the repos excepts `hub-mirror-action` and `hashes`
+#### Static list, only mirror the repos `hub-mirror-action` and `hashes`
 ```yaml
 - name: Black list
   uses: Yikun/hub-mirror-action@master
@@ -74,7 +78,7 @@ You can see more real workflows in [here](https://github.com/Yikun/hub-mirror-ac
     dst: gitee/yikunkero
     dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
     dst_token: ${{ secrets.GITEE_TOKEN }}
-    black_list: "hub-mirror-action,hashes"
+    static_list: "hub-mirror-action,hashes"
 ```
 
 #### clone style, use `ssh` clone style
@@ -101,7 +105,7 @@ You can see more real workflows in [here](https://github.com/Yikun/hub-mirror-ac
     cache_path: /github/workspace/hub-mirror-cache
 ```
 
-#### Force udpate
+#### Force udpate and enable the debug flag
 ```yaml
 - name: Mirror with force push (git push -f)
   uses: Yikun/hub-mirror-action@master
@@ -111,6 +115,7 @@ You can see more real workflows in [here](https://github.com/Yikun/hub-mirror-ac
     dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
     dst_token: ${{ secrets.GITEE_TOKEN }}
     force_update: true
+    debug: true
 ```
 
 ## FAQ
