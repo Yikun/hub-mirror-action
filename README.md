@@ -121,3 +121,6 @@ You can see more real workflows in [here](https://github.com/Yikun/hub-mirror-ac
   1. **Get Token and Key**，you can get them in [ssh key](https://gitee.com/profile/sshkeys) and [token](https://gitee.com/profile/personal_access_tokens).
   2. **Add Secrets**，add settings-secrets in repo，like `GITEE_PRIVATE_KEY`、`GITEE_TOKEN`
   3. **Add workflow**，add the workflow file into .github/workflows.
+
+## Reference
+[Hub mirror template](https://github.com/yi-Xu-0100/hub-mirror): A template repo to show how to use this action.
