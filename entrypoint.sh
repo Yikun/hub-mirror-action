@@ -202,10 +202,9 @@ for repo in $SRC_REPOS
 
     update_repo || echo "Update failed"
 
-    import_repo || delay_exit "Push failed"
+    import_repo && success=$(($success + 1)) || delay_exit "Push failed"
 
     cd ..
-	success=$(($success + 1))
   else
     skip=$(($skip + 1))
   fi
