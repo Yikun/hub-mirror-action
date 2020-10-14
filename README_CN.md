@@ -24,17 +24,21 @@ steps:
 <a href="https://github.com/kunpengcompute" > <img src="https://user-images.githubusercontent.com/1736354/95939597-040a1500-0e0f-11eb-99f8-4fc312751681.jpg" width="70"></a> <a href="https://github.com/openeuler-mirror" > <img src="https://user-images.githubusercontent.com/1736354/95939584-feacca80-0e0e-11eb-88cf-bc002ded0bd5.jpg"  width="70"><a href="https://github.com/mindspore-ai" ><img src="https://user-images.githubusercontent.com/1736354/95939590-00768e00-0e0f-11eb-8436-7875a0bb6c92.jpg" width="70"></a> <a href="https://github.com/opengauss-mirror" ><img src="https://user-images.githubusercontent.com/1736354/95939582-fc4a7080-0e0e-11eb-94e6-288c4afd0278.jpg"  width="70"></a> <a href="https://github.com/openlookeng" ><img src="https://user-images.githubusercontent.com/1736354/95939601-05d3d880-0e0f-11eb-86a6-01ef95e7b85e.jpg"  width="70"></a><a href="https://github.com/WeBankFinTech" ><img src="https://user-images.githubusercontent.com/1736354/95939579-fa80ad00-0e0e-11eb-9e44-264b1cf27374.jpg"  width="70"></a><a href="https://github.com/WeBankPartners" ><img src="https://user-images.githubusercontent.com/1736354/95940763-c5c22500-0e11-11eb-9890-c7d1b6fa5aa3.jpg"  width="70"></a><a href="https://github.com/openbiox" ><img src="https://user-images.githubusercontent.com/1736354/95940344-aaa2e580-0e10-11eb-863d-1ff2c5a04cfa.jpg"  width="70"></a><a href="https://github.com/renwu-cool" ><img src="https://user-images.githubusercontent.com/1736354/95940437-eb9afa00-0e10-11eb-9fe2-65a8e68c6698.jpg"  width="70"></a><a><img src="https://user-images.githubusercontent.com/1736354/95940571-42a0cf00-0e11-11eb-9ee2-cd497b50f06a.png"  width="70"></a>
 
 ## 参数详解
-
+#### 必选参数
 - `src` 需要被同步的源端账户名，如github/kunpengcompute，表示Github的kunpengcompute账户。
 - `dst` 需要同步到的目的端账户名，如gitee/kunpengcompute，表示Gitee的kunpengcompute账户。
-- `dst_key` 用于目的端上传代码的SSH key，用于上传代码，Github可以在[这里](https://github.com/settings/keys)找到，Gitee可以[这里](https://gitee.com/profile/sshkeys)找到
+- `dst_key` 用于在目的端上传代码的私钥(默认可以从~/.ssh/id_rsa获取），可参考[生成/添加SSH公钥](https://gitee.com/help/articles/4181)或[generating SSH keys](https://docs.github.com/articles/generating-an-ssh-key/)生成，并确认对应公钥已经被正确配置在目的端。对应公钥，Github可以在[这里](https://github.com/settings/keys)配置，Gitee可以[这里](https://gitee.com/profile/sshkeys)配置。
 - `dst_token` 创建仓库的API tokens， 用于自动创建不存在的仓库，Github可以在[这里](https://github.com/settings/tokens)找到，Gitee可以在[这里](https://gitee.com/profile/personal_access_tokens)找到。
-- `account_type` (optional) 默认为user，源和目的的账户类型，可以设置为org（组织）或者user（用户），目前仅支持**同类型账户**（即组织到组织，或用户到用户）的同步。
-- `clone_style` (optional) 默认为https，可以设置为ssh或者https。
-- `cache_path` (optional) 将代码缓存在指定目录，用于与actions/cache配合以加速镜像过程。
-- `black_list` (optional) 配置后，黑名单中的repos将不会被同步，如“repo1,repo2,repo3”。
-- `white_list` (optional) 配置后，仅同步白名单中的repos，如“repo1,repo2,repo3”。
-- `static_list` (optional) 配置后，仅同步静态列表，不会再动态获取需同步列表（黑白名单机制依旧生效），如“repo1,repo2,repo3”。
+
+#### 可选参数
+- `account_type` 默认为user，源和目的的账户类型，可以设置为org（组织）或者user（用户），目前仅支持**同类型账户**（即组织到组织，或用户到用户）的同步。
+- `clone_style` 默认为https，可以设置为ssh或者https。
+- `cache_path` 默认为'', 将代码缓存在指定目录，用于与actions/cache配合以加速镜像过程。
+- `black_list` 默认为'', 配置后，黑名单中的repos将不会被同步，如“repo1,repo2,repo3”。
+- `white_list` 默认为'', 配置后，仅同步白名单中的repos，如“repo1,repo2,repo3”。
+- `static_list` 默认为'', 配置后，仅同步静态列表，不会再动态获取需同步列表（黑白名单机制依旧生效），如“repo1,repo2,repo3”。
+- `force_update` 默认为false, 配置后，启用git push -f强制同步，**注意：开启后，会强制覆盖目的端仓库**。
+- `debug` 默认为false, 配置后，启用debug开关，会显示所有执行命令。
 
 ## 举些例子
 
@@ -50,7 +54,7 @@ steps:
     account_type: org
 ```
 
-#### 白名单，仅同步Github的Yikun账户的hub-mirror-action这个repo到Gittee
+#### 黑/白名单，动态获取原端github/Yikun的repos，但仅同步名为hub-mirror-action，不同步hashes这个repo到Gittee
 ```yaml
 - name: Single repo mirror
   uses: Yikun/hub-mirror-action@master
@@ -60,9 +64,10 @@ steps:
     dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
     dst_token: ${{ secrets.GITEE_TOKEN }}
     white_list: "hub-mirror-action"
+    black_list: "hashes"
 ```
 
-#### 黑名单，同步除了hub-mirror-action和hashes之外的所有repos
+#### 静态名单（可用于某一仓库同步），不会动态获取原端github/Yikun的repos，仅同步hub-mirror-action这个repo
 ```yaml
 - name: Black list
   uses: Yikun/hub-mirror-action@master
@@ -71,7 +76,7 @@ steps:
     dst: gitee/yikunkero
     dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
     dst_token: ${{ secrets.GITEE_TOKEN }}
-    black_list: "hub-mirror-action,hashes"
+    static_list: "hub-mirror-action"
 ```
 
 #### clone方式，使用ssh方式进行clone
@@ -98,7 +103,7 @@ steps:
     cache_path: /github/workspace/hub-mirror-cache
 ```
 
-#### 强制更新
+#### 强制更新，并打开debug日志开关
 ```yaml
 - name: Mirror with force push (git push -f)
   uses: Yikun/hub-mirror-action@master
@@ -108,6 +113,7 @@ steps:
     dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
     dst_token: ${{ secrets.GITEE_TOKEN }}
     force_update: true
+    debug: true
 ```
 
 ## FAQ
