@@ -20,6 +20,9 @@ steps:
 
 你可以在[测试和demo](https://github.com/Yikun/hub-mirror-action/tree/master/.github/workflows)找到更多的使用方法。
 
+## 谁在使用？
+<a href="https://github.com/kunpengcompute" > <img src="https://user-images.githubusercontent.com/1736354/95939597-040a1500-0e0f-11eb-99f8-4fc312751681.jpg" width="70"></a> <a href="https://github.com/openeuler-mirror" > <img src="https://user-images.githubusercontent.com/1736354/95939584-feacca80-0e0e-11eb-88cf-bc002ded0bd5.jpg"  width="70"><a href="https://github.com/mindspore-ai" ><img src="https://user-images.githubusercontent.com/1736354/95939590-00768e00-0e0f-11eb-8436-7875a0bb6c92.jpg" width="70"></a> <a href="https://github.com/opengauss-mirror" ><img src="https://user-images.githubusercontent.com/1736354/95939582-fc4a7080-0e0e-11eb-94e6-288c4afd0278.jpg"  width="70"></a> <a href="https://github.com/openlookeng" ><img src="https://user-images.githubusercontent.com/1736354/95939601-05d3d880-0e0f-11eb-86a6-01ef95e7b85e.jpg"  width="70"></a><a href="https://github.com/WeBankFinTech" ><img src="https://user-images.githubusercontent.com/1736354/95939579-fa80ad00-0e0e-11eb-9e44-264b1cf27374.jpg"  width="70"></a><a href="https://github.com/WeBankPartners" ><img src="https://user-images.githubusercontent.com/1736354/95940763-c5c22500-0e11-11eb-9890-c7d1b6fa5aa3.jpg"  width="70"></a><a href="https://github.com/openbiox" ><img src="https://user-images.githubusercontent.com/1736354/95940344-aaa2e580-0e10-11eb-863d-1ff2c5a04cfa.jpg"  width="70"></a><a href="https://github.com/renwu-cool" ><img src="https://user-images.githubusercontent.com/1736354/95940437-eb9afa00-0e10-11eb-9fe2-65a8e68c6698.jpg"  width="70"></a><a><img src="https://user-images.githubusercontent.com/1736354/95940571-42a0cf00-0e11-11eb-9ee2-cd497b50f06a.png"  width="70"></a>
+
 ## 参数详解
 
 - `src` 需要被同步的源端账户名，如github/kunpengcompute，表示Github的kunpengcompute账户。
