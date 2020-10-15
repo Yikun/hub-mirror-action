@@ -8,16 +8,21 @@ jobs:
     - name: Checkout source code
       uses: actions/checkout@v1
 
+    - name: Get time
+      id: info
+      uses: actions/github-script@v3.0.0
+      with:
+        github-token: ${{secrets.HUB_TOKEN}}
+        result-encoding: string
+        script: |
+          return new Date(Date.now()).toISOString().replace(/[^0-9]/g, "");
     - name: Cache src repos
       uses: actions/cache@v1
       id: cache
       with:
-        path: /home/runner/work/hub-mirror-action/hub-mirror-action/hub-mirror-cache
-        key: ${{ runner.os }}-yikun-repos-cache
-
-    - name: Print the cache status
-      if: steps.cache.outputs.cache-hit == 'true'
-      run: echo "Cached successfully."
+        path: ${{ github.workspace }}/hub-mirror-cache
+        key: ${{ runner.os }}-yikun-repos-cache-${{ steps.info.outputs.time }}
+        restore-keys: ${{ runner.os }}-yikun-repos-cache-
 
     - name: Mirror Github to Gitee with white list and cache
       uses: ./.
@@ -32,4 +37,4 @@ jobs:
 
     - name: Print cache path
       run: |
-        ls -la /home/runner/work/hub-mirror-action/hub-mirror-action/hub-mirror-cache
+        ls -la ${{ github.workspace }}/hub-mirror-cache
