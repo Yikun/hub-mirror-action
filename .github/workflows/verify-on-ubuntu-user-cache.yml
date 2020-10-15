@@ -5,14 +5,13 @@ jobs:
     name: Run
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout source code 
+    - name: Checkout source code
       uses: actions/checkout@v1
 
     - name: Get time
       id: info
       uses: actions/github-script@v3.0.0
       with:
-        github-token: ${{secrets.HUB_TOKEN}}
         result-encoding: string
         script: |
           return new Date(Date.now()).toISOString().replace(/[^0-9]/g, "");
