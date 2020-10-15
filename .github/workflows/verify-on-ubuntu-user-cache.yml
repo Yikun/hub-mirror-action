@@ -21,8 +21,8 @@ jobs:
       id: cache
       with:
         path: ${{ github.workspace }}/hub-mirror-cache
-        key: ${{ runner.os }}-yikun-repos-cache-${{ steps.info.outputs.result }}
-        restore-keys: ${{ runner.os }}-yikun-repos-cache-
+        key: ${{ runner.os }}-yikun-hub-cache-${{ steps.info.outputs.result }}
+        restore-keys: ${{ runner.os }}-yikun-hub-cache
 
     - name: Mirror Github to Gitee with white list and cache
       uses: ./.
