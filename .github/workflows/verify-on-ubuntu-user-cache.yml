@@ -12,7 +12,6 @@ jobs:
       id: info
       uses: actions/github-script@v3.0.0
       with:
-        github-token: ${{secrets.GITHUB_TOKEN}}
         result-encoding: string
         script: |
           return new Date(Date.now()).toISOString().replace(/[^0-9]/g, "");
