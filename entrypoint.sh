@@ -42,8 +42,11 @@ function err_exit {
   exit 1
 }
 
+FAILED_LIST=()
+
 function delay_exit {
   echo -e "\033[31m $1 \033[0m"
+  FAILED_LIST+=($2)
   DELAY_EXIT=true
   return 1
 }
@@ -205,20 +208,24 @@ for repo in $SRC_REPOS
 
     cd $CACHE_PATH
 
-    clone_repo $repo || delay_exit "clone and cd failed" || continue
+    clone_repo $repo || delay_exit "clone and cd failed"  $repo || continue
 
-    create_repo $repo $DST_TOKEN || delay_exit "create failed" || continue
+    create_repo $repo $DST_TOKEN || delay_exit "create failed" $repo || continue
 
-    update_repo || delay_exit "Update failed" || continue
+    update_repo || delay_exit "Update failed" $repo || continue
 
-    import_repo && success=$(($success + 1)) || delay_exit "Push failed" || continue
+    import_repo && success=$(($success + 1)) || delay_exit "Push failed" $repo || continue
   else
     skip=$(($skip + 1))
   fi
 }
 
 failed=$(($all - $skip - $success))
+echo "SRC: "$SRC_REPOS
+ecoo "DST: "$DST_REPOS
+echo "Failed: "$FAILED_LIST
 echo "Total: $all, skip: $skip, successed: $success, failed: $failed."
+
 
 if [[ "$DELAY_EXIT" == "true" ]]; then
   exit 1
