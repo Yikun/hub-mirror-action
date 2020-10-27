@@ -43,6 +43,7 @@ function err_exit {
 function delay_exit {
   echo -e "\033[31m $1 \033[0m"
   DELAY_EXIT=true
+  return 1
 }
 
 if [[ "$ACCOUNT_TYPE" == "org" ]]; then
@@ -200,15 +201,15 @@ for repo in $SRC_REPOS
   if test_black_white_list $repo ; then
     echo -e "\n\033[31mBackup $repo ...\033[0m"
 
-    clone_repo $repo || delay_exit "clone and cd failed"
+    cd $CACHE_PATH
 
-    create_repo $repo $DST_TOKEN || echo "create failed"
+    clone_repo $repo || delay_exit "clone and cd failed" || continue
 
-    update_repo || echo "Update failed"
+    create_repo $repo $DST_TOKEN || delay_exit "create failed" || continue
 
-    import_repo && success=$(($success + 1)) || delay_exit "Push failed"
+    update_repo || delay_exit "Update failed" || continue
 
-    cd ..
+    import_repo && success=$(($success + 1)) || delay_exit "Push failed" || continue
   else
     skip=$(($skip + 1))
   fi
