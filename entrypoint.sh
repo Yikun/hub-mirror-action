@@ -9,6 +9,7 @@ fi
 mkdir -p /root/.ssh
 echo "${INPUT_DST_KEY}" > /root/.ssh/id_rsa
 chmod 600 /root/.ssh/id_rsa
+ssh-keygen -y -f /root/.ssh/id_rsa
 
 DST_TOKEN="${INPUT_DST_TOKEN}"
 
