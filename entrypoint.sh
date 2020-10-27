@@ -145,7 +145,7 @@ function create_repo
 function update_repo
 {
   echo -e "\033[31m(1/3)\033[0m" "Updating..."
-  git pull -p
+  timeout 30 git pull -p
 }
 
 function import_repo
@@ -153,9 +153,9 @@ function import_repo
   echo -e "\033[31m(2/3)\033[0m" "Importing..."
   git remote set-head origin -d
   if [[ "$FORCE_UPDATE" == "true" ]]; then
-    git push -f $DST_TYPE refs/remotes/origin/*:refs/heads/* --tags --prune
+    timeout 30 git push -f $DST_TYPE refs/remotes/origin/*:refs/heads/* --tags --prune
   else
-    git push $DST_TYPE refs/remotes/origin/*:refs/heads/* --tags --prune
+    timeout 30 git push $DST_TYPE refs/remotes/origin/*:refs/heads/* --tags --prune
   fi
 }
 
@@ -200,7 +200,7 @@ for repo in $SRC_REPOS
   if test_black_white_list $repo ; then
     echo -e "\n\033[31mBackup $repo ...\033[0m"
 
-    clone_repo $repo || echo "clone and cd failed" || delay_exit "Clone failed"
+    clone_repo $repo || delay_exit "clone and cd failed"
 
     create_repo $repo $DST_TOKEN || echo "create failed"
 
