@@ -222,7 +222,7 @@ for repo in $SRC_REPOS
 
 failed=$(($all - $skip - $success))
 echo "SRC: "$SRC_REPOS
-ecoo "DST: "$DST_REPOS
+echo "DST: "$DST_REPOS
 echo "Failed: "$FAILED_LIST
 echo "Total: $all, skip: $skip, successed: $success, failed: $failed."
 
