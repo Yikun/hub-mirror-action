@@ -122,7 +122,7 @@ function clone_repo
 {
   echo -e "\033[31m(0/3)\033[0m" "Downloading..."
   if [ ! -d "$1" ]; then
-    git clone $SRC_REPO_BASE_URL$SRC_ACCOUNT/$1.git
+    timeout 30 git clone $SRC_REPO_BASE_URL$SRC_ACCOUNT/$1.git
   fi
   cd $1
 }
@@ -200,7 +200,7 @@ for repo in $SRC_REPOS
   if test_black_white_list $repo ; then
     echo -e "\n\033[31mBackup $repo ...\033[0m"
 
-    clone_repo $repo || echo "clone and cd failed"
+    clone_repo $repo || echo "clone and cd failed" || delay_exit "Clone failed"
 
     create_repo $repo $DST_TOKEN || echo "create failed"
 
