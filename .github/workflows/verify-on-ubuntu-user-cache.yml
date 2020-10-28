@@ -11,7 +11,7 @@ jobs:
     - name: Get Time
       id: get-time
       run: |
-        echo "::set-output name=date::$(/bin/date -u "+%Y%m%d")"
+        echo "::set-output name=date::$(/bin/date -u "+%Y%m%d%H%M%S")"
       shell: bash
 
     - name: Cache src repos
