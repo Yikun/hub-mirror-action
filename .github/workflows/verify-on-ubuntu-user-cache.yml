@@ -8,21 +8,19 @@ jobs:
     - name: Checkout source code
       uses: actions/checkout@v1
 
-    - name: Get time
-      id: info
-      uses: actions/github-script@v3.0.0
-      with:
-        result-encoding: string
-        script: |
-          return new Date(Date.now()).toISOString().replace(/[^0-9]/g, "");
+    - name: Get Time
+      id: get-time
+      run: |
+        echo "::set-output name=date::$(/bin/date -u "+%Y%m%d%H%M%S")"
+      shell: bash
 
     - name: Cache src repos
       uses: actions/cache@v1
       id: cache
       with:
         path: ${{ github.workspace }}/hub-mirror-cache
-        key: ${{ runner.os }}-yikun-hub-cache-${{ steps.info.outputs.result }}
-        restore-keys: ${{ runner.os }}-yikun-hub-cache
+        key: ${{ runner.os }}-repos-cache-${{ steps.get-time.outputs.date }}
+        restore-keys: ${{ runner.os }}-repos-cache
 
     - name: Mirror Github to Gitee with white list and cache
       uses: ./.
