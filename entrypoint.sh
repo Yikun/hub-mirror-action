@@ -35,7 +35,7 @@ FORCE_UPDATE="${INPUT_FORCE_UPDATE}"
 
 DELAY_EXIT=false
 
-TIME_OUT=600
+TIME_OUT=0
 
 function err_exit {
   echo -e "\033[31m $1 \033[0m"
