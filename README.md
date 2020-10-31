@@ -129,6 +129,19 @@ steps:
     debug: true
 ```
 
+#### 设置命令行超时时间为1小时
+```yaml
+- name: Mirror with force push (git push -f)
+  uses: Yikun/hub-mirror-action@master
+  with:
+    src: github/Yikun
+    dst: gitee/yikunkero
+    dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
+    dst_token: ${{ secrets.GITEE_TOKEN }}
+    force_update: true
+    timeout: '1h'
+```
+
 ## FAQ
 
 - 如何在secrets添加dst_token和dst_key？

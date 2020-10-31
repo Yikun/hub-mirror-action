@@ -35,6 +35,8 @@ FORCE_UPDATE="${INPUT_FORCE_UPDATE}"
 
 DELAY_EXIT=false
 
+TIME_OUT="${INPUT_TIMEOUT}"
+
 function err_exit {
   echo -e "\033[31m $1 \033[0m"
   exit 1
@@ -122,7 +124,7 @@ function clone_repo
 {
   echo -e "\033[31m(0/3)\033[0m" "Downloading..."
   if [ ! -d "$1" ]; then
-    git clone $SRC_REPO_BASE_URL$SRC_ACCOUNT/$1.git
+    timeout $TIME_OUT git clone $SRC_REPO_BASE_URL$SRC_ACCOUNT/$1.git
   fi
   cd $1
 }
@@ -145,7 +147,7 @@ function create_repo
 function update_repo
 {
   echo -e "\033[31m(1/3)\033[0m" "Updating..."
-  git pull -p
+  timeout $TIME_OUT git pull -p
 }
 
 function import_repo
@@ -153,9 +155,9 @@ function import_repo
   echo -e "\033[31m(2/3)\033[0m" "Importing..."
   git remote set-head origin -d
   if [[ "$FORCE_UPDATE" == "true" ]]; then
-    git push -f $DST_TYPE refs/remotes/origin/*:refs/heads/* --tags --prune
+    timeout $TIME_OUT git push -f $DST_TYPE refs/remotes/origin/*:refs/heads/* --tags --prune
   else
-    git push $DST_TYPE refs/remotes/origin/*:refs/heads/* --tags --prune
+    timeout $TIME_OUT git push $DST_TYPE refs/remotes/origin/*:refs/heads/* --tags --prune
   fi
 }
 
