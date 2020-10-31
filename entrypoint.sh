@@ -34,6 +34,7 @@ STATIC_LIST="${INPUT_STATIC_LIST}"
 FORCE_UPDATE="${INPUT_FORCE_UPDATE}"
 
 DELAY_EXIT=false
+WARNING_FLAG=false
 
 function err_exit {
   echo -e "\033[31m $1 \033[0m"
@@ -42,7 +43,12 @@ function err_exit {
 
 function delay_exit {
   echo -e "\033[31m $1 \033[0m"
-  DELAY_EXIT=true
+  if [[ "$WARNING_FLAG" == "true" ]]; then
+    warning=$(($warning + 1))
+    WARNING_FLAG=false
+  else
+    DELAY_EXIT=true
+  fi
 }
 
 if [[ "$ACCOUNT_TYPE" == "org" ]]; then
@@ -122,7 +128,12 @@ function clone_repo
 {
   echo -e "\033[31m(0/3)\033[0m" "Downloading..."
   if [ ! -d "$1" ]; then
-    git clone $SRC_REPO_BASE_URL$SRC_ACCOUNT/$1.git
+    clone_res=`git clone $SRC_REPO_BASE_URL$SRC_ACCOUNT/$1.git 2>&1`
+  fi
+  is_empty=`echo $clone_res | grep "cloned an empty repository." | wc -l`
+  if [ $is_empty == 1 ]; then
+    WARNING_FLAG=true
+	return -1
   fi
   cd $1
 }
@@ -134,9 +145,12 @@ function create_repo
   if [ $has_repo == 0 ]; then
     echo "Create non-exist repo..."
     if [[ "$DST_TYPE" == "github" ]]; then
-      curl -s -H "Authorization: token $2" --data '{"name":"'$1'"}' $DST_REPO_CREATE_API > /dev/null
+      create_result=`curl -H "Authorization: token $2" --data '{"name":"'$1'"}' $DST_REPO_CREATE_API`
     elif [[ "$DST_TYPE" == "gitee" ]]; then
-      curl -s -X POST --header 'Content-Type: application/json;charset=UTF-8' $DST_REPO_CREATE_API -d '{"name": "'$1'","access_token": "'$2'"}' > /dev/null
+      create_result=`curl -X POST --header 'Content-Type: application/json;charset=UTF-8' $DST_REPO_CREATE_API -d '{"name": "'$1'","access_token": "'$2'"}'`
+    fi
+	if [[ "$DEBUG" == "true" ]]; then
+	  echo $create_result
     fi
   fi
   git remote add $DST_TYPE git@$DST_TYPE.com:$DST_ACCOUNT/$1.git
@@ -194,19 +208,22 @@ cd $CACHE_PATH
 all=0
 success=0
 skip=0
+warning=0
 for repo in $SRC_REPOS
 {
   all=$(($all + 1))
   if test_black_white_list $repo ; then
     echo -e "\n\033[31mBackup $repo ...\033[0m"
 
-    clone_repo $repo || echo "clone and cd failed"
+    cd $CACHE_PATH
 
-    create_repo $repo $DST_TOKEN || echo "create failed"
+    clone_repo $repo || delay_exit "clone and cd failed"  $repo || continue
 
-    update_repo || echo "Update failed"
+    create_repo $repo $DST_TOKEN || delay_exit "create failed" $repo || continue
 
-    import_repo && success=$(($success + 1)) || delay_exit "Push failed"
+    update_repo || delay_exit "Update failed" $repo || continue
+
+    import_repo && success=$(($success + 1)) || delay_exit "Push failed" $repo || continue
 
     cd ..
   else
@@ -214,8 +231,8 @@ for repo in $SRC_REPOS
   fi
 }
 
-failed=$(($all - $skip - $success))
-echo "Total: $all, skip: $skip, successed: $success, failed: $failed."
+failed=$(($all - $skip - $success - $warning))
+echo "Total: $all, skip: $skip, successed: $success, warning: $warning, failed: $failed."
 
 if [[ "$DELAY_EXIT" == "true" ]]; then
   exit 1
