@@ -40,9 +40,13 @@ function err_exit {
   exit 1
 }
 
+FAILED_LIST=()
+
 function delay_exit {
   echo -e "\033[31m $1 \033[0m"
+  FAILED_LIST+=($2)
   DELAY_EXIT=true
+  return 1
 }
 
 if [[ "$ACCOUNT_TYPE" == "org" ]]; then
@@ -139,7 +143,7 @@ function create_repo
       curl -s -X POST --header 'Content-Type: application/json;charset=UTF-8' $DST_REPO_CREATE_API -d '{"name": "'$1'","access_token": "'$2'"}' > /dev/null
     fi
   fi
-  git remote add $DST_TYPE git@$DST_TYPE.com:$DST_ACCOUNT/$1.git
+  git remote add $DST_TYPE git@$DST_TYPE.com:$DST_ACCOUNT/$1.git || echo "Remote already exists."
 }
 
 function update_repo
@@ -200,15 +204,15 @@ for repo in $SRC_REPOS
   if test_black_white_list $repo ; then
     echo -e "\n\033[31mBackup $repo ...\033[0m"
 
-    clone_repo $repo || echo "clone and cd failed"
+    cd $CACHE_PATH
 
-    create_repo $repo $DST_TOKEN || echo "create failed"
+    clone_repo $repo || delay_exit "clone and cd failed"  $repo || continue
 
-    update_repo || echo "Update failed"
+    create_repo $repo $DST_TOKEN || delay_exit "create failed" $repo || continue
 
-    import_repo && success=$(($success + 1)) || delay_exit "Push failed"
+    update_repo || delay_exit "Update failed" $repo || continue
 
-    cd ..
+    import_repo && success=$(($success + 1)) || delay_exit "Push failed" $repo || continue
   else
     skip=$(($skip + 1))
   fi
@@ -216,6 +220,7 @@ for repo in $SRC_REPOS
 
 failed=$(($all - $skip - $success))
 echo "Total: $all, skip: $skip, successed: $success, failed: $failed."
+echo "Failed: "$FAILED_LIST
 
 if [[ "$DELAY_EXIT" == "true" ]]; then
   exit 1
