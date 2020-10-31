@@ -134,9 +134,9 @@ function create_repo
   if [ $has_repo == 0 ]; then
     echo "Create non-exist repo..."
     if [[ "$DST_TYPE" == "github" ]]; then
-      curl -H "Authorization: token $2" --data '{"name":"'$1'"}' $DST_REPO_CREATE_API
+      curl -s -H "Authorization: token $2" --data '{"name":"'$1'"}' $DST_REPO_CREATE_API > /dev/null
     elif [[ "$DST_TYPE" == "gitee" ]]; then
-      curl -X POST --header 'Content-Type: application/json;charset=UTF-8' $DST_REPO_CREATE_API -d '{"name": "'$1'","access_token": "'$2'"}'
+      curl -s -X POST --header 'Content-Type: application/json;charset=UTF-8' $DST_REPO_CREATE_API -d '{"name": "'$1'","access_token": "'$2'"}' > /dev/null
     fi
   fi
   git remote add $DST_TYPE git@$DST_TYPE.com:$DST_ACCOUNT/$1.git
