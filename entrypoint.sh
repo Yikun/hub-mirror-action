@@ -78,10 +78,12 @@ fi
 function get_all_repo_names
 {
   PAGE_NUM=100
-  if [[ "$SRC_TYPE" == "github" ]]; then
-    total=`curl -sI "$SRC_REPO_LIST_API?page=1&per_page=$PAGE_NUM" | sed -nr "s/^[lL]ink:.*page=([0-9]+)&per_page=$PAGE_NUM.*/\1/p"`
-  elif [[ "$SRC_TYPE" == "gitee" ]]; then
-    total=`curl -sI "$SRC_REPO_LIST_API?page=1&per_page=$PAGE_NUM" | grep total_page: |cut -d ' ' -f2 |tr -d '\r'`
+  URL=$1
+  HUB_TYPE=$2
+  if [[ "$HUB_TYPE" == "github" ]]; then
+    total=`curl -sI "$URL?page=1&per_page=$PAGE_NUM" | sed -nr "s/^[lL]ink:.*page=([0-9]+)&per_page=$PAGE_NUM.*/\1/p"`
+  elif [[ "$HUB_TYPE" == "gitee" ]]; then
+    total=`curl -sI "$URL?page=1&per_page=$PAGE_NUM" | grep total_page: |cut -d ' ' -f2 |tr -d '\r'`
   fi
 
   # use pagination?
@@ -92,14 +94,14 @@ function get_all_repo_names
 
   p=1
   while [ "$p" -le "$total" ]; do
-    x=`curl -s "$SRC_REPO_LIST_API?page=$p&per_page=$PAGE_NUM" | jq '.[] | .name' |  sed 's/"//g'`
+    x=`curl -s "$URL?page=$p&per_page=$PAGE_NUM" | jq '.[] | .name' |  sed 's/"//g'`
     echo $x
     p=$(($p + 1))
   done
 }
 
 if [[ -z $STATIC_LIST ]]; then
-  SRC_REPOS=`get_all_repo_names`
+  SRC_REPOS=`get_all_repo_names $SRC_REPO_LIST_API $SRC_TYPE`
 else
   SRC_REPOS=`echo $STATIC_LIST | tr ',' ' '`
 fi
@@ -114,6 +116,8 @@ else
   err_exit "Unknown dst args, the `dst` should be `[github|gittee]/account`"
 fi
 
+DST_REPOS=`get_all_repo_names $DST_REPO_LIST_API $DST_TYPE`
+
 function clone_repo
 {
   echo -e "\033[31m(0/3)\033[0m" "Downloading..."
@@ -126,7 +130,7 @@ function clone_repo
 function create_repo
 {
   # Auto create non-existing repo
-  has_repo=`curl $DST_REPO_LIST_API | jq '.[] | select(.full_name=="'$DST_ACCOUNT'/'$1'").name' | wc -l`
+  has_repo=`echo $DST_REPOS | grep -w $1 | wc -l`
   if [ $has_repo == 0 ]; then
     echo "Create non-exist repo..."
     if [[ "$DST_TYPE" == "github" ]]; then
