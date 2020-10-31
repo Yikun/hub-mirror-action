@@ -19,8 +19,8 @@ jobs:
       id: cache
       with:
         path: ${{ github.workspace }}/hub-mirror-cache
-        key: ${{ runner.os }}-repos-cache-${{ steps.get-time.outputs.date }}
-        restore-keys: ${{ runner.os }}-repos-cache
+        key: ${{ runner.os }}-hub-repos-cache-${{ steps.get-time.outputs.date }}
+        restore-keys: ${{ runner.os }}-hub-repos-cache
 
     - name: Mirror Github to Gitee with white list and cache
       uses: ./.
