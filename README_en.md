@@ -116,6 +116,19 @@ Here is a workflow to mirror the kunpengcompute org repos from Github to Gitee, 
     debug: true
 ```
 
+#### Set command timeout to an hour
+```yaml
+- name: Mirror with force push (git push -f)
+  uses: Yikun/hub-mirror-action@master
+  with:
+    src: github/Yikun
+    dst: gitee/yikunkero
+    dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
+    dst_token: ${{ secrets.GITEE_TOKEN }}
+    force_update: true
+    timeout: '1h'
+```
+
 ## FAQ
 - How to use `secrets` to add token and key?
   
