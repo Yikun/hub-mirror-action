@@ -42,8 +42,8 @@ inputs:
     description: "Enable the debug flag to show detail log"
     default: false
   timeout:
-    description: "Set the timeout for every git command, like '600'=>600s, '1m'=>1 mins, '1h'=>1 hours"
-    default: '600'
+    description: "Set the timeout for every git command, like '600'=>600s, '30m'=>30 mins, '1h'=>1 hours"
+    default: '30m'
 runs:
   using: "docker"
   image: "Dockerfile"
