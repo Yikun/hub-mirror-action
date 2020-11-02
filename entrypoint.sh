@@ -36,6 +36,7 @@ FORCE_UPDATE="${INPUT_FORCE_UPDATE}"
 DELAY_EXIT=false
 
 TIME_OUT="${INPUT_TIMEOUT}"
+RETRY_TIMES=3
 
 function err_exit {
   echo -e "\033[31m $1 \033[0m"
@@ -80,6 +81,24 @@ elif [[ "$SRC_TYPE" == "gitee" ]]; then
 else
   err_exit "Unknown src args, the `src` should be `[github|gittee]/account`"
 fi
+
+function retry {
+  local retries=$RETRY_TIMES
+  local count=0
+  until timeout $TIME_OUT "$@"; do
+    exit=$?
+    wait=$((2 ** $count))
+    count=$(($count + 1))
+    if [ $count -lt $retries ]; then
+      echo "Retry $count/$retries exited $exit, retrying in $wait seconds..."
+      sleep $wait
+    else
+      echo "Retry $count/$retries exited $exit, no more retries left."
+      return $exit
+    fi
+  done
+  return 0
+}
 
 function get_all_repo_names
 {
@@ -128,7 +147,7 @@ function clone_repo
 {
   echo -e "\033[31m(0/3)\033[0m" "Downloading..."
   if [ ! -d "$1" ]; then
-    timeout $TIME_OUT git clone $SRC_REPO_BASE_URL$SRC_ACCOUNT/$1.git
+    retry git clone $SRC_REPO_BASE_URL$SRC_ACCOUNT/$1.git
   fi
   cd $1
 }
@@ -151,7 +170,7 @@ function create_repo
 function update_repo
 {
   echo -e "\033[31m(1/3)\033[0m" "Updating..."
-  timeout $TIME_OUT git pull -p
+  retry git pull -p
 }
 
 function import_repo
@@ -159,9 +178,9 @@ function import_repo
   echo -e "\033[31m(2/3)\033[0m" "Importing..."
   git remote set-head origin -d
   if [[ "$FORCE_UPDATE" == "true" ]]; then
-    timeout $TIME_OUT git push -f $DST_TYPE refs/remotes/origin/*:refs/heads/* --tags --prune
+    retry git push -f $DST_TYPE refs/remotes/origin/*:refs/heads/* --tags --prune
   else
-    timeout $TIME_OUT git push $DST_TYPE refs/remotes/origin/*:refs/heads/* --tags --prune
+    retry git push $DST_TYPE refs/remotes/origin/*:refs/heads/* --tags --prune
   fi
 }
 
