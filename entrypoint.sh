@@ -155,7 +155,7 @@ function clone_repo
 function create_repo
 {
   # Auto create non-existing repo
-  has_repo=`echo $DST_REPOS | grep -w $1 | wc -l`
+  has_repo=`echo $DST_REPOS | grep -Fx $1 | wc -l`
   if [ $has_repo == 0 ]; then
     echo "Create non-exist repo..."
     if [[ "$DST_TYPE" == "github" ]]; then
