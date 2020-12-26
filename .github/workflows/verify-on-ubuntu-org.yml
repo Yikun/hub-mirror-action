@@ -10,8 +10,8 @@ jobs:
     - name: Mirror Github to Gitee
       uses: ./.
       with:
-        src: github/kunpengcompute
-        dst: gitee/kunpengcompute
+        src: github/CIT-K
+        dst: gitee/CIT_K
         dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
         dst_token: ${{ secrets.GITEE_TOKEN }}
         account_type: org
