@@ -119,7 +119,7 @@ function get_all_repo_names
 
   p=1
   while [ "$p" -le "$total" ]; do
-    x=`curl -s "$URL?page=$p&per_page=$PAGE_NUM" | jq '.[] | .name' |  sed 's/"//g'`
+    x=`curl -s "$URL?page=$p&per_page=$PAGE_NUM" | jq -r '.[] | .name'`
     echo $x
     p=$(($p + 1))
   done
@@ -155,7 +155,7 @@ function clone_repo
 function create_repo
 {
   # Auto create non-existing repo
-  has_repo=`echo $DST_REPOS | grep -Fx $1 | wc -l`
+  has_repo=`echo $DST_REPOS | sed 's/ /\n/g' | grep -Fx $1 | wc -l`
   if [ $has_repo == 0 ]; then
     echo "Create non-exist repo..."
     if [[ "$DST_TYPE" == "github" ]]; then
