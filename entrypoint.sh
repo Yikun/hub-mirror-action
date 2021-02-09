@@ -221,6 +221,7 @@ success=0
 skip=0
 for repo in $SRC_REPOS
 {
+  repo = ${repo,,}
   all=$(($all + 1))
   if test_black_white_list $repo ; then
     echo -e "\n\033[31mBackup $repo ...\033[0m"
