@@ -5,18 +5,18 @@ jobs:
     name: Run
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout source codes
+    - name: Checkout source code
       uses: actions/checkout@v1
     - name: Mirror Github to Gitee
       uses: ./.
       with:
-        src: github/kunpengcompute
-        dst: gitee/kunpengcompute
+        src: github/hub-mirror-action
+        dst: gitee/hub-mirror-action
         dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
         dst_token: ${{ secrets.GITEE_TOKEN }}
         account_type: org
-        # Only sync Kunpeng
-        black_list: 'KAE'
-        white_list: 'KAE,Kunpeng,kunpengcompute.github.io'
+        # Only sync normal repo
+        black_list: 'test'
+        white_list: 'normal,test'
         force_update: true
         debug: true
