@@ -1,8 +1,11 @@
-FROM alpine
+FROM ubuntu
 
-RUN apk add --no-cache git openssh-client bash jq curl&& \
+RUN apt update && apt install git python3 python3-pip -y && \
   echo "StrictHostKeyChecking no" >> /etc/ssh/ssh_config
 
 ADD *.sh /
+ADD hubmirror.py /
+ADD requirements.txt /
+ADD action.yml /
 
 ENTRYPOINT ["/entrypoint.sh"]
