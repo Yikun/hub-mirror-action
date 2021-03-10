@@ -57,9 +57,19 @@ class Mirror(object):
         print("(2/3) Creating...")
         self.hub.create_dst_repo(self.name)
 
+    def _check_empty(self, repo):
+        cmd = ["-n", "1", "--all"]
+        if repo.git.rev_list(*cmd):
+            return False
+        else:
+            return True
+
     @retry(wait=wait_exponential(), reraise=True, stop=stop_after_attempt(3))
     def push(self, force=False):
         local_repo = git.Repo(self.repo_path)
+        if self._check_empty(local_repo):
+            print("Empty repo %s, skip pushing." % self.src_url)
+            return
         cmd = ['set-head', 'origin', '-d']
         local_repo.git.remote(*cmd)
         try:
