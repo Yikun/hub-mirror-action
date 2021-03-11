@@ -17,6 +17,6 @@ jobs:
         account_type: org
         # Only sync normal repo
         black_list: 'test'
-        white_list: 'normal,test'
+        white_list: 'normal,test,empty'
         force_update: true
         debug: true
