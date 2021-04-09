@@ -86,29 +86,17 @@ class Hub(object):
         return self._get_all_repo_names(url)
 
     @functools.lru_cache
-    def _get_all_repo_names(self, url):
-        page, per_page = 1, 60
-        api = url + "?page=0&per_page=" + str(per_page)
+    def _get_all_repo_names(self, url, page=1):
+        per_page = 60
+        api = url + f"?page={page}&per_page=" + str(per_page)
         # TODO: src_token support
         response = self.session.get(api)
-        # TODO: DRY
+        all_items = []
         if response.status_code != 200:
             print("Repo getting failed: " + response.text)
-            return []
+            return all_items
         items = response.json()
-        all_items = []
-        while items:
+        if items:
             names = [i['name'] for i in items]
-            all_items += names
-            items = None
-            if 'next' in response.links:
-                url_next = response.links['next']['url']
-                response = self.session.get(url_next)
-                # TODO: DRY
-                if response.status_code != 200:
-                    print("Repo getting failed: " + response.text)
-                    return []
-                page += 1
-                items = response.json()
-
+            return names + self._get_all_repo_names(url, page=page+1)
         return all_items
