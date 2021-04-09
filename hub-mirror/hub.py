@@ -87,7 +87,7 @@ class Hub(object):
 
     @functools.lru_cache
     def _get_all_repo_names(self, url, page=1):
-        per_page = 60
+        per_page = 1
         api = url + f"?page={page}&per_page=" + str(per_page)
         # TODO: src_token support
         response = self.session.get(api)
