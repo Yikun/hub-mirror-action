@@ -15,6 +15,7 @@ class Hub(object):
         self.dst_type, self.dst_account = dst.split('/')
         self.dst_token = dst_token
         self.session = requests.Session()
+        self.all_dst_repo_list = []
         if self.dst_type == "gitee":
             self.dst_base = 'https://gitee.com/api/v5'
         elif self.dst_type == "github":
@@ -32,16 +33,20 @@ class Hub(object):
         # TODO: toekn push support
         prefix = "git@" + self.dst_type + ".com:"
         self.dst_repo_base = prefix + self.dst_account
-
-    def has_dst_repo(self, repo_name):
+    
+    def make_dst_repo_list(self):
         url = '/'.join(
             [self.dst_base, self.account_type+'s', self.dst_account, 'repos']
         )
-        repo_names = self._get_all_repo_names(url)
-        if not repo_names:
+        return self._get_all_repo_names(url)
+
+    def has_dst_repo(self, repo_name):
+        if not self.all_dst_repo_list:
+            self.all_dst_repo_list = self.make_dst_repo_list()
+        if not self.all_dst_repo_list:
             print("Warning: destination repos is []")
             return False
-        return repo_name in repo_names
+        return repo_name in self.all_dst_repo_list
 
     def create_dst_repo(self, repo_name):
         suffix = 'user/repos'
