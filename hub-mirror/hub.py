@@ -33,7 +33,7 @@ class Hub(object):
         # TODO: toekn push support
         prefix = "git@" + self.dst_type + ".com:"
         self.dst_repo_base = prefix + self.dst_account
-    
+
     def make_dst_repo_list(self):
         url = '/'.join(
             [self.dst_base, self.account_type+'s', self.dst_account, 'repos']
