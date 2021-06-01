@@ -60,7 +60,7 @@ steps:
 
 #### 黑/白名单
 
-动态获取原端github/Yikun的repos，但仅同步名为hub-mirror-action，不同步hashes这个repo到Gittee
+动态获取源端github/Yikun的repos，但仅同步名为hub-mirror-action，不同步hashes这个repo到Gittee
 
 ```yaml
 - name: Single repo mirror
@@ -76,7 +76,7 @@ steps:
 
 #### 静态名单（可用于单一仓库同步）
 
-不会动态获取原端github/Yikun的repos，仅同步hub-mirror-action这个repo
+不会动态获取源端github/Yikun的repos，仅同步hub-mirror-action这个repo
 
 ```yaml
 - name: Black list
