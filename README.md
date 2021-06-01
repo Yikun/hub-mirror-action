@@ -26,7 +26,7 @@ steps:
 
 ## 参数详解
 #### 必选参数
-- `src` 需要被同步的远端账户名，如github/kunpengcompute，表示Github的kunpengcompute账户。
+- `src` 需要被同步的源端账户名，如github/kunpengcompute，表示Github的kunpengcompute账户。
 - `dst` 需要同步到的目的端账户名，如gitee/kunpengcompute，表示Gitee的kunpengcompute账户。
 - `dst_key` 用于在目的端上传代码的私钥(默认可以从~/.ssh/id_rsa获取），可参考[生成/添加SSH公钥](https://gitee.com/help/articles/4181)或[generating SSH keys](https://docs.github.com/articles/generating-an-ssh-key/)生成，并确认对应公钥已经被正确配置在目的端。对应公钥，Github可以在[这里](https://github.com/settings/keys)配置，Gitee可以[这里](https://gitee.com/profile/sshkeys)配置。
 - `dst_token` 创建仓库的API tokens， 用于自动创建不存在的仓库，Github可以在[这里](https://github.com/settings/tokens)找到，Gitee可以在[这里](https://gitee.com/profile/personal_access_tokens)找到。
@@ -60,7 +60,7 @@ steps:
 
 #### 黑/白名单
 
-动态获取远端github/Yikun的repos，但仅同步名为hub-mirror-action，不同步hashes这个repo到Gittee
+动态获取源端github/Yikun的repos，但仅同步名为hub-mirror-action，不同步hashes这个repo到Gittee
 
 ```yaml
 - name: Single repo mirror
@@ -76,7 +76,7 @@ steps:
 
 #### 静态名单（可用于单一仓库同步）
 
-不会动态获取远端github/Yikun的repos，仅同步hub-mirror-action这个repo
+不会动态获取源端github/Yikun的repos，仅同步hub-mirror-action这个repo
 
 ```yaml
 - name: Black list
