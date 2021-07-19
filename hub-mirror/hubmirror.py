@@ -59,8 +59,8 @@ class HubMirror(object):
         src_type, src_account = self.args.src.split('/')
 
         # Using static list when static_list is set
-        repos = self.args.static_list
-        src_repos = repos.split(',') if repos else hub.dynamic_list()
+        repos = self.static_list
+        src_repos = repos if repos else hub.dynamic_list()
 
         total, success, skip = len(src_repos), 0, 0
         failed_list = []
