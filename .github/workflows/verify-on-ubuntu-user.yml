@@ -17,3 +17,4 @@ jobs:
         static_list: 'hub-mirror-action,hashes,simple-spring'
         force_update: true
         debug: true
+        mappings: 'hashes=>hashes_gitee'
