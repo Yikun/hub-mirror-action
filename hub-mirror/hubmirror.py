@@ -2,7 +2,7 @@ import argparse
 import sys
 import yaml
 
-from utils import str2bool, str2list
+from utils import str2bool, str2list, str2map
 from hub import Hub
 from mirror import Mirror
 
@@ -14,6 +14,7 @@ class HubMirror(object):
         self.white_list = str2list(self.args.white_list)
         self.black_list = str2list(self.args.black_list)
         self.static_list = str2list(self.args.static_list)
+        self.mappings = str2map(self.args.mappings)
 
     def _create_parser(self):
         with open('/action.yml', 'r') as f:
@@ -64,12 +65,16 @@ class HubMirror(object):
 
         total, success, skip = len(src_repos), 0, 0
         failed_list = []
-        for repo in src_repos:
-            if self.test_black_white_list(repo):
-                print("Backup %s" % repo)
+        for src_repo in src_repos:
+            dst_repo = src_repo
+            if src_repo in self.mappings:
+                dst_repo = self.mappings[src_repo]
+                print("Map %s to %s" % (src_repo, dst_repo))
+            if self.test_black_white_list(src_repo):
+                print("Backup %s" % src_repo)
                 try:
                     mirror = Mirror(
-                        hub, repo,
+                        hub, src_repo, dst_repo,
                         cache=self.args.cache_path,
                         timeout=self.args.timeout,
                         force_update=self.args.force_update,
@@ -80,7 +85,7 @@ class HubMirror(object):
                     success += 1
                 except Exception as e:
                     print(e)
-                    failed_list.append(repo)
+                    failed_list.append(src_repo)
             else:
                 skip += 1
         failed = total - success - skip

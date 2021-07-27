@@ -22,7 +22,8 @@ python3 /hub-mirror/hubmirror.py --src "${INPUT_SRC}" --dst "${INPUT_DST}" \
 --static-list "${INPUT_STATIC_LIST}" \
 --force-update "${INPUT_FORCE_UPDATE}" \
 --debug "${INPUT_DEBUG}" \
---timeout  "${INPUT_TIMEOUT}"
+--timeout  "${INPUT_TIMEOUT}" \
+--mappings  "${INPUT_MAPPINGS}"
 
 # Skip original code
 exit $?
