@@ -39,6 +39,8 @@ Here is a workflow to mirror the kunpengcompute org repos from Github to Gitee, 
 - `white_list` (optional) the white list, such as “repo1,repo2,repo3”.
 - `static_list` (optional) Only mirror repos in the static list, but don't get list from repo api dynamically (the white/black list is still available). like 'repo1,repo2,repo3'
 - `force_update` (optional) Force to update the destination repo, use '-f' flag do 'git push'
+- `timeout` (optional) Default is '30m', set the timeout for every git command, like '600'=>600s, '30m'=>30 mins, '1h'=>1 hours
+- `mappings` (optional) Default is empty, the source repos mappings, such as 'A=>B, C=>CC', source repo name would be mapped follow the rule: A to B, C to CC. Mapping is not transitive.
 
 ## Scenarios
 
@@ -127,6 +129,19 @@ Here is a workflow to mirror the kunpengcompute org repos from Github to Gitee, 
     dst_token: ${{ secrets.GITEE_TOKEN }}
     force_update: true
     timeout: '1h'
+```
+
+#### Sync between different repo name（github/yikun/yikun.github.com to gitee/yikunkero/blog）
+```
+- name: mirror with mappings
+  uses: Yikun/hub-mirror-action@mappings
+  with:
+    src: github/yikun
+    dst: gitee/yikunkero
+    dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
+    dst_token: ${{ secrets.GITEE_TOKEN }}
+    mappings: "yikun.github.com=>blog"
+    static_list: "yikun.github.com"
 ```
 
 ## FAQ
