@@ -40,6 +40,10 @@ steps:
 - `static_list` 默认为'', 配置后，仅同步静态列表，不会再动态获取需同步列表（黑白名单机制依旧生效），如“repo1,repo2,repo3”。
 - `force_update` 默认为false, 配置后，启用git push -f强制同步，**注意：开启后，会强制覆盖目的端仓库**。
 - `debug` 默认为false, 配置后，启用debug开关，会显示所有执行命令。
+- `debug` 默认为false, 配置后，启用debug开关，会显示所有执行命令。
+- `debug` 默认为false, 配置后，启用debug开关，会显示所有执行命令。
+- `timeout` 默认为'30m', 用于设置每个git命令的超时时间，'600'=>600s, '30m'=>30 mins, '1h'=>1 hours
+- `mappings` 源仓库映射规则，比如'A=>B, C=>CC', A会被映射为B，C会映射为CC，映射不具有传递性。主要用于源和目的仓库名不同的镜像。
 
 ## 举些例子
 
@@ -140,6 +144,19 @@ steps:
     dst_token: ${{ secrets.GITEE_TOKEN }}
     force_update: true
     timeout: '1h'
+```
+
+#### 同步仓库名不同的镜像（github/yikun/yikun.github.com to gitee/yikunkero/blog）
+```
+- name: mirror with mappings
+  uses: Yikun/hub-mirror-action@mappings
+  with:
+    src: github/yikun
+    dst: gitee/yikunkero
+    dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
+    dst_token: ${{ secrets.GITEE_TOKEN }}
+    mappings: "yikun.github.com=>blog"
+    static_list: "yikun.github.com"
 ```
 
 ## FAQ
