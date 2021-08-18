@@ -9,12 +9,16 @@ from utils import cov2sec
 
 
 class Mirror(object):
-    def __init__(self, hub, name, cache='.', timeout='0', force_update=False):
+    def __init__(
+        self, hub, src_name, dst_name,
+        cache='.', timeout='0', force_update=False
+    ):
         self.hub = hub
-        self.name = name
-        self.src_url = hub.src_repo_base + '/' + name + ".git"
-        self.dst_url = hub.dst_repo_base + '/' + name + ".git"
-        self.repo_path = cache + '/' + name
+        self.src_name = src_name
+        self.dst_name = dst_name
+        self.src_url = hub.src_repo_base + '/' + src_name + ".git"
+        self.dst_url = hub.dst_repo_base + '/' + dst_name + ".git"
+        self.repo_path = cache + '/' + src_name
         if re.match(r"^\d+[dhms]?$", timeout):
             self.timeout = cov2sec(timeout)
         else:
@@ -38,7 +42,7 @@ class Mirror(object):
             local_repo.git.pull(kill_after_timeout=self.timeout)
         except git.exc.GitCommandError:
             # Cleanup local repo and re-clone
-            print('Updating failed, re-clone %s' % self.name)
+            print('Updating failed, re-clone %s' % self.src_name)
             shutil.rmtree(local_repo.working_dir)
             self._clone()
 
@@ -55,7 +59,7 @@ class Mirror(object):
 
     def create(self):
         print("(2/3) Creating...")
-        self.hub.create_dst_repo(self.name)
+        self.hub.create_dst_repo(self.dst_name)
 
     def _check_empty(self, repo):
         cmd = ["-n", "1", "--all"]

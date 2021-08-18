@@ -35,3 +35,15 @@ def str2list(s):
     if not s:
         return []
     return s.replace(' ', '').split(',') if s else []
+
+
+# "a=>b, c=>d" to {'a': 'b', 'c': 'd'}
+def str2map(s):
+    if not s:
+        return {}
+    mappings = {}
+    mappings_list = str2list(s)
+    for maping in mappings_list:
+        old, new = maping.split("=>")
+        mappings[old] = new
+    return mappings
