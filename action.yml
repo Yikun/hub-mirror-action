@@ -63,4 +63,5 @@ runs:
     - ${{ inputs.static_list }}
     - ${{ inputs.force_update}}
     - ${{ inputs.debug}}
+    - ${{ inputs.timeout}}
     - ${{ inputs.mappings}}
