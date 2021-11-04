@@ -20,6 +20,8 @@ steps:
 
 上面的配置完成了kunpencompute组织从github到gitee的同步，你可以在[测试和demo](https://github.com/Yikun/hub-mirror-action/tree/master/.github/workflows)找到完整用法。
 
+有疑问、想法、问题、建议，可以通过[![Gitter](https://badges.gitter.im/hub-mirror-action/community.svg)](https://gitter.im/hub-mirror-action/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)找到我们。
+
 ## 谁在使用？
 超过[100+](https://github.com/search?p=2&q=hub-mirror-action+%22account_type%22+%22org%22&type=Code)组织，[4000+](https://github.com/search?l=YAML&q=%22hub-mirror-action%22&type=Code)使用者正在使用，[50+](https://github.com/search?l=Markdown&q=%22hub-mirror-action%22&type=code)来自使用者的使用教程：
 
