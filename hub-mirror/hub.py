@@ -8,10 +8,14 @@ import requests
 class Hub(object):
     def __init__(
         self, src, dst, dst_token, account_type="user",
-        clone_style="https"
+        clone_style="https",
+        src_account_type=None,
+        dst_account_type=None,
     ):
         # TODO: check invalid type
         self.account_type = account_type
+        self.src_account_type = src_account_type or account_type
+        self.dst_account_type = dst_account_type or account_type
         self.src_type, self.src_account = src.split('/')
         self.dst_type, self.dst_account = dst.split('/')
         self.dst_token = dst_token
@@ -36,7 +40,7 @@ class Hub(object):
 
     def has_dst_repo(self, repo_name):
         url = '/'.join(
-            [self.dst_base, self.account_type+'s', self.dst_account, 'repos']
+            [self.dst_base, self.dst_account_type+'s', self.dst_account, 'repos']
         )
         repo_names = self._get_all_repo_names(url)
         if not repo_names:
@@ -46,7 +50,7 @@ class Hub(object):
 
     def create_dst_repo(self, repo_name):
         suffix = 'user/repos'
-        if self.account_type == "org":
+        if self.dst_account_type == "org":
             suffix = 'orgs/%s/repos' % self.dst_account
         url = '/'.join(
             [self.dst_base, suffix]
@@ -87,7 +91,7 @@ class Hub(object):
 
     def dynamic_list(self):
         url = '/'.join(
-            [self.src_base, self.account_type+'s', self.src_account, 'repos']
+            [self.src_base, self.src_account_type+'s', self.src_account, 'repos']
         )
         return self._get_all_repo_names(url)
 

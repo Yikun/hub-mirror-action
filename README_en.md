@@ -16,6 +16,8 @@ steps:
     dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
     dst_token: ${{ secrets.GITEE_TOKEN }}
     account_type: org
+    # src_account_type: org
+    # dst_account_type: org
 ```
 
 Here is a workflow to mirror the kunpengcompute org repos from Github to Gitee, see more complete workflows in [here](https://github.com/Yikun/hub-mirror-action/tree/master/.github/workflows).
@@ -34,7 +36,9 @@ More than [100+](https://github.com/search?p=2&q=hub-mirror-action+%22account_ty
 - `dst_token` the API token to create non-existent repo, You can get Github token in [here](https://github.com/settings/tokens), and the Gitee in [here](https://gitee.com/profile/personal_access_tokens).
 
 #### Optional
-- `account_type` (optional) default is `user`, the account type of src and dst account, can be set to `org` or `user`，only support mirror between same account type (that is "org to org" or "user to user").
+- `account_type` (optional) default is `user`, the account type of src and dst account, can be set to `org` or `user`，only support mirror between same account type (that is "org to org" or "user to user"). if u wanna mirror difference account type, use the `src_account_type` and `dst_account_type` please.
+- `src_account_type` (optional) default is `user`, the account type of src account, can be set to `org` or `user`.
+- `dst_account_type` (optional) default is `user`, the account type of dst account, can be set to `org` or `user`.
 - `clone_style` (optional) default is `https`, can be set to `ssh` or `https`.
 - `cache_path` (optional) let code clone in specific path, can be used with actions/cache to speed up mirror.
 - `black_list` (optional) the black list, such as “repo1,repo2,repo3”.
@@ -148,7 +152,7 @@ More than [100+](https://github.com/search?p=2&q=hub-mirror-action+%22account_ty
 
 ## FAQ
 - How to use `secrets` to add token and key?
-  
+
   You can use below steps to add secrets, you can also see more in [Secrets](https://help.github.com/en/actions/configuring-and-managing-workflows/creating-and-storing-encrypted-secrets).
 
   1. **Get Token and Key**，you can get them in [ssh key](https://gitee.com/profile/sshkeys) and [token](https://gitee.com/profile/personal_access_tokens).
