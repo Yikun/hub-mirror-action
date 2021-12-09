@@ -1,3 +1,4 @@
+import time
 import functools
 import json
 
@@ -50,6 +51,7 @@ class Hub(object):
         url = '/'.join(
             [self.dst_base, suffix]
         )
+        result = None
         if self.dst_type == 'gitee':
             data = {'name': repo_name}
         elif self.dst_type == 'github':
@@ -62,7 +64,8 @@ class Hub(object):
                     data=data,
                     headers={'Authorization': 'token ' + self.dst_token}
                 )
-                if response.status_code == 201:
+                result = response.status_code == 201
+                if result:
                     print("Destination repo creating accepted.")
                 else:
                     print("Destination repo creating failed: " + response.text)
@@ -72,12 +75,15 @@ class Hub(object):
                     headers={'Content-Type': 'application/json;charset=UTF-8'},
                     params={"name": repo_name, "access_token": self.dst_token}
                 )
-                if response.status_code == 201:
+                result = response.status_code == 201
+                if result:
                     print("Destination repo creating accepted.")
                 else:
                     print("Destination repo creating failed: " + response.text)
         else:
             print(repo_name + " repo exist, skip creating...")
+        if result: time.sleep(2)
+        return result
 
     def dynamic_list(self):
         url = '/'.join(
