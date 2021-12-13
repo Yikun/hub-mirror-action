@@ -89,7 +89,7 @@ class Hub(object):
                     print("Destination repo creating failed: " + response.text)
         else:
             print(repo_name + " repo exist, skip creating...")
-        # TODO(snowyu): Cleanup 2s sleep 
+        # TODO(snowyu): Cleanup 2s sleep
         if result:
             time.sleep(2)
         return result
