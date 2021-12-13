@@ -1,3 +1,4 @@
+import time
 import functools
 import json
 
@@ -7,10 +8,14 @@ import requests
 class Hub(object):
     def __init__(
         self, src, dst, dst_token, account_type="user",
-        clone_style="https"
+        clone_style="https",
+        src_account_type=None,
+        dst_account_type=None,
     ):
         # TODO: check invalid type
         self.account_type = account_type
+        self.src_account_type = src_account_type or account_type
+        self.dst_account_type = dst_account_type or account_type
         self.src_type, self.src_account = src.split('/')
         self.dst_type, self.dst_account = dst.split('/')
         self.dst_token = dst_token
@@ -35,7 +40,10 @@ class Hub(object):
 
     def has_dst_repo(self, repo_name):
         url = '/'.join(
-            [self.dst_base, self.account_type+'s', self.dst_account, 'repos']
+            [
+                self.dst_base, self.dst_account_type+'s', self.dst_account,
+                'repos'
+            ]
         )
         repo_names = self._get_all_repo_names(url)
         if not repo_names:
@@ -45,11 +53,12 @@ class Hub(object):
 
     def create_dst_repo(self, repo_name):
         suffix = 'user/repos'
-        if self.account_type == "org":
+        if self.dst_account_type == "org":
             suffix = 'orgs/%s/repos' % self.dst_account
         url = '/'.join(
             [self.dst_base, suffix]
         )
+        result = None
         if self.dst_type == 'gitee':
             data = {'name': repo_name}
         elif self.dst_type == 'github':
@@ -62,7 +71,8 @@ class Hub(object):
                     data=data,
                     headers={'Authorization': 'token ' + self.dst_token}
                 )
-                if response.status_code == 201:
+                result = response.status_code == 201
+                if result:
                     print("Destination repo creating accepted.")
                 else:
                     print("Destination repo creating failed: " + response.text)
@@ -72,16 +82,24 @@ class Hub(object):
                     headers={'Content-Type': 'application/json;charset=UTF-8'},
                     params={"name": repo_name, "access_token": self.dst_token}
                 )
-                if response.status_code == 201:
+                result = response.status_code == 201
+                if result:
                     print("Destination repo creating accepted.")
                 else:
                     print("Destination repo creating failed: " + response.text)
         else:
             print(repo_name + " repo exist, skip creating...")
+        # TODO(snowyu): Cleanup 2s sleep
+        if result:
+            time.sleep(2)
+        return result
 
     def dynamic_list(self):
         url = '/'.join(
-            [self.src_base, self.account_type+'s', self.src_account, 'repos']
+            [
+                self.src_base, self.src_account_type+'s', self.src_account,
+                'repos',
+            ]
         )
         return self._get_all_repo_names(url)
 

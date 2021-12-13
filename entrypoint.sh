@@ -15,6 +15,8 @@ pip3 install -r /hub-mirror/requirements.txt
 python3 /hub-mirror/hubmirror.py --src "${INPUT_SRC}" --dst "${INPUT_DST}" \
 --dst-token "${INPUT_DST_TOKEN}" \
 --account-type "${INPUT_ACCOUNT_TYPE}" \
+--src-account-type "${INPUT_SRC_ACCOUNT_TYPE}" \
+--dst-account-type "${INPUT_DST_ACCOUNT_TYPE}" \
 --clone-style "${INPUT_CLONE_STYLE}" \
 --cache-path "${INPUT_CACHE_PATH}" \
 --black-list "${INPUT_BLACK_LIST}" \

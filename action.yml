@@ -20,6 +20,12 @@ inputs:
   account_type:
     description: "The account type. Such as org, user."
     default: 'user'
+  src_account_type:
+    description: "The src account type. Such as org, user."
+    default: ''
+  dst_account_type:
+    description: "The dst account type. Such as org, user."
+    default: ''
   clone_style:
     description: "The git clone style, https or ssh."
     default: 'https'
@@ -56,6 +62,8 @@ runs:
     - ${{ inputs.src }}
     - ${{ inputs.dst }}
     - ${{ inputs.account_type }}
+    - ${{ inputs.src_account_type }}
+    - ${{ inputs.dst_account_type }}
     - ${{ inputs.clone_style }}
     - ${{ inputs.cache_path }}
     - ${{ inputs.black_list }}

@@ -16,6 +16,8 @@ steps:
     dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
     dst_token: ${{ secrets.GITEE_TOKEN }}
     account_type: org
+    # src_account_type: org
+    # dst_account_type: org
 ```
 
 上面的配置完成了kunpencompute组织从github到gitee的同步，你可以在[测试和demo](https://github.com/Yikun/hub-mirror-action/tree/master/.github/workflows)找到完整用法。
@@ -36,7 +38,9 @@ steps:
 - `dst_token` 创建仓库的API tokens， 用于自动创建不存在的仓库，Github可以在[这里](https://github.com/settings/tokens)找到，Gitee可以在[这里](https://gitee.com/profile/personal_access_tokens)找到。
 
 #### 可选参数
-- `account_type` 默认为user，源和目的的账户类型，可以设置为org（组织）或者user（用户），目前仅支持**同类型账户**（即组织到组织，或用户到用户）的同步。
+- `account_type` 默认为user，源和目的的账户类型，可以设置为org（组织）或者user（用户），该参数支持**同类型账户**（即组织到组织，或用户到用户）的同步。如果源目的仓库是不同类型，请单独使用`src_account_type`和`dst_account_type`配置。
+- `src_account_type` 默认为`account_type`，源账户类型，可以设置为org（组织）或者user（用户）。
+- `dst_account_type` 默认为`account_type`，目的账户类型，可以设置为org（组织）或者user（用户）。
 - `clone_style` 默认为https，可以设置为ssh或者https。
 - `cache_path` 默认为'', 将代码缓存在指定目录，用于与actions/cache配合以加速镜像过程。
 - `black_list` 默认为'', 配置后，黑名单中的repos将不会被同步，如“repo1,repo2,repo3”。

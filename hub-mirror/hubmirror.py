@@ -55,7 +55,9 @@ class HubMirror(object):
             self.args.dst,
             self.args.dst_token,
             account_type=self.args.account_type,
-            clone_style=self.args.clone_style
+            clone_style=self.args.clone_style,
+            src_account_type=self.args.src_account_type,
+            dst_account_type=self.args.dst_account_type,
         )
         src_type, src_account = self.args.src.split('/')
 
