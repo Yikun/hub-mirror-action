@@ -40,7 +40,10 @@ class Hub(object):
 
     def has_dst_repo(self, repo_name):
         url = '/'.join(
-            [self.dst_base, self.dst_account_type+'s', self.dst_account, 'repos']
+            [
+                self.dst_base, self.dst_account_type+'s', self.dst_account,
+                'repos'
+            ]
         )
         repo_names = self._get_all_repo_names(url)
         if not repo_names:
@@ -86,12 +89,16 @@ class Hub(object):
                     print("Destination repo creating failed: " + response.text)
         else:
             print(repo_name + " repo exist, skip creating...")
-        if result: time.sleep(2)
+        if result:
+            time.sleep(2)
         return result
 
     def dynamic_list(self):
         url = '/'.join(
-            [self.src_base, self.src_account_type+'s', self.src_account, 'repos']
+            [
+                self.src_base, self.src_account_type+'s', self.src_account,
+                'repos',
+            ]
         )
         return self._get_all_repo_names(url)
 
