@@ -46,6 +46,7 @@ class Hub(object):
             ]
         )
         repo_names = self._get_all_repo_names(url)
+        print("DST: " + url + ", " + str(repo_names))
         if not repo_names:
             print("Warning: destination repos is []")
             return False
