@@ -70,7 +70,7 @@ steps:
 
 #### 黑/白名单
 
-动态获取源端github/Yikun的repos，但仅同步名为hub-mirror-action，不同步hashes这个repo到Gittee
+动态获取源端github/Yikun的repos，但仅同步名为hub-mirror-action，不同步hashes这个repo到Gitee
 
 ```yaml
 - name: Single repo mirror
@@ -153,7 +153,7 @@ steps:
 ```
 
 #### 仓库名不同时同步（github/yikun/yikun.github.com to gitee/yikunkero/blog）
-```
+```yaml
 - name: mirror with mappings
   uses: Yikun/hub-mirror-action@mappings
   with:
