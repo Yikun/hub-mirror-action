@@ -88,7 +88,7 @@ More than [100+](https://github.com/search?p=2&q=hub-mirror-action+%22account_ty
 ```
 
 #### clone style, use `ssh` clone style
-⚠️Note: Please configure the public key of dst_key to the source and destination
+⚠️Warning: Please configure the public key of dst to the source and destination
 ```yaml
 - name: ssh clone style
   uses: Yikun/hub-mirror-action@master
