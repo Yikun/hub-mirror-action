@@ -102,6 +102,7 @@ steps:
 #### clone方式
 
 使用ssh方式进行clone
+⚠️注意：请把dst_key的公钥配置到源端及目的端
 
 ```yaml
 - name: ssh clone style
