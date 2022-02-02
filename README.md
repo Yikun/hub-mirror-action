@@ -41,7 +41,7 @@ steps:
 - `account_type` 默认为user，源和目的的账户类型，可以设置为org（组织）或者user（用户），该参数支持**同类型账户**（即组织到组织，或用户到用户）的同步。如果源目的仓库是不同类型，请单独使用`src_account_type`和`dst_account_type`配置。
 - `src_account_type` 默认为`account_type`，源账户类型，可以设置为org（组织）或者user（用户）。
 - `dst_account_type` 默认为`account_type`，目的账户类型，可以设置为org（组织）或者user（用户）。
-- `clone_style` 默认为https，可以设置为ssh或者https。
+- `clone_style` 默认为https，可以设置为ssh或者https。当设置为ssh时，你需要将dst_key所对应的公钥同时配置到源端和目的端。
 - `cache_path` 默认为'', 将代码缓存在指定目录，用于与actions/cache配合以加速镜像过程。
 - `black_list` 默认为'', 配置后，黑名单中的repos将不会被同步，如“repo1,repo2,repo3”。
 - `white_list` 默认为'', 配置后，仅同步白名单中的repos，如“repo1,repo2,repo3”。
@@ -104,6 +104,8 @@ steps:
 使用ssh方式进行clone
 
 ⚠️注意：请把dst的公钥配置到源端及目的端
+
+说明：请把`dst_key`所的公钥配置到源端（在这里为github）及目的端（在这里为gitee）
 
 ```yaml
 - name: ssh clone style
