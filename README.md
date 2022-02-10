@@ -103,8 +103,6 @@ steps:
 
 使用ssh方式进行clone
 
-⚠️注意：请把`dst_key`的公钥配置到源端及目的端
-
 说明：请把`dst_key`所的公钥配置到源端（在这里为github）及目的端（在这里为gitee）
 
 ```yaml
