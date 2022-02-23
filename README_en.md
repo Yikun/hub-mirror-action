@@ -152,6 +152,21 @@ Note: please configure the public key of `dst_key` to the source (github in here
     static_list: "yikun.github.com"
 ```
 
+### Only sync repository list exclude private and fork
+```yaml
+- name: Get repository list exclude private and fork
+  id: repo
+  uses: yi-Xu-0100/repo-list-generator@v1.0.1
+- name: Mirror repository list exclude private and fork
+  uses: Yikun/hub-mirror-action@master
+  with:
+    src: github/Yikun
+    dst: gitee/yikunkero
+    dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
+    dst_token: ${{ secrets.GITEE_TOKEN }}
+    static_list: ${{ steps.repo.outputs.repoList }}
+```
+
 ## FAQ
 - How to use `secrets` to add token and key?
 
