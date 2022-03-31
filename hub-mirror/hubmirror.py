@@ -54,6 +54,7 @@ class HubMirror(object):
             self.args.src,
             self.args.dst,
             self.args.dst_token,
+            self.args.dst_private,
             account_type=self.args.account_type,
             clone_style=self.args.clone_style,
             src_account_type=self.args.src_account_type,

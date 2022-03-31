@@ -7,7 +7,7 @@ import requests
 
 class Hub(object):
     def __init__(
-        self, src, dst, dst_token, account_type="user",
+        self, src, dst, dst_token,dst_private, account_type="user",
         clone_style="https",
         src_account_type=None,
         dst_account_type=None,
@@ -19,6 +19,7 @@ class Hub(object):
         self.src_type, self.src_account = src.split('/')
         self.dst_type, self.dst_account = dst.split('/')
         self.dst_token = dst_token
+        self.dst_private = dst_private
         self.session = requests.Session()
         if self.dst_type == "gitee":
             self.dst_base = 'https://gitee.com/api/v5'
@@ -62,7 +63,7 @@ class Hub(object):
         if self.dst_type == 'gitee':
             data = {'name': repo_name}
         elif self.dst_type == 'github':
-            data = json.dumps({'name': repo_name})
+            data = json.dumps({'name': repo_name,'private': self.dst_private})
         if not self.has_dst_repo(repo_name):
             print(repo_name + " doesn't exist, create it...")
             if self.dst_type == "github":
@@ -80,7 +81,7 @@ class Hub(object):
                 response = requests.post(
                     url,
                     headers={'Content-Type': 'application/json;charset=UTF-8'},
-                    params={"name": repo_name, "access_token": self.dst_token}
+                    params={"name": repo_name, "access_token": self.dst_token ,"private": self.dst_private}
                 )
                 result = response.status_code == 201
                 if result:
