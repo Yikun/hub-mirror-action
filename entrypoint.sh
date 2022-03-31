@@ -26,7 +26,7 @@ python3 /hub-mirror/hubmirror.py --src "${INPUT_SRC}" --dst "${INPUT_DST}" \
 --debug "${INPUT_DEBUG}" \
 --timeout  "${INPUT_TIMEOUT}" \
 --mappings  "${INPUT_MAPPINGS}" \
---dst_private "${INPUT_DST_PRIVATE}"
+--dst-private "${INPUT_DST_PRIVATE}"
 
 # Skip original code
 exit $?
