@@ -1,0 +1,25 @@
+on:
+  push:
+  pull_request_target:
+    branches: [master]
+name: Mirror the Github organization repos to Gitee.
+jobs:
+  run:
+    name: Run
+    runs-on: ubuntu-latest
+    steps:
+    - name: Mirror the Github organization repos to Gitee.
+      uses: Yikun/hub-mirror-action@master
+    - name: Mirror Github to Gitee
+      uses: ./.
+      with:
+        src: github/yamaeye
+        dst: gitee/yamaeye
+        dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
+        dst_token: ${{ secrets.GITEE_TOKEN }}
+        account_type: user
+        # Only sync normal repo
+        white_list: 'yamaeye.github.io,docs,blog'
+        black_list: 'hub-mirror-action,GLaDOS-CheckIn'
+        force_update: true
+        debug: true
