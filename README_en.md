@@ -9,15 +9,17 @@ Action for mirroring repos between Hubs (like Github and Gitee)
 ```yaml
 steps:
 - name: Mirror the Github organization repos to Gitee.
-  uses: Yikun/hub-mirror-action@master
+  uses: Dislazy/hub-mirror-action@master
   with:
-    src: github/kunpengcompute
-    dst: gitee/kunpengcompute
+    src: github.com/kunpengcompute
+    dst: gitee.com/kunpengcompute
     dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
-    dst_token: ${{ secrets.GITEE_TOKEN }}
-    account_type: org
-    # src_account_type: org
-    # dst_account_type: org
+    static_list: repo1,repo2,repo3
+    cache_path: /github/workspace/hub-mirror-cache
+    force_update: true
+    debug: true
+    timeout: '1h'
+    mappings: "yikun.github.com=>blog"
 ```
 
 Here is a workflow to mirror the kunpengcompute org repos from Github to Gitee, see more complete workflows in [here](https://github.com/Yikun/hub-mirror-action/tree/master/.github/workflows).
@@ -33,151 +35,24 @@ More than [100+](https://github.com/search?p=2&q=hub-mirror-action+%22account_ty
 - `src` source account, such as `github/kunpengcompute`, is the Github kunpengcompute account.
 - `dst` Destination account, such as `/kunpengcompute`, is the Gitee kunpengcompute account.
 - `dst_key` the private key to push code in destination account (default in ~/.ssh/id_rsa), you can see [generating SSH keys](https://docs.github.com/articles/generating-an-ssh-key/) to generate the pri/pub key, and make sure the pub key has been added in destination. You can set Github ssh key in [here](https://github.com/settings/keys)，set the Gitee ssh key in [here](https://gitee.com/profile/sshkeys).
-- `dst_token` the API token to create non-existent repo, You can get Github token in [here](https://github.com/settings/tokens), and the Gitee in [here](https://gitee.com/profile/personal_access_tokens).
+- `static_list` Only mirror repos in the static list, like 'repo1,repo2,repo3'
 
 #### Optional
-- `account_type` (optional) default is `user`, the account type of src and dst account, can be set to `org` or `user`，only support mirror between same account type (that is "org to org" or "user to user"). if u wanna mirror difference account type, use the `src_account_type` and `dst_account_type` please.
-- `src_account_type` (optional) default is `account_type`, the account type of src account, can be set to `org` or `user`.
-- `dst_account_type` (optional) default is `account_type`, the account type of dst account, can be set to `org` or `user`.
-- `clone_style` (optional) default is `https`, can be set to `ssh` or `https`.When you are using ssh clone style, you need to configure the public key of `dst_key` to both source end and destination end.
 - `cache_path` (optional) let code clone in specific path, can be used with actions/cache to speed up mirror.
-- `black_list` (optional) the black list, such as “repo1,repo2,repo3”.
-- `white_list` (optional) the white list, such as “repo1,repo2,repo3”.
-- `static_list` (optional) Only mirror repos in the static list, but don't get list from repo api dynamically (the white/black list is still available). like 'repo1,repo2,repo3'
 - `force_update` (optional) Force to update the destination repo, use '-f' flag do 'git push'
 - `timeout` (optional) Default is '30m', set the timeout for every git command, like '600'=>600s, '30m'=>30 mins, '1h'=>1 hours
 - `mappings` (optional) Default is empty, the source repos mappings, such as 'A=>B, C=>CC', source repo name would be mapped follow the rule: A to B, C to CC. Mapping is not transitive.
-- `dst_private` (optional) Default is false. After configuration, if the gitee repository does not exist, create a public repository, otherwise create a private repository
-
-## Scenarios
-
-#### Organization mirror, mirror the Github/kunpengcompute to Gitee/kunpengcompute
-```yaml
-- name: Organization mirror
-  uses: Yikun/hub-mirror-action@master
-  with:
-    src: github/kunpengcompute
-    dst: gitee/kunpengcompute
-    dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
-    dst_token: ${{ secrets.GITEE_TOKEN }}
-    account_type: org
-```
-
-#### White/Black list, only mirror the Yikun/hub-mirror-action but not Yikun/hashes
-```yaml
-- name: Single repo mirror
-  uses: Yikun/hub-mirror-action@master
-  with:
-    src: github/Yikun
-    dst: gitee/yikunkero
-    dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
-    dst_token: ${{ secrets.GITEE_TOKEN }}
-    white_list: "hub-mirror-action"
-    white_list: "hashes"
-```
-
-#### Static list, only mirror the repos `hub-mirror-action` and `hashes`
-```yaml
-- name: Black list
-  uses: Yikun/hub-mirror-action@master
-  with:
-    src: github/Yikun
-    dst: gitee/yikunkero
-    dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
-    dst_token: ${{ secrets.GITEE_TOKEN }}
-    static_list: "hub-mirror-action,hashes"
-```
-
-#### clone style, use `ssh` clone style
-Note: please configure the public key of `dst_key` to the source (github in here) and destination(gitee in here)
-
-```yaml
-- name: ssh clone style
-  uses: Yikun/hub-mirror-action@master
-  with:
-    src: github/Yikun
-    dst: gitee/yikunkero
-    dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
-    dst_token: ${{ secrets.GITEE_TOKEN }}
-    clone_style: "ssh"
-```
-
-#### set sepecific cache
-```yaml
-- name: Mirror with specific cache
-  uses: Yikun/hub-mirror-action@master
-  with:
-    src: github/Yikun
-    dst: gitee/yikunkero
-    dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
-    dst_token: ${{ secrets.GITEE_TOKEN }}
-    cache_path: /github/workspace/hub-mirror-cache
-```
-
-#### Force udpate and enable the debug flag
-```yaml
-- name: Mirror with force push (git push -f)
-  uses: Yikun/hub-mirror-action@master
-  with:
-    src: github/Yikun
-    dst: gitee/yikunkero
-    dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
-    dst_token: ${{ secrets.GITEE_TOKEN }}
-    force_update: true
-    debug: true
-```
-
-#### Set command timeout to an hour
-```yaml
-- name: Mirror with force push (git push -f)
-  uses: Yikun/hub-mirror-action@master
-  with:
-    src: github/Yikun
-    dst: gitee/yikunkero
-    dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
-    dst_token: ${{ secrets.GITEE_TOKEN }}
-    force_update: true
-    timeout: '1h'
-```
-
-#### Sync between different repo name（github/yikun/yikun.github.com to gitee/yikunkero/blog）
-```
-- name: mirror with mappings
-  uses: Yikun/hub-mirror-action@mappings
-  with:
-    src: github/yikun
-    dst: gitee/yikunkero
-    dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
-    dst_token: ${{ secrets.GITEE_TOKEN }}
-    mappings: "yikun.github.com=>blog"
-    static_list: "yikun.github.com"
-```
-
-### Only sync repository list exclude private and fork
-```yaml
-- name: Get repository list exclude private and fork
-  id: repo
-  uses: yi-Xu-0100/repo-list-generator@v1.0.1
-- name: Mirror repository list exclude private and fork
-  uses: Yikun/hub-mirror-action@master
-  with:
-    src: github/Yikun
-    dst: gitee/yikunkero
-    dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
-    dst_token: ${{ secrets.GITEE_TOKEN }}
-    static_list: ${{ steps.repo.outputs.repoList }}
-```
 
 ## FAQ
-- How to use `secrets` to add token and key?
+- How to use `secrets` to add key?
 
   You can use below steps to add secrets, you can also see more in [Secrets](https://help.github.com/en/actions/configuring-and-managing-workflows/creating-and-storing-encrypted-secrets).
 
-  1. **Get Token and Key**，you can get them in [ssh key](https://gitee.com/profile/sshkeys) and [token](https://gitee.com/profile/personal_access_tokens).
-  2. **Add Secrets**，add settings-secrets in repo，like `GITEE_PRIVATE_KEY`、`GITEE_TOKEN`
-  3. **Add workflow**，add the workflow file into .github/workflows.
+  1**Add Secrets**，add settings-secrets in repo，like `GITEE_PRIVATE_KEY`、`GITEE_TOKEN`
+  2**Add workflow**，add the workflow file into .github/workflows.
 
 ## Reference
 - [Hub mirror template](https://github.com/yi-Xu-0100/hub-mirror): A template repo to show how to use this action. from @yi-Xu-0100
 - [Auto-Sync GitHub Repositories to Gitee](https://github.com/ShixiangWang/sync2gitee): An introduction about how to use this action. from @ShixiangWang
 - [Use Github Action to sync reois to Gitee](http://yikun.github.io/2020/01/17/%E5%B7%A7%E7%94%A8Github-Action%E5%90%8C%E6%AD%A5%E4%BB%A3%E7%A0%81%E5%88%B0Gitee/): The blog for this action.
+- [Hub Mirror Action](https://github.com/Yikun/hub-mirror-action): This before repo,greate

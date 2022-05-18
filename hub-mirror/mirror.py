@@ -27,7 +27,6 @@ class Mirror(object):
 
     @retry(wait=wait_exponential(), reraise=True, stop=stop_after_attempt(3))
     def _clone(self):
-        # TODO: process empty repo
         print("Starting git clone " + self.src_url)
         mygit = git.cmd.Git(os.getcwd())
         mygit.clone(
@@ -59,7 +58,7 @@ class Mirror(object):
 
     def create(self):
         print("(2/3) Creating...")
-        self.hub.create_dst_repo(self.dst_name)
+        return False
 
     def _check_empty(self, repo):
         cmd = ["-n", "1", "--all"]

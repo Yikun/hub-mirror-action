@@ -1,6 +1,6 @@
-name: "Hub Mirror Action."
-description: "Mirror the organization repos between hub (github/gitee)."
-author: "yikun"
+name: "More Hub Mirror Action."
+description: "Mirror the list repos between hub (github/gitee/other)."
+author: "Jack"
 branding:
   icon: "upload-cloud"
   color: "gray-dark"
@@ -8,72 +8,46 @@ inputs:
   dst_key:
     description: "The private SSH key which is used to to push code in destination hub."
     required: true
-  dst_token:
-    description: "The app token which is used to  create repo in destination hub."
-    required: true
   dst:
     description: "Destination name. Such as `gitee/kunpengcompute`."
     required: true
   src:
     description: "Source name. Such as `github/kunpengcompute`."
     required: true
-  account_type:
-    description: "The account type. Such as org, user."
-    default: 'user'
-  src_account_type:
-    description: "The src account type. Such as org, user."
-    default: ''
-  dst_account_type:
-    description: "The dst account type. Such as org, user."
-    default: ''
-  clone_style:
-    description: "The git clone style, https or ssh."
-    default: 'https'
   cache_path:
     description: "The path to cache the source repos code."
     default: '/github/workspace/hub-mirror-cache'
-  black_list:
-    description: "Hight priority, the back list of mirror repo. like 'repo1,repo2,repo3'"
-    default: ''
-  white_list:
-    description: "Low priority, the white list of mirror repo. like 'repo1,repo2,repo3'"
-    default: ''
+    required: false
   static_list:
     description: "Only mirror repo in the static list, but don't get from repo api (the white/black list is still available). like 'repo1,repo2,repo3'"
     default: ''
+    required: true
   force_update:
     description: "Force to update the destination repo, use '-f' flag do 'git push'"
     default: false
+    required: false
   debug:
     description: "Enable the debug flag to show detail log"
     default: false
+    required: false
   timeout:
     description: "Set the timeout for every git command, like '600'=>600s, '30m'=>30 mins, '1h'=>1 hours"
     default: '30m'
+    required: false
   mappings:
     description: "The source repos mappings, such as 'A=>B, C=>CC', source repo name would be mapped follow the rule: A to B, C to CC. Mapping is not transitive."
     default: ''
-  dst_private:
-    description: "set create repo to public or private"
-    default: false
+    required: false
 runs:
   using: "docker"
   image: "Dockerfile"
   args:
     - ${{ inputs.dst_key }}
-    - ${{ inputs.dst_token }}
     - ${{ inputs.src }}
     - ${{ inputs.dst }}
-    - ${{ inputs.account_type }}
-    - ${{ inputs.src_account_type }}
-    - ${{ inputs.dst_account_type }}
-    - ${{ inputs.clone_style }}
     - ${{ inputs.cache_path }}
-    - ${{ inputs.black_list }}
-    - ${{ inputs.white_list }}
     - ${{ inputs.static_list }}
     - ${{ inputs.force_update}}
     - ${{ inputs.debug}}
     - ${{ inputs.timeout}}
     - ${{ inputs.mappings}}
-    - ${{ inputs.dst_private }}
