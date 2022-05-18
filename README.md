@@ -5,12 +5,18 @@
 一个用于在hub间（例如Github，Gitee、Coding，不局限，可以是所有）账户代码仓库同步的action，这个项目脱胎于Yikun/hub-mirror-action@master。
 
 简单做几点说明：
-1、由于我是想要一个纯粹的不同的hub之间 同步的脚本，所以将该脚本进行了删减，不是作者做的不好，只是我仅仅需要简单的功能罢了
-2、目前只支持，也只会支持两个仓库必须在两个hub之间存在的情况，不再创建新的仓库（由于创建仓库需要api支持，但是为了更通用，所以决定不支持对应的功能）
-3、根据能量守恒定律，失去些什么，必然能得到些什么，这样就可以在不同的hub之间同步数据，不管是 从 github->gitee 还是 gitee-github 都可以支持到
-4、src、dst 都需要写全路径了，例如：github.com/kunpengcompute
-5、static_list 是必传参数，因为不会再动态获取对应的repos了
-6、dst_key 也是必传参数，因为为了安全考虑，我决定全部使用ssh的方式进行同步，如果后期有需要，可以兼容https
+
+1. 由于我是想要一个纯粹的不同的hub之间 同步的脚本，所以将该脚本进行了删减，不是作者做的不好，只是我仅仅需要简单的功能罢了
+
+2. 目前只支持，也只会支持两个仓库必须在两个hub之间存在的情况，不再创建新的仓库（由于创建仓库需要api支持，但是为了更通用，所以决定不支持对应的功能）
+
+3. 根据能量守恒定律，失去些什么，必然能得到些什么，这样就可以在不同的hub之间同步数据，不管是 从 github->gitee 还是 gitee-github 都可以支持到
+
+4. src、dst 都需要写全路径了，例如：github.com/kunpengcompute
+
+5. static_list 是必传参数，因为不会再动态获取对应的repos了
+
+6. dst_key 也是必传参数，因为为了安全考虑，我决定全部使用ssh的方式进行同步，如果后期有需要，可以兼容https
 
 ## 用法
 
@@ -51,8 +57,8 @@ steps:
 
 - 如何在secrets添加dst_key？
   下面是添加secrets的方法，也可以参考[secrets官方文档](https://help.github.com/en/actions/configuring-and-managing-workflows/creating-and-storing-encrypted-secrets)了解更多：
-  2. **增加Secrets配置**，在配置仓库的Setting-Secrets中新增Secrets，例如GITEE_PRIVATE_KEY、GITEE_TOKEN
-  3. **在Workflow中引用**， 可以用过类似`${{ secrets.GITEE_PRIVATE_KEY }}`来访问
+  1. **增加Secrets配置**，在配置仓库的Setting-Secrets中新增Secrets，例如GITEE_PRIVATE_KEY、GITEE_TOKEN
+  2. **在Workflow中引用**， 可以用过类似`${{ secrets.GITEE_PRIVATE_KEY }}`来访问
 
 ## 参考
 - [Hub mirror template](https://github.com/yi-Xu-0100/hub-mirror): 一个用于展示如何使用这个action的模板仓库. from @yi-Xu-0100
