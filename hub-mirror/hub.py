@@ -5,7 +5,7 @@ from typing import Any, Dict, List
 
 import requests
 
-from platforms import GitPlatform, get_platform
+from platforms import GitPlatform, RepoVisibility, get_platform
 
 logger = logging.getLogger(__name__)
 
@@ -23,11 +23,13 @@ class Hub(object):
         src_endpoint: str = "",
         dst_endpoint: str = "",
         api_timeout: int = 60,
+        dst_visibility: RepoVisibility = RepoVisibility.AUTO,
     ) -> None:
         self.api_timeout: int = api_timeout
         self.account_type: str = account_type
         self.src_account_type: str = src_account_type or account_type
         self.dst_account_type: str = dst_account_type or account_type
+        self.dst_visibility: RepoVisibility = dst_visibility
         self.src_type, self.src_account = src.split("/")
         self.dst_type, self.dst_account = dst.split("/")
         self.src_platform: GitPlatform = get_platform(
@@ -84,6 +86,16 @@ class Hub(object):
             self.src_account, self.src_account_type
         )
         return self._get_all_repo_names(url)
+
+    def update_dst_repo_visibility(self, repo_name: str) -> bool:
+        return self.dst_platform.update_repo_visibility(
+            self.session,
+            self.dst_account,
+            repo_name,
+            self.dst_visibility,
+            self.dst_token,
+            self.api_timeout,
+        )
 
     @functools.lru_cache
     def _get_all_repo_names(self, url: str, page: int = 1) -> List[str]:

@@ -60,6 +60,7 @@ steps:
 - `lfs` 提供[git lfs](https://git-lfs.com/)支持, 默认为false, 配置为true后，调用`git lfs fetch --all`和`git lfs push --all`进行同步。
 - `api_timeout`（可选）默认值为 `60`，用于设置 API 请求的超时时间（单位：秒）。
   例如：`api_timeout: '90'`
+- `dst_visibility` （可选） 默认为`auto`。该参数代表味着同步目标仓库的默认的设置为状态。`auto`代表只会同步，将不进行任何修改。`public`代表将目标仓库设置为公开仓库，`private`代表将目标仓库设置为私有仓库。
 
 ## 举些例子
 

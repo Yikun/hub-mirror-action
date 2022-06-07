@@ -7,6 +7,7 @@ import click
 
 from hub import Hub
 from mirror import Mirror
+from platforms import ALLOWED_VISIBILITY, RepoVisibility
 from utils import str2list, str2map
 
 logger = logging.getLogger(__name__)
@@ -33,6 +34,7 @@ class MirrorConfig:
     api_timeout: int = 60
     mappings: str = ""
     lfs: bool = False
+    dst_visibility: RepoVisibility = RepoVisibility.AUTO
 
 
 class HubMirror(object):
@@ -67,6 +69,7 @@ class HubMirror(object):
             src_endpoint=config.src_endpoint,
             dst_endpoint=config.dst_endpoint,
             api_timeout=config.api_timeout,
+            dst_visibility=config.dst_visibility,
         )
 
         # Using static list when static_list is set
@@ -96,6 +99,10 @@ class HubMirror(object):
                     mirror.download()
                     mirror.create()
                     mirror.push()
+                    if not hub.update_dst_repo_visibility(dst_repo):
+                        raise RuntimeError(
+                            f"Failed to update repo visibility for {dst_repo}"
+                        )
                     success += 1
                 except Exception as e:
                     logger.error(f"Mirror failed for {src_repo}: {e}")
@@ -164,6 +171,13 @@ CLI_OPTIONS = [
     click.option("--api-timeout", default=60, type=int, show_default=True),
     click.option("--mappings", default="", show_default=True),
     click.option("--lfs", default=False, type=click.BOOL, show_default=True),
+    click.option(
+        "--dst-visibility",
+        default="auto",
+        type=click.Choice(ALLOWED_VISIBILITY, case_sensitive=False),
+        show_default=True,
+        help="Set destination repo visibility (public, private, or auto).",
+    ),
 ]
 
 
@@ -204,6 +218,9 @@ def main(**params: Any) -> None:
         level=log_level,
     )
     params["debug"] = logging.getLevelName(log_level)
+    params["dst_visibility"] = RepoVisibility.from_str(
+        params["dst_visibility"]
+    )
     config = MirrorConfig(**params)
     mirror = HubMirror(config)
     mirror.run()
