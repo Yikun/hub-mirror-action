@@ -11,6 +11,7 @@ class Hub(object):
         clone_style="https",
         src_account_type=None,
         dst_account_type=None,
+        dst_visibility='public'
     ):
         # TODO: check invalid type
         self.account_type = account_type
@@ -37,6 +38,15 @@ class Hub(object):
         # TODO: toekn push support
         prefix = "git@" + self.dst_type + ".com:"
         self.dst_repo_base = prefix + self.dst_account
+        # Currently, if dst_visibility is not 'public', create the private
+        # repo when mirroring.
+        # We perhaps also support:
+        # - `auto`: dst visibility according to src visibility
+        # - `private`: dst visibility is force set to private
+        # - `public`: dst visibility is force set to public
+        # See also:
+        # https://github.com/Yikun/hub-mirror-action/issues/38#issuecomment-1094033841   # noqa: E501
+        self.dst_private = False if dst_visibility == 'public' else True
 
     def has_dst_repo(self, repo_name):
         url = '/'.join(
@@ -60,9 +70,13 @@ class Hub(object):
         )
         result = None
         if self.dst_type == 'gitee':
-            data = {'name': repo_name}
+            data = {
+                'name': repo_name,
+                "access_token": self.dst_token,
+                'private': self.dst_private
+            }
         elif self.dst_type == 'github':
-            data = json.dumps({'name': repo_name})
+            data = json.dumps({'name': repo_name, 'private': self.dst_private})
         if not self.has_dst_repo(repo_name):
             print(repo_name + " doesn't exist, create it...")
             if self.dst_type == "github":
@@ -80,7 +94,7 @@ class Hub(object):
                 response = requests.post(
                     url,
                     headers={'Content-Type': 'application/json;charset=UTF-8'},
-                    params={"name": repo_name, "access_token": self.dst_token}
+                    params=data
                 )
                 result = response.status_code == 201
                 if result:

@@ -16,7 +16,8 @@ jobs:
         dst: gitee/yikunkero
         dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
         dst_token:  ${{ secrets.GITEE_TOKEN }}
-        static_list: 'hub-mirror-action,hashes, simple-spring'
+        static_list: 'hashes,simple-spring'
         force_update: true
         debug: true
-        mappings: 'hashes=>hashes_gitee'
+        mappings: 'hashes=>private_hashes,simple-spring=>private_simple-spring'
+        dst_visibility: 'private'
