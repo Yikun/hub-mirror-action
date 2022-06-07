@@ -14,6 +14,7 @@ class Hub(object):
         src_endpoint="",
         dst_endpoint="",
         api_timeout=60,
+        dst_visibility='public'
     ):
         self.api_timeout = api_timeout
         self.account_type = account_type
@@ -64,6 +65,18 @@ class Hub(object):
         # TODO: toekn push support
         prefix = "git@" + self.dst_host + ":"
         self.dst_repo_base = prefix + self.dst_account
+        # repo when mirroring.
+        # We perhaps also support:
+        # - `auto`: dst visibility according to src visibility
+        # - `private`: dst visibility is force set to private
+        # - `public`: dst visibility is force set to public
+        # See also:
+        # https://github.com/Yikun/hub-mirror-action/issues/38#issuecomment-1094033841   # noqa: E501
+        self.dst_visibility = dst_visibility
+
+    @property
+    def dst_private(self):
+        return self.dst_visibility == 'private'
 
     def _validate_account_type(self, platform_type, account_type, role):
         if platform_type not in ("gitlab", "github", "gitee", "gitcode"):
@@ -123,6 +136,13 @@ class Hub(object):
                 data = {'name': repo_name}
             elif self.dst_type == 'github':
                 data = json.dumps({'name': repo_name})
+        if self.dst_type == 'gitee':
+            data = {
+                'name': repo_name,
+                "access_token": self.dst_token
+            }
+        elif self.dst_type == 'github':
+            data = json.dumps({'name': repo_name, 'private': self.dst_private})
         if not self.has_dst_repo(repo_name):
             print(repo_name + " doesn't exist, create it...")
             if self.dst_type == "github":
@@ -141,8 +161,9 @@ class Hub(object):
                 response = requests.post(
                     url,
                     headers={'Content-Type': 'application/json;charset=UTF-8'},
-                    params={"name": repo_name, "access_token": self.dst_token},
-                    timeout=self.api_timeout
+
+                    timeout=self.api_timeout,
+                    params=data
                 )
                 result = response.status_code == 201
                 if result:
@@ -161,12 +182,34 @@ class Hub(object):
                     print("Destination repo creating accepted.")
                 else:
                     print("Destination repo creating failed: " + response.text)
-        else:
-            print(repo_name + " repo exist, skip creating...")
         # TODO(snowyu): Cleanup 2s sleep
         if result:
             time.sleep(2)
         return result
+
+    def update_dst_repo_visibility(self, repo_name):
+        if self.dst_type == 'gitee':
+            if self.dst_visibility == 'auto':
+                return
+            visibility_status = self.dst_visibility
+            print("Updating repo visibility to %s..." % visibility_status)
+            url = '/'.join(
+                [self.dst_base, 'repos', self.dst_account, repo_name]
+            )
+            response = requests.patch(
+                url,
+                headers={'Content-Type': 'application/json;charset=UTF-8'},
+                params={
+                    "access_token": self.dst_token,
+                    "name": repo_name,
+                    "private": self.dst_private,
+                },
+                timeout=self.api_timeout
+            )
+            if response.status_code == 200:
+                print("Repo visibility updated.")
+            else:
+                print("Repo visibility update failed: " + response.text)
 
     def dynamic_list(self):
         # gitlab ---> projects, github/gitee ---> repos

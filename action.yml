@@ -65,6 +65,9 @@ inputs:
   lfs:
     description: "Enable Git LFS support."
     default: false
+  dst_visibility:
+    description: "Set destination repo visibility to public, private, or auto (preserve destination visibility)."
+    default: 'auto'
 runs:
   using: "composite"
   steps:
@@ -135,5 +138,6 @@ runs:
           --timeout "${{ inputs.timeout }}" \
           --api-timeout "${{ inputs.api_timeout }}" \
           --mappings "${{ inputs.mappings }}" \
-          --lfs "${{ inputs.lfs }}"
+          --lfs "${{ inputs.lfs }}" \
+          --dst-visibility "${{ inputs.dst_visibility }}" \
       shell: bash
