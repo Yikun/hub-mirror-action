@@ -94,13 +94,12 @@ class Hub(object):
             time.sleep(2)
         return result
 
-    def dynamic_list(self):
-        url = '/'.join(
-            [
-                self.src_base, self.src_account_type+'s', self.src_account,
-                'repos',
-            ]
-        )
+    def src_dynamic_list(self):
+        url = '/'.join([self.src_base, self.src_account_type+'s', self.src_account, 'repos'])
+        return self._get_all_repo_names(url)
+
+    def dst_dynamic_list(self):
+        url = '/'.join([self.dst_base, self.dst_account_type+'s', self.dst_account, 'repos'])
         return self._get_all_repo_names(url)
 
     @functools.lru_cache

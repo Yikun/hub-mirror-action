@@ -44,6 +44,9 @@ inputs:
   force_update:
     description: "Force to update the destination repo, use '-f' flag do 'git push'"
     default: false
+  force_clean:
+    description: "Force clean source repo finally"
+    default: false
   debug:
     description: "Enable the debug flag to show detail log"
     default: false
@@ -70,6 +73,7 @@ runs:
     - ${{ inputs.white_list }}
     - ${{ inputs.static_list }}
     - ${{ inputs.force_update}}
+    - ${{ inputs.force_clean}}
     - ${{ inputs.debug}}
     - ${{ inputs.timeout}}
     - ${{ inputs.mappings}}
