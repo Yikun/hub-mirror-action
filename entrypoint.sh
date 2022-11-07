@@ -23,6 +23,7 @@ python3 /hub-mirror/hubmirror.py --src "${INPUT_SRC}" --dst "${INPUT_DST}" \
 --white-list "${INPUT_WHITE_LIST}" \
 --static-list "${INPUT_STATIC_LIST}" \
 --force-update "${INPUT_FORCE_UPDATE}" \
+--force-clean "${INPUT_FORCE_CLEAN}" \
 --debug "${INPUT_DEBUG}" \
 --timeout  "${INPUT_TIMEOUT}" \
 --mappings  "${INPUT_MAPPINGS}"

@@ -79,10 +79,12 @@ class HubMirror(object):
                         cache=self.args.cache_path,
                         timeout=self.args.timeout,
                         force_update=self.args.force_update,
+                        force_clean=self.args.force_clean,
                     )
                     mirror.download()
                     mirror.create()
                     mirror.push()
+                    mirror.clean()
                     success += 1
                 except Exception as e:
                     print(e)
