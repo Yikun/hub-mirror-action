@@ -40,11 +40,11 @@ class HubMirror(object):
 
     def test_black_white_list(self, repo):
         if repo in self.black_list:
-            print("Skip, %s in black list: %s" % (repo, self.black_list))
+            print("Skip, %s in black list" % (repo,))
             return False
 
         if self.white_list and repo not in self.white_list:
-            print("Skip, %s not in white list: %s" % (repo, self.white_list))
+            print("Skip, %s not in white list" % (repo,))
             return False
 
         return True
@@ -63,7 +63,11 @@ class HubMirror(object):
 
         # Using static list when static_list is set
         repos = self.static_list
-        src_repos = repos if repos else hub.dynamic_list()
+        src_repos = repos if repos else hub.src_dynamic_list()
+
+        force_update = self.args.force_update
+        if force_update is False:
+            src_repos = list(set(src_repos) - set(hub.dst_dynamic_list()) )
 
         total, success, skip = len(src_repos), 0, 0
         failed_list = []
@@ -78,7 +82,7 @@ class HubMirror(object):
                         hub, src_repo, dst_repo,
                         cache=self.args.cache_path,
                         timeout=self.args.timeout,
-                        force_update=self.args.force_update,
+                        force_update=force_update,
                         force_clean=self.args.force_clean,
                     )
                     mirror.download()
