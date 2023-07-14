@@ -12,6 +12,8 @@ chmod 600 /root/.ssh/id_rsa
 
 pip3 install -r /hub-mirror/requirements.txt
 
+git lfs install
+
 python3 /hub-mirror/hubmirror.py --src "${INPUT_SRC}" --dst "${INPUT_DST}" \
 --dst-token "${INPUT_DST_TOKEN}" \
 --account-type "${INPUT_ACCOUNT_TYPE}" \
@@ -25,7 +27,8 @@ python3 /hub-mirror/hubmirror.py --src "${INPUT_SRC}" --dst "${INPUT_DST}" \
 --force-update "${INPUT_FORCE_UPDATE}" \
 --debug "${INPUT_DEBUG}" \
 --timeout  "${INPUT_TIMEOUT}" \
---mappings  "${INPUT_MAPPINGS}"
+--mappings  "${INPUT_MAPPINGS}"\
+--lfs "${INPUT_LFS}"
 
 # Skip original code
 exit $?
