@@ -11,7 +11,7 @@ from utils import cov2sec
 class Mirror(object):
     def __init__(
         self, hub, src_name, dst_name,
-        cache='.', timeout='0', force_update=False
+        cache='.', timeout='0', force_update=False, lfs=False
     ):
         self.hub = hub
         self.src_name = src_name
@@ -24,6 +24,7 @@ class Mirror(object):
         else:
             self.timeout = 0
         self.force_update = force_update
+        self.lfs = lfs
 
     @retry(wait=wait_exponential(), reraise=True, stop=stop_after_attempt(3))
     def _clone(self):
@@ -34,12 +35,17 @@ class Mirror(object):
             git.cmd.Git.polish_url(self.src_url), self.repo_path,
             kill_after_timeout=self.timeout
         )
-        print("Clone completed: %s" % os.getcwd() + self.repo_path)
+        local_repo = git.Repo(self.repo_path)
+        if self.lfs:
+            local_repo.git.lfs("fetch", "--all", "origin")
+        print("Clone completed: %s" % (os.getcwd() + self.repo_path))
 
     @retry(wait=wait_exponential(), reraise=True, stop=stop_after_attempt(3))
     def _update(self, local_repo):
         try:
             local_repo.git.pull(kill_after_timeout=self.timeout)
+            if self.lfs:
+                local_repo.git.lfs("fetch", "--all", "origin")
         except git.exc.GitCommandError:
             # Cleanup local repo and re-clone
             print('Updating failed, re-clone %s' % self.src_name)
@@ -71,6 +77,7 @@ class Mirror(object):
     @retry(wait=wait_exponential(), reraise=True, stop=stop_after_attempt(3))
     def push(self, force=False):
         local_repo = git.Repo(self.repo_path)
+        git_cmd = local_repo.git
         if self._check_empty(local_repo):
             print("Empty repo %s, skip pushing." % self.src_url)
             return
@@ -79,7 +86,7 @@ class Mirror(object):
         try:
             local_repo.create_remote(self.hub.dst_type, self.dst_url)
         except git.exc.GitCommandError:
-            print("Remote exsits, re-create: set %s to %s" % (
+            print("Remote exists, re-create: set %s to %s" % (
                 self.hub.dst_type, self.dst_url))
             local_repo.delete_remote(self.hub.dst_type)
             local_repo.create_remote(self.hub.dst_type, self.dst_url)
@@ -90,7 +97,11 @@ class Mirror(object):
         if not self.force_update:
             print("(3/3) Pushing...")
             local_repo.git.push(*cmd, kill_after_timeout=self.timeout)
+            if self.lfs:
+                git_cmd.lfs("push", self.hub.dst_type, "--all")
         else:
             print("(3/3) Force pushing...")
+            if self.lfs:
+                git_cmd.lfs("push", self.hub.dst_type, "--all")
             cmd = ['-f'] + cmd
             local_repo.git.push(*cmd, kill_after_timeout=self.timeout)
