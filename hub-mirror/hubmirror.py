@@ -79,6 +79,10 @@ class HubMirror(object):
                         cache=self.args.cache_path,
                         timeout=self.args.timeout,
                         force_update=self.args.force_update,
+                        lfs=(
+                            self.args.lfs if hasattr(self.args, "lfs")
+                            else False
+                        )
                     )
                     mirror.download()
                     mirror.create()
