@@ -47,6 +47,7 @@ More than [100+](https://github.com/search?p=2&q=hub-mirror-action+%22account_ty
 - `force_update` (optional) Force to update the destination repo, use '-f' flag do 'git push'
 - `timeout` (optional) Default is '30m', set the timeout for every git command, like '600'=>600s, '30m'=>30 mins, '1h'=>1 hours
 - `mappings` (optional) Default is empty, the source repos mappings, such as 'A=>B, C=>CC', source repo name would be mapped follow the rule: A to B, C to CC. Mapping is not transitive.
+- `lfs` (optional) Default is false, support [git lfs](https://git-lfs.com/), call `git lfs fetch --all` and `git lfs push --all` to support lfs mirror.
 
 ## Scenarios
 
@@ -165,6 +166,18 @@ Note: please configure the public key of `dst_key` to the source (github in here
     dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
     dst_token: ${{ secrets.GITEE_TOKEN }}
     static_list: ${{ steps.repo.outputs.repoList }}
+```
+
+#### Support LFS mirror
+```yaml
+- name: Mirror with lfs (git lfs fetch/push --all)
+  uses: Yikun/hub-mirror-action@master
+  with:
+    src: github/Yikun
+    dst: gitee/yikunkero
+    dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
+    dst_token: ${{ secrets.GITEE_TOKEN }}
+    lfs: true
 ```
 
 ## FAQ
