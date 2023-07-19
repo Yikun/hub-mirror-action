@@ -53,6 +53,9 @@ inputs:
   mappings:
     description: "The source repos mappings, such as 'A=>B, C=>CC', source repo name would be mapped follow the rule: A to B, C to CC. Mapping is not transitive."
     default: ''
+  lfs:
+    description: "Enable Git LFS support."
+    default: false
 runs:
   using: "docker"
   image: "Dockerfile"
@@ -73,3 +76,4 @@ runs:
     - ${{ inputs.debug}}
     - ${{ inputs.timeout}}
     - ${{ inputs.mappings}}
+    - ${{ inputs.lfs }}

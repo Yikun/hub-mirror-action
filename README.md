@@ -50,6 +50,7 @@ steps:
 - `debug` 默认为false, 配置后，启用debug开关，会显示所有执行命令。
 - `timeout` 默认为'30m', 用于设置每个git命令的超时时间，'600'=>600s, '30m'=>30 mins, '1h'=>1 hours
 - `mappings` 源仓库映射规则，比如'A=>B, C=>CC', A会被映射为B，C会映射为CC，映射不具有传递性。主要用于源和目的仓库名不同的镜像。
+- `lfs` 提供[git lfs](https://git-lfs.com/)支持, 默认为false, 配置为true后，调用`git lfs fetch --all`和`git lfs push --all`进行同步。
 
 ## 举些例子
 
@@ -180,6 +181,18 @@ steps:
     dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
     dst_token: ${{ secrets.GITEE_TOKEN }}
     static_list: ${{ steps.repo.outputs.repoList }}
+```
+
+#### 支持LFS同步
+```yaml
+- name: Mirror with lfs (git lfs fetch/push --all)
+  uses: Yikun/hub-mirror-action@master
+  with:
+    src: github/Yikun
+    dst: gitee/yikunkero
+    dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
+    dst_token: ${{ secrets.GITEE_TOKEN }}
+    lfs: true
 ```
 
 ## FAQ
