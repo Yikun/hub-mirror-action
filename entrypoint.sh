@@ -9,7 +9,10 @@ fi
 mkdir -p /root/.ssh
 echo "${INPUT_DST_KEY}" > /root/.ssh/id_rsa
 chmod 600 /root/.ssh/id_rsa
-chmod -R /github/home/.cache/pip
+
+rm -rf /github/home/.cache/pip
+mikdir /github/home/.cache/pip
+chmod 600 /github/home/.cache/pip
 
 pip3 install -r /hub-mirror/requirements.txt
 
