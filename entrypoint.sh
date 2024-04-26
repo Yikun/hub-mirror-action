@@ -10,8 +10,6 @@ mkdir -p /root/.ssh
 echo "${INPUT_DST_KEY}" > /root/.ssh/id_rsa
 chmod 600 /root/.ssh/id_rsa
 
-python -m pip install --upgrade pip
-
 pip3 install -r /hub-mirror/requirements.txt
 
 git lfs install
