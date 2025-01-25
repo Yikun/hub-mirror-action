@@ -1,5 +1,5 @@
 name: "Hub Mirror Action."
-description: "Mirror the organization repos between hub (github/gitee)."
+description: "Mirror the organization repos between hub (github/gitee/gitLab)."
 author: "yikun"
 branding:
   icon: "upload-cloud"
@@ -18,13 +18,13 @@ inputs:
     description: "Source name. Such as `github/kunpengcompute`."
     required: true
   account_type:
-    description: "The account type. Such as org, user."
+    description: "The account type. Such as org, user, group."
     default: 'user'
   src_account_type:
-    description: "The src account type. Such as org, user."
+    description: "The src account type. Such as org, user, group."
     default: ''
   dst_account_type:
-    description: "The dst account type. Such as org, user."
+    description: "The dst account type. Such as org, user, group."
     default: ''
   clone_style:
     description: "The git clone style, https or ssh."

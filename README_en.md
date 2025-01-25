@@ -2,10 +2,11 @@
 
 English | [简体中文](./README.md)
 
-Action for mirroring repos between Hubs (like Github and Gitee)
+Action for mirroring repos between Hubs (like GitHub, Gitee, and GitLab).
 
 ## Tutorial
 
+### Mirror GitHub to Gitee
 ```yaml
 steps:
 - name: Mirror the Github organization repos to Gitee.
@@ -19,6 +20,21 @@ steps:
     # src_account_type: org
     # dst_account_type: org
 ```
+### Mirror GitHub to Gitlab
+```yaml
+steps:
+- name: Mirror the GitHub organization repos to GitLab.
+  uses: Yikun/hub-mirror-action@master
+  with:
+    src: github/kunpengcompute
+    dst: gitlab/kunpengcompute
+    dst_key: ${{ secrets.GITLAB_PRIVATE_KEY }}
+    dst_token: ${{ secrets.GITLAB_TOKEN }}
+    account_type: group
+    src_account_type: org
+    dst_account_type: group
+```
+
 
 Here is a workflow to mirror the kunpengcompute org repos from Github to Gitee, see more complete workflows in [here](https://github.com/Yikun/hub-mirror-action/tree/master/.github/workflows).
 
@@ -32,13 +48,13 @@ More than [100+](https://github.com/search?p=2&q=hub-mirror-action+%22account_ty
 #### Required
 - `src` source account, such as `github/kunpengcompute`, is the Github kunpengcompute account.
 - `dst` Destination account, such as `/kunpengcompute`, is the Gitee kunpengcompute account.
-- `dst_key` the private key to push code in destination account (default in ~/.ssh/id_rsa), you can see [generating SSH keys](https://docs.github.com/articles/generating-an-ssh-key/) to generate the pri/pub key, and make sure the pub key has been added in destination. You can set Github ssh key in [here](https://github.com/settings/keys)，set the Gitee ssh key in [here](https://gitee.com/profile/sshkeys).
-- `dst_token` the API token to create non-existent repo, You can get Github token in [here](https://github.com/settings/tokens), and the Gitee in [here](https://gitee.com/profile/personal_access_tokens).
+- `dst_key` the private key to push code in destination account (default in ~/.ssh/id_rsa), you can see [generating SSH keys](https://docs.github.com/articles/generating-an-ssh-key/) to generate the pri/pub key, and make sure the pub key has been added in destination. You can set Github ssh key in [here](https://github.com/settings/keys)，set the Gitee ssh key in [here](https://gitee.com/profile/sshkeys) set the Gitlab ssh key in [here](https://gitlab.com/-/user_settings/ssh_keys).
+- `dst_token` the API token to create non-existent repo, You can get Github token in [here](https://github.com/settings/tokens), and the Gitee in [here](https://gitee.com/profile/personal_access_tokens). and for GitLab in [here](https://gitlab.com/-/user_settings/personal_access_tokens) (Required scopes: api, read_api, read_repository, write_repository).
 
 #### Optional
-- `account_type` (optional) default is `user`, the account type of src and dst account, can be set to `org` or `user`，only support mirror between same account type (that is "org to org" or "user to user"). if u wanna mirror difference account type, use the `src_account_type` and `dst_account_type` please.
-- `src_account_type` (optional) default is `account_type`, the account type of src account, can be set to `org` or `user`.
-- `dst_account_type` (optional) default is `account_type`, the account type of dst account, can be set to `org` or `user`.
+- `account_type` (optional) default is `user`, the account type of src and dst account, can be set to `org` or `user`，For GitLab: can be set to `group` or `user`,only support mirror between same account type (that is "org to org" or "user to user" or "group to group"). if u wanna mirror difference account type, use the `src_account_type` and `dst_account_type` please.
+- `src_account_type` (optional) default is `account_type`, the account type of src account, can be set to `org` or `user` or `group`.
+- `dst_account_type` (optional) default is `account_type`, the account type of dst account, can be set to `org` or `user`r `group`.
 - `clone_style` (optional) default is `https`, can be set to `ssh` or `https`.When you are using ssh clone style, you need to configure the public key of `dst_key` to both source end and destination end.
 - `cache_path` (optional) let code clone in specific path, can be used with actions/cache to speed up mirror.
 - `black_list` (optional) the black list, such as “repo1,repo2,repo3”.
@@ -61,6 +77,19 @@ More than [100+](https://github.com/search?p=2&q=hub-mirror-action+%22account_ty
     dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
     dst_token: ${{ secrets.GITEE_TOKEN }}
     account_type: org
+```
+#### GitLab group mirror, mirror from GitHub organization to GitLab group
+```yaml
+- name: GitLab group mirror
+  uses: Yikun/hub-mirror-action@master
+  with:
+    src: github/organization-name
+    dst: gitlab/group-name
+    dst_key: ${{ secrets.GITLAB_PRIVATE_KEY }}
+    dst_token: ${{ secrets.GITLAB_TOKEN }}
+    account_type: group
+    src_account_type: org
+    dst_account_type: group
 ```
 
 #### White/Black list, only mirror the Yikun/hub-mirror-action but not Yikun/hashes
@@ -185,11 +214,24 @@ Note: please configure the public key of `dst_key` to the source (github in here
 
   You can use below steps to add secrets, you can also see more in [Secrets](https://help.github.com/en/actions/configuring-and-managing-workflows/creating-and-storing-encrypted-secrets).
 
-  1. **Get Token and Key**，you can get them in [ssh key](https://gitee.com/profile/sshkeys) and [token](https://gitee.com/profile/personal_access_tokens).
-  2. **Add Secrets**，add settings-secrets in repo，like `GITEE_PRIVATE_KEY`、`GITEE_TOKEN`
+  1. **Get Token and Key**:
+     * For Gitee: Get SSH key from [here](https://gitee.com/profile/sshkeys) and token from [here](https://gitee.com/profile/personal_access_tokens)
+     * For GitLab: Get SSH key from [here](https://gitlab.com/-/user_settings/ssh_keys) and token from [here](https://gitlab.com/-/user_settings/personal_access_tokens)
+  2. **Add Secrets**，add settings-secrets in repo，like `GITEE_PRIVATE_KEY`、`GITEE_TOKEN` or `GITLAB_PRIVATE_KEY`、`GITLAB_TOKEN`
   3. **Add workflow**，add the workflow file into .github/workflows.
 
 ## Reference
 - [Hub mirror template](https://github.com/yi-Xu-0100/hub-mirror): A template repo to show how to use this action. from @yi-Xu-0100
 - [Auto-Sync GitHub Repositories to Gitee](https://github.com/ShixiangWang/sync2gitee): An introduction about how to use this action. from @ShixiangWang
 - [Use Github Action to sync reois to Gitee](http://yikun.github.io/2020/01/17/%E5%B7%A7%E7%94%A8Github-Action%E5%90%8C%E6%AD%A5%E4%BB%A3%E7%A0%81%E5%88%B0Gitee/): The blog for this action.
+
+## Platform-Specific Notes
+
+### GitLab
+- Uses `group` instead of `org` for organizational accounts
+- Only top-level groups are supported for mirroring. Nested subgroups (group/subgroup) are not supported yet
+- Requires API token with appropriate scopes (api, read_api, read_repository, write_repository)
+- When mirroring to GitLab, ensure your group/user has sufficient permissions to create repositories
+- GitLab.com has API rate limits of 2000 requests per minute for authenticated users
+- [GitLab API Documentation](https://docs.gitlab.com/ee/api/): Official GitLab API documentation
+- [GitLab Personal Access Tokens](https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html): Guide for creating GitLab tokens
