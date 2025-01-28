@@ -6,37 +6,27 @@ Action for mirroring repos between Hubs (like GitHub, Gitee, and GitLab).
 
 ## Tutorial
 
-### Mirror GitHub to Gitee
 ```yaml
 steps:
 - name: Mirror the Github organization repos to Gitee.
   uses: Yikun/hub-mirror-action@master
   with:
+    # Support gitee, github and gitlab
     src: github/kunpengcompute
+    # Support gitee, github and gitlab
     dst: gitee/kunpengcompute
     dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
     dst_token: ${{ secrets.GITEE_TOKEN }}
+    # Support github/gitee user, org and gitlab group
     account_type: org
+    # Supporte set account type speparately
     # src_account_type: org
     # dst_account_type: org
 ```
-### Mirror GitHub to Gitlab
-```yaml
-steps:
-- name: Mirror the GitHub organization repos to GitLab.
-  uses: Yikun/hub-mirror-action@master
-  with:
-    src: github/kunpengcompute
-    dst: gitlab/kunpengcompute
-    dst_key: ${{ secrets.GITLAB_PRIVATE_KEY }}
-    dst_token: ${{ secrets.GITLAB_TOKEN }}
-    account_type: group
-    src_account_type: org
-    dst_account_type: group
-```
-
 
 Here is a workflow to mirror the kunpengcompute org repos from Github to Gitee, see more complete workflows in [here](https://github.com/Yikun/hub-mirror-action/tree/master/.github/workflows).
+
+Please refer to [scenarios](https://github.com/Yikun/hub-mirror-action/blob/master/README_en.md#scenarios) for more examples.
 
 ## Who are using?
 More than [100+](https://github.com/search?p=2&q=hub-mirror-action+%22account_type%22+%22org%22&type=Code) organizations，[4000+](https://github.com/search?l=YAML&q=%22hub-mirror-action%22&type=Code) users are using, [50+](https://github.com/search?l=Markdown&q=%22hub-mirror-action%22&type=code) related blogs from users：
@@ -215,8 +205,9 @@ Note: please configure the public key of `dst_key` to the source (github in here
   You can use below steps to add secrets, you can also see more in [Secrets](https://help.github.com/en/actions/configuring-and-managing-workflows/creating-and-storing-encrypted-secrets).
 
   1. **Get Token and Key**:
-     * For Gitee: Get SSH key from [here](https://gitee.com/profile/sshkeys) and token from [here](https://gitee.com/profile/personal_access_tokens)
-     * For GitLab: Get SSH key from [here](https://gitlab.com/-/user_settings/ssh_keys) and token from [here](https://gitlab.com/-/user_settings/personal_access_tokens)
+  - Github: Configure and save your [ssh key](https://github.com/settings/keys)和[token](https://github.com/settings/tokens)
+  - Gitee: Configure and save your [ssh key](https://gitee.com/profile/sshkeys)和[token](https://gitee.com/profile/personal_access_tokens)
+  - Gtilab: Configure and save your [ssh key](https://gitlab.com/-/user/settings/keys)和[token](https://gitlab.com/-/user_settings/personal_access_tokens)
   2. **Add Secrets**，add settings-secrets in repo，like `GITEE_PRIVATE_KEY`、`GITEE_TOKEN` or `GITLAB_PRIVATE_KEY`、`GITLAB_TOKEN`
   3. **Add workflow**，add the workflow file into .github/workflows.
 
