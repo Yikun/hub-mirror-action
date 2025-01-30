@@ -58,6 +58,7 @@ class HubMirror(object):
             clone_style=self.args.clone_style,
             src_account_type=self.args.src_account_type,
             dst_account_type=self.args.dst_account_type,
+            api_timeout=int(self.args.api_timeout),
         )
         src_type, src_account = self.args.src.split('/')
 
