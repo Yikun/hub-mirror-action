@@ -29,6 +29,7 @@ python3 /hub-mirror/hubmirror.py --src "${INPUT_SRC}" --dst "${INPUT_DST}" \
 --force-update "${INPUT_FORCE_UPDATE}" \
 --debug "${INPUT_DEBUG}" \
 --timeout  "${INPUT_TIMEOUT}" \
+--api-timeout "${INPUT_API_TIMEOUT}" \
 --mappings  "${INPUT_MAPPINGS}" \
 --lfs "${INPUT_LFS}"
 

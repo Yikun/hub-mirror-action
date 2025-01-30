@@ -11,7 +11,9 @@ class Hub(object):
         clone_style="https",
         src_account_type=None,
         dst_account_type=None,
+        api_timeout=60,
     ):
+        self.api_timeout = api_timeout
         self.account_type = account_type
         self.src_account_type = src_account_type or account_type
         self.dst_account_type = dst_account_type or account_type
@@ -112,7 +114,8 @@ class Hub(object):
                 response = self.session.post(
                     url,
                     data=data,
-                    headers={'Authorization': 'token ' + self.dst_token}
+                    headers={'Authorization': 'token ' + self.dst_token},
+                    timeout=self.api_timeout
                 )
                 result = response.status_code == 201
                 if result:
@@ -123,7 +126,8 @@ class Hub(object):
                 response = requests.post(
                     url,
                     headers={'Content-Type': 'application/json;charset=UTF-8'},
-                    params={"name": repo_name, "access_token": self.dst_token}
+                    params={"name": repo_name, "access_token": self.dst_token},
+                    timeout=self.api_timeout
                 )
                 result = response.status_code == 201
                 if result:
@@ -134,7 +138,8 @@ class Hub(object):
                 response = self.session.post(
                     url,
                     data=data,
-                    headers=headers
+                    headers=headers,
+                    timeout=self.api_timeout
                 )
                 result = response.status_code == 201
                 if result:
@@ -164,7 +169,7 @@ class Hub(object):
         per_page = 60
         api = url + f"?page={page}&per_page=" + str(per_page)
         # TODO: src_token support
-        response = self.session.get(api)
+        response = self.session.get(api, timeout=self.api_timeout)
         all_items = []
         if response.status_code != 200:
             print("Repo getting failed: " + response.text)
@@ -179,7 +184,11 @@ class Hub(object):
         """Helper method to get GitLab group ID"""
         url = f"{self.dst_base}/groups"
         headers = {'PRIVATE-TOKEN': self.dst_token}
-        response = self.session.get(url, headers=headers)
+        response = self.session.get(
+            url,
+            headers=headers,
+            timeout=self.api_timeout
+        )
         if response.status_code == 200:
             groups = response.json()
             for group in groups:

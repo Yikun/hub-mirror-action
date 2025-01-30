@@ -50,6 +50,9 @@ inputs:
   timeout:
     description: "Set the timeout for every git command, like '600'=>600s, '30m'=>30 mins, '1h'=>1 hours"
     default: '30m'
+  api_timeout:
+    description: "Set the timeout for API requests (in seconds)."
+    default: '60'
   mappings:
     description: "The source repos mappings, such as 'A=>B, C=>CC', source repo name would be mapped follow the rule: A to B, C to CC. Mapping is not transitive."
     default: ''
@@ -75,5 +78,6 @@ runs:
     - ${{ inputs.force_update}}
     - ${{ inputs.debug}}
     - ${{ inputs.timeout}}
+    - ${{ inputs.api_timeout }}
     - ${{ inputs.mappings}}
     - ${{ inputs.lfs }}
