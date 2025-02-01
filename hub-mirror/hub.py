@@ -86,6 +86,7 @@ class Hub(object):
         return repo_name in repo_names
 
     def create_dst_repo(self, repo_name):
+        result = None
         # gitlab ---> projects, github/gitee ---> repos
         repo_field = "projects" if self.dst_type == "gitlab" else "repos"
         if self.dst_type == "gitlab":
@@ -103,7 +104,6 @@ class Hub(object):
             url = '/'.join(
                 [self.dst_base, suffix]
             )
-            result = None
             if self.dst_type == 'gitee':
                 data = {'name': repo_name}
             elif self.dst_type == 'github':
