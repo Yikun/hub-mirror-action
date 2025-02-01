@@ -56,6 +56,8 @@ steps:
 - `timeout` 默认为'30m', 用于设置每个git命令的超时时间，'600'=>600s, '30m'=>30 mins, '1h'=>1 hours
 - `mappings` 源仓库映射规则，比如'A=>B, C=>CC', A会被映射为B，C会映射为CC，映射不具有传递性。主要用于源和目的仓库名不同的镜像。
 - `lfs` 提供[git lfs](https://git-lfs.com/)支持, 默认为false, 配置为true后，调用`git lfs fetch --all`和`git lfs push --all`进行同步。
+- `api_timeout`（可选）默认值为 `60`，用于设置 API 请求的超时时间（单位：秒）。
+  例如：`api_timeout: '90'`
 
 ## 举些例子
 
