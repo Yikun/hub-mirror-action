@@ -33,6 +33,8 @@ class Hub(object):
             self.dst_base = 'https://api.github.com'
         elif self.dst_type == "gitlab":
             self.dst_base = 'https://gitlab.com/api/v4'
+        elif self.dst_type == "gitcode":
+            self.dst_base = 'https://api.gitcode.com/api/v5'
 
         prefix = "https://" if clone_style == 'https' else 'git@'
         suffix = "/" if clone_style == 'https' else ':'
@@ -45,13 +47,16 @@ class Hub(object):
         elif self.src_type == "gitlab":
             self.src_base = 'https://gitlab.com/api/v4'
             self.src_repo_base = prefix + 'gitlab.com' + suffix
+        elif self.src_type == "gitcode":
+            self.src_base = 'https://api.gitcode.com/api/v5'
+            self.src_repo_base = prefix + 'gitlab.com' + suffix
         self.src_repo_base = self.src_repo_base + self.src_account
         # TODO: toekn push support
         prefix = "git@" + self.dst_type + ".com:"
         self.dst_repo_base = prefix + self.dst_account
 
     def _validate_account_type(self, platform_type, account_type, role):
-        if platform_type not in ("gitlab", "github", "gitee"):
+        if platform_type not in ("gitlab", "github", "gitee", "gitcode"):
             raise ValueError(
                 f"Unsupported platform_type '{platform_type}' for {role}."
             )
@@ -63,7 +68,7 @@ class Hub(object):
                     "either 'user' or 'group'."
                 )
         # github/gitee ---> user or org
-        elif platform_type in ("github", "gitee"):
+        elif platform_type in ("github", "gitee", "gitcode"):
             if account_type not in ("user", "org"):
                 raise ValueError(
                     f"For {platform_type}, {role} account_type must be"
@@ -87,7 +92,7 @@ class Hub(object):
 
     def create_dst_repo(self, repo_name):
         result = None
-        # gitlab ---> projects, github/gitee ---> repos
+        # gitlab ---> projects, github/gitee/gitcode ---> repos
         repo_field = "projects" if self.dst_type == "gitlab" else "repos"
         if self.dst_type == "gitlab":
             url = f"{self.dst_base}/{repo_field}"
@@ -106,7 +111,7 @@ class Hub(object):
             )
             if self.dst_type == 'gitee':
                 data = {'name': repo_name}
-            elif self.dst_type == 'github':
+            elif self.dst_type == 'github' or self.dst_type == 'gitcode':
                 data = json.dumps({'name': repo_name})
         if not self.has_dst_repo(repo_name):
             print(repo_name + " doesn't exist, create it...")
@@ -122,7 +127,7 @@ class Hub(object):
                     print("Destination repo creating accepted.")
                 else:
                     print("Destination repo creating failed: " + response.text)
-            elif self.dst_type == "gitee":
+            elif self.dst_type == "gitee" or self.dst_type == "gitcode":
                 response = requests.post(
                     url,
                     headers={'Content-Type': 'application/json;charset=UTF-8'},
