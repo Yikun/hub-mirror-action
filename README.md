@@ -2,7 +2,7 @@
 
 简体中文 | [English](./README_en.md)
 
-一个用于在hub间（例如Github，Gitee和Gitlab）账户代码仓库同步的action
+一个用于在hub间（例如Github，Gitee, Gitlab 和 Gitcode）账户代码仓库同步的action
 
 ## 用法
 
@@ -12,13 +12,13 @@ steps:
 - name: Mirror the Github organization repos to Gitee.
   uses: Yikun/hub-mirror-action@master
   with:
-    # 支持Gitee, Github and Gitlab
+    # 支持Gitee, Github , Gitlab and Gitcode
     src: github/kunpengcompute
-    # 支持Gitee, Github and Gitlab
+    # 支持Gitee, Github , Gitlab and Gitcode
     dst: gitee/kunpengcompute
     dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
     dst_token: ${{ secrets.GITEE_TOKEN }}
-    # 支持Github/Gitee的用户、组织以及Gitlab的组
+    # 支持Github/Gitee/Gitcode的用户、组织以及Gitlab的组
     account_type: org
     # 支持分别设置源和目的端的类型
     # src_account_type: org
@@ -224,7 +224,8 @@ steps:
   - Github: 配置并保存[ssh key](https://github.com/settings/keys)和[token](https://github.com/settings/tokens)
   - Gitee: 配置并保存[ssh key](https://gitee.com/profile/sshkeys)和[token](https://gitee.com/profile/personal_access_tokens)
   - Gtilab: 配置并保存[ssh key](https://gitlab.com/-/user/settings/keys)和[token](https://gitlab.com/-/user_settings/personal_access_tokens)
-  2. **增加Secrets配置**，在配置仓库的Setting-Secrets中新增Secrets，例如`GITEE_PRIVATE_KEY`\`GITLAB_PRIVATE_KEY`、`GITEE_TOKEN`\`GITLAB_TOKEN`。
+  - Gticode: 配置并保存[ssh key](https://gitcode.com/setting/key-ssh)和[token](https://gitcode.com/setting/token-classic)
+  2. **增加Secrets配置**，在配置仓库的Setting-Secrets中新增Secrets，例如`GITEE_PRIVATE_KEY`\`GITLAB_PRIVATE_KEY`、`GITEE_TOKEN`\`GITLAB_TOKEN`\`GITCODE_TOKEN`。
   3. **在Workflow中引用**， 可以用过类似`${{ secrets.GITEE_PRIVATE_KEY }}`来访问。
 
 ## 参考

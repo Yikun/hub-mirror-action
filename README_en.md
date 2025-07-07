@@ -2,7 +2,7 @@
 
 English | [简体中文](./README.md)
 
-Action for mirroring repos between Hubs (like GitHub, Gitee, and GitLab).
+Action for mirroring repos between Hubs (like GitHub, Gitee, GitLab and GitCode).
 
 ## Tutorial
 
@@ -11,13 +11,13 @@ steps:
 - name: Mirror the Github organization repos to Gitee.
   uses: Yikun/hub-mirror-action@master
   with:
-    # Support gitee, github and gitlab
+    # Support gitee, github , gitlab and gitcode
     src: github/kunpengcompute
-    # Support gitee, github and gitlab
+    # Support gitee, github , gitlab and gitcode
     dst: gitee/kunpengcompute
     dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
     dst_token: ${{ secrets.GITEE_TOKEN }}
-    # Support github/gitee user, org and gitlab group
+    # Support github/gitee/gitcode user, org and gitlab group
     account_type: org
     # Supporte set account type speparately
     # src_account_type: org
@@ -38,8 +38,8 @@ More than [100+](https://github.com/search?p=2&q=hub-mirror-action+%22account_ty
 #### Required
 - `src` source account, such as `github/kunpengcompute`, is the Github kunpengcompute account.
 - `dst` Destination account, such as `/kunpengcompute`, is the Gitee kunpengcompute account.
-- `dst_key` the private key to push code in destination account (default in ~/.ssh/id_rsa), you can see [generating SSH keys](https://docs.github.com/articles/generating-an-ssh-key/) to generate the pri/pub key, and make sure the pub key has been added in destination. You can set Github ssh key in [here](https://github.com/settings/keys)，set the Gitee ssh key in [here](https://gitee.com/profile/sshkeys) set the Gitlab ssh key in [here](https://gitlab.com/-/user_settings/ssh_keys).
-- `dst_token` the API token to create non-existent repo, You can get Github token in [here](https://github.com/settings/tokens), and the Gitee in [here](https://gitee.com/profile/personal_access_tokens). and for GitLab in [here](https://gitlab.com/-/user_settings/personal_access_tokens) (Required scopes: api, read_api, read_repository, write_repository).
+- `dst_key` the private key to push code in destination account (default in ~/.ssh/id_rsa), you can see [generating SSH keys](https://docs.github.com/articles/generating-an-ssh-key/) to generate the pri/pub key, and make sure the pub key has been added in destination. You can set Github ssh key in [here](https://github.com/settings/keys)，set the Gitee ssh key in [here](https://gitee.com/profile/sshkeys), set the Gitlab ssh key in [here](https://gitlab.com/-/user_settings/ssh_keys), set the Gitcode ssh key in [here](https://gitcode.com/setting/key-ssh).
+- `dst_token` the API token to create non-existent repo, You can get Github token in [here](https://github.com/settings/tokens), and the Gitee in [here](https://gitee.com/profile/personal_access_tokens). and for GitLab in [here](https://gitlab.com/-/user_settings/personal_access_tokens) ,and for GitCode in [here](https://gitcode.com/setting/token-classic) (Required scopes: api, read_api, read_repository, write_repository).
 
 #### Optional
 - `account_type` (optional) default is `user`, the account type of src and dst account, can be set to `org` or `user`，For GitLab: can be set to `group` or `user`,only support mirror between same account type (that is "org to org" or "user to user" or "group to group"). if u wanna mirror difference account type, use the `src_account_type` and `dst_account_type` please.
@@ -210,7 +210,7 @@ Note: please configure the public key of `dst_key` to the source (github in here
   - Github: Configure and save your [ssh key](https://github.com/settings/keys)和[token](https://github.com/settings/tokens)
   - Gitee: Configure and save your [ssh key](https://gitee.com/profile/sshkeys)和[token](https://gitee.com/profile/personal_access_tokens)
   - Gtilab: Configure and save your [ssh key](https://gitlab.com/-/user/settings/keys)和[token](https://gitlab.com/-/user_settings/personal_access_tokens)
-  2. **Add Secrets**，add settings-secrets in repo，like `GITEE_PRIVATE_KEY`、`GITEE_TOKEN` or `GITLAB_PRIVATE_KEY`、`GITLAB_TOKEN`
+  2. **Add Secrets**，add settings-secrets in repo，like `GITEE_PRIVATE_KEY`、`GITEE_TOKEN` or `GITLAB_PRIVATE_KEY`、`GITLAB_TOKEN`、`GITCODE_TOKEN`
   3. **Add workflow**，add the workflow file into .github/workflows.
 
 ## Reference
