@@ -35,7 +35,7 @@ class Hub(object):
             self.dst_base = 'https://gitlab.com/api/v4'
         elif self.dst_type == "gitcode":
             self.dst_base = 'https://api.gitcode.com/api/v5'
-        
+
         prefix = "https://" if clone_style == 'https' else 'git@'
         suffix = "/" if clone_style == 'https' else ':'
         if self.src_type == "gitee":
