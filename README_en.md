@@ -11,9 +11,9 @@ steps:
 - name: Mirror the Github organization repos to Gitee.
   uses: Yikun/hub-mirror-action@master
   with:
-    # Support gitee, github , gitlab and gitcode
+    # Support gitee, github, gitlab and gitcode
     src: github/kunpengcompute
-    # Support gitee, github , gitlab and gitcode
+    # Support gitee, github, gitlab and gitcode
     dst: gitee/kunpengcompute
     dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
     dst_token: ${{ secrets.GITEE_TOKEN }}
@@ -207,10 +207,10 @@ Note: please configure the public key of `dst_key` to the source (github in here
   You can use below steps to add secrets, you can also see more in [Secrets](https://help.github.com/en/actions/configuring-and-managing-workflows/creating-and-storing-encrypted-secrets).
 
   1. **Get Token and Key**:
-  - Github: Configure and save your [ssh key](https://github.com/settings/keys)和[token](https://github.com/settings/tokens)
-  - Gitee: Configure and save your [ssh key](https://gitee.com/profile/sshkeys)和[token](https://gitee.com/profile/personal_access_tokens)
-  - Gitlab: Configure and save your [ssh key](https://gitlab.com/-/user/settings/keys)和[token](https://gitlab.com/-/user_settings/personal_access_tokens)
-  - Gitcode: Configure and save your [ssh key](https://gitcode.com/setting/key-ssh)和[token](https://gitcode.com/setting/token-classic)
+  - Github: Configure and save your [ssh key](https://github.com/settings/keys) and [token](https://github.com/settings/tokens)
+  - Gitee: Configure and save your [ssh key](https://gitee.com/profile/sshkeys) and [token](https://gitee.com/profile/personal_access_tokens)
+  - Gitlab: Configure and save your [ssh key](https://gitlab.com/-/user/settings/keys) and [token](https://gitlab.com/-/user_settings/personal_access_tokens)
+  - Gitcode: Configure and save your [ssh key](https://gitcode.com/setting/key-ssh) and[token](https://gitcode.com/setting/token-classic)
   2. **Add Secrets**，add settings-secrets in repo，like `GITEE_PRIVATE_KEY`、`GITEE_TOKEN` or `GITLAB_PRIVATE_KEY`、`GITLAB_TOKEN` or `GITCODE_PRIVATE_KEY`、`GITCODE_TOKEN`
   3. **Add workflow**，add the workflow file into .github/workflows.
 

@@ -12,9 +12,9 @@ steps:
 - name: Mirror the Github organization repos to Gitee.
   uses: Yikun/hub-mirror-action@master
   with:
-    # 支持Gitee, Github , Gitlab and Gitcode
+    # 支持Gitee, Github, Gitlab and Gitcode
     src: github/kunpengcompute
-    # 支持Gitee, Github , Gitlab and Gitcode
+    # 支持Gitee, Github, Gitlab and Gitcode
     dst: gitee/kunpengcompute
     dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
     dst_token: ${{ secrets.GITEE_TOKEN }}
