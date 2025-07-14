@@ -223,9 +223,9 @@ steps:
   1. **获取Token和Key**，例如
   - Github: 配置并保存[ssh key](https://github.com/settings/keys)和[token](https://github.com/settings/tokens)
   - Gitee: 配置并保存[ssh key](https://gitee.com/profile/sshkeys)和[token](https://gitee.com/profile/personal_access_tokens)
-  - Gtilab: 配置并保存[ssh key](https://gitlab.com/-/user/settings/keys)和[token](https://gitlab.com/-/user_settings/personal_access_tokens)
-  - Gticode: 配置并保存[ssh key](https://gitcode.com/setting/key-ssh)和[token](https://gitcode.com/setting/token-classic)
-  2. **增加Secrets配置**，在配置仓库的Setting-Secrets中新增Secrets，例如`GITEE_PRIVATE_KEY`\`GITLAB_PRIVATE_KEY`、`GITEE_TOKEN`\`GITLAB_TOKEN`\`GITCODE_TOKEN`。
+  - Gitlab: 配置并保存[ssh key](https://gitlab.com/-/user/settings/keys)和[token](https://gitlab.com/-/user_settings/personal_access_tokens)
+  - Gitcode: 配置并保存[ssh key](https://gitcode.com/setting/key-ssh)和[token](https://gitcode.com/setting/token-classic)
+  2. **增加Secrets配置**，在配置仓库的Setting-Secrets中新增Secrets，例如`GITEE_PRIVATE_KEY`\`GITLAB_PRIVATE_KEY`\`GITCODE_PRIVATE_KEY`、`GITEE_TOKEN`\`GITLAB_TOKEN`\`GITCODE_TOKEN`。
   3. **在Workflow中引用**， 可以用过类似`${{ secrets.GITEE_PRIVATE_KEY }}`来访问。
 
 ## 参考

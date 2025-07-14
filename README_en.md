@@ -209,8 +209,9 @@ Note: please configure the public key of `dst_key` to the source (github in here
   1. **Get Token and Key**:
   - Github: Configure and save your [ssh key](https://github.com/settings/keys)和[token](https://github.com/settings/tokens)
   - Gitee: Configure and save your [ssh key](https://gitee.com/profile/sshkeys)和[token](https://gitee.com/profile/personal_access_tokens)
-  - Gtilab: Configure and save your [ssh key](https://gitlab.com/-/user/settings/keys)和[token](https://gitlab.com/-/user_settings/personal_access_tokens)
-  2. **Add Secrets**，add settings-secrets in repo，like `GITEE_PRIVATE_KEY`、`GITEE_TOKEN` or `GITLAB_PRIVATE_KEY`、`GITLAB_TOKEN`、`GITCODE_TOKEN`
+  - Gitlab: Configure and save your [ssh key](https://gitlab.com/-/user/settings/keys)和[token](https://gitlab.com/-/user_settings/personal_access_tokens)
+  - Gitcode: Configure and save your [ssh key](https://gitcode.com/setting/key-ssh)和[token](https://gitcode.com/setting/token-classic)
+  2. **Add Secrets**，add settings-secrets in repo，like `GITEE_PRIVATE_KEY`、`GITEE_TOKEN` or `GITLAB_PRIVATE_KEY`、`GITLAB_TOKEN` or `GITCODE_PRIVATE_KEY`、`GITCODE_TOKEN`
   3. **Add workflow**，add the workflow file into .github/workflows.
 
 ## Reference
