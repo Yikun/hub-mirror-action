@@ -17,7 +17,9 @@ pip3 install -r /hub-mirror/requirements.txt
 git lfs install
 
 python3 /hub-mirror/hubmirror.py --src "${INPUT_SRC}" --dst "${INPUT_DST}" \
+--src-endpoint "${INPUT_SRC_ENDPOINT}" \
 --dst-token "${INPUT_DST_TOKEN}" \
+--dst-endpoint "${INPUT_DST_ENDPOINT}" \
 --account-type "${INPUT_ACCOUNT_TYPE}" \
 --src-account-type "${INPUT_SRC_ACCOUNT_TYPE}" \
 --dst-account-type "${INPUT_DST_ACCOUNT_TYPE}" \
