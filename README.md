@@ -49,7 +49,7 @@ steps:
 - `src_endpoint` 默认为空，仅在源端为GitLab时生效，用于自托管GitLab地址，例如`gitlab.example.com`（无需包含`https://`前缀），为空时使用`gitlab.com`。
 - `dst_endpoint` 默认为空，仅在目的端为GitLab时生效，用于自托管GitLab地址，例如`gitlab.example.com`（无需包含`https://`前缀），为空时使用`gitlab.com`。
 - `clone_style` 默认为https，可以设置为ssh或者https。当设置为ssh时，你需要将`dst_key`所对应的公钥同时配置到源端和目的端。
-- `cache_path` 默认为'', 将代码缓存在指定目录，用于与actions/cache配合以加速镜像过程。
+- `cache_path` 默认为`hub-mirror-cache`，将代码缓存在指定目录，用于与actions/cache配合以加速镜像过程。若为相对路径，会自动拼接`${{ github.workspace }}`。
 - `black_list` 默认为'', 配置后，黑名单中的repos将不会被同步，如“repo1,repo2,repo3”。
 - `white_list` 默认为'', 配置后，仅同步白名单中的repos，如“repo1,repo2,repo3”。
 - `static_list` 默认为'', 配置后，仅同步静态列表，不会再动态获取需同步列表（黑白名单机制依旧生效），如“repo1,repo2,repo3”。
@@ -135,7 +135,7 @@ steps:
     dst: gitee/yikunkero
     dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
     dst_token: ${{ secrets.GITEE_TOKEN }}
-    cache_path: /github/workspace/hub-mirror-cache
+    cache_path: hub-mirror-cache
 ```
 
 #### 强制更新，并打开debug日志开关
