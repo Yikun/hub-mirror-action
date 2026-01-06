@@ -32,7 +32,7 @@ jobs:
         dst: gitee/yikunkero
         dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
         dst_token:  ${{ secrets.GITEE_TOKEN }}
-        cache_path: /github/workspace/hub-mirror-cache
+        cache_path: hub-mirror-cache
         white_list: 'hub-mirror-action, hexo-migrator-github-issue'
         force_update: true
 

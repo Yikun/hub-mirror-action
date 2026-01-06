@@ -1,6 +1,7 @@
 import argparse
 import sys
 import yaml
+import os
 
 from utils import str2bool, str2list, str2map
 from hub import Hub
@@ -17,7 +18,12 @@ class HubMirror(object):
         self.mappings = str2map(self.args.mappings)
 
     def _create_parser(self):
-        with open('/action.yml', 'r') as f:
+        # action.yml is in the parent directory of this script
+        action_yml_path = os.path.join(
+            os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+            "action.yml"
+        )
+        with open(action_yml_path, 'r') as f:
             action = yaml.safe_load(f)
         parser = argparse.ArgumentParser(
             description=action['description'])
