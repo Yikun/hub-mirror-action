@@ -242,3 +242,5 @@ steps:
 如果觉得不错，**来个star**支持下作者吧！你的Star是我更新代码的动力！：）
 
 想任何想吐槽或者建议的都可以直接飞个[issue](https://github.com/Yikun/hub-mirror-action/issues).
+
+trigger new ci test
