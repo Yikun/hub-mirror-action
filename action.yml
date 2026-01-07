@@ -14,9 +14,15 @@ inputs:
   dst:
     description: "Destination name. Such as `gitee/kunpengcompute`."
     required: true
+  dst_endpoint:
+    description: "Destination endpoint for self-hosted, currently only Gitlab is supported, like gitlab.example.com (no https:// prefix)."
+    default: ''
   src:
     description: "Source name. Such as `github/kunpengcompute`."
     required: true
+  src_endpoint:
+    description: "Source endpoint for self-hosted, currently only Gitlab is supported, like gitlab.example.com (no https:// prefix)."
+    default: ''
   account_type:
     description: "The account type. Such as org, user, group."
     default: 'user'
@@ -66,7 +72,9 @@ runs:
     - ${{ inputs.dst_key }}
     - ${{ inputs.dst_token }}
     - ${{ inputs.src }}
+    - ${{ inputs.src_endpoint }}
     - ${{ inputs.dst }}
+    - ${{ inputs.dst_endpoint }}
     - ${{ inputs.account_type }}
     - ${{ inputs.src_account_type }}
     - ${{ inputs.dst_account_type }}

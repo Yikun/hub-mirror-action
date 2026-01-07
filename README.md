@@ -46,6 +46,8 @@ steps:
 - `account_type` 默认为user，源和目的的账户类型，可以设置为org（组织）、user（用户）或者group（组），该参数支持**同类型账户**（即组织到组织，或用户到用户，或组到组）的同步。如果源目的仓库是不同类型，请单独使用`src_account_type`和`dst_account_type`配置。
 - `src_account_type` 默认为`account_type`，源账户类型，可以设置为org（组织）、user（用户）或者group（组）。
 - `dst_account_type` 默认为`account_type`，目的账户类型，可以设置为org（组织）、user（用户）或者group（组）。
+- `src_endpoint` 默认为空，仅在源端为GitLab时生效，用于自托管GitLab地址，例如`gitlab.example.com`（无需包含`https://`前缀），为空时使用`gitlab.com`。
+- `dst_endpoint` 默认为空，仅在目的端为GitLab时生效，用于自托管GitLab地址，例如`gitlab.example.com`（无需包含`https://`前缀），为空时使用`gitlab.com`。
 - `clone_style` 默认为https，可以设置为ssh或者https。当设置为ssh时，你需要将`dst_key`所对应的公钥同时配置到源端和目的端。
 - `cache_path` 默认为'', 将代码缓存在指定目录，用于与actions/cache配合以加速镜像过程。
 - `black_list` 默认为'', 配置后，黑名单中的repos将不会被同步，如“repo1,repo2,repo3”。
@@ -209,6 +211,8 @@ steps:
   with:
     src: github/organization-name
     dst: gitlab/group-name
+    # 自托管GitLab可选
+    # dst_endpoint: gitlab.example.com
     dst_key: ${{ secrets.GITLAB_PRIVATE_KEY }}
     dst_token: ${{ secrets.GITLAB_TOKEN }}
     account_type: group
@@ -238,4 +242,3 @@ steps:
 如果觉得不错，**来个star**支持下作者吧！你的Star是我更新代码的动力！：）
 
 想任何想吐槽或者建议的都可以直接飞个[issue](https://github.com/Yikun/hub-mirror-action/issues).
-

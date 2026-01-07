@@ -45,6 +45,8 @@ More than [100+](https://github.com/search?p=2&q=hub-mirror-action+%22account_ty
 - `account_type` (optional) default is `user`, the account type of src and dst account, can be set to `org` or `user`，For GitLab: can be set to `group` or `user`,only support mirror between same account type (that is "org to org" or "user to user" or "group to group"). if u wanna mirror difference account type, use the `src_account_type` and `dst_account_type` please.
 - `src_account_type` (optional) default is `account_type`, the account type of src account, can be set to `org` or `user` or `group`.
 - `dst_account_type` (optional) default is `account_type`, the account type of dst account, can be set to `org` or `user`r `group`.
+- `src_endpoint` (optional) only for self-hosted GitLab source, used for self-hosted GitLab endpoint like `gitlab.example.com` (no https:// prefix), default is empty.
+- `dst_endpoint` (optional) only for self-hosted GitLab destination, used for self-hosted GitLab endpoint like `gitlab.example.com` (no https:// prefix), default is `gitlab.com`.
 - `clone_style` (optional) default is `https`, can be set to `ssh` or `https`.When you are using ssh clone style, you need to configure the public key of `dst_key` to both source end and destination end.
 - `cache_path` (optional) let code clone in specific path, can be used with actions/cache to speed up mirror.
 - `black_list` (optional) the black list, such as “repo1,repo2,repo3”.
@@ -77,6 +79,8 @@ More than [100+](https://github.com/search?p=2&q=hub-mirror-action+%22account_ty
   with:
     src: github/organization-name
     dst: gitlab/group-name
+    # Optional for self-hosted GitLab
+    # dst_endpoint: gitlab.example.com
     dst_key: ${{ secrets.GITLAB_PRIVATE_KEY }}
     dst_token: ${{ secrets.GITLAB_TOKEN }}
     account_type: group

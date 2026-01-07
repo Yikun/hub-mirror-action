@@ -11,6 +11,8 @@ class Hub(object):
         clone_style="https",
         src_account_type=None,
         dst_account_type=None,
+        src_endpoint="",
+        dst_endpoint="",
         api_timeout=60,
     ):
         self.api_timeout = api_timeout
@@ -27,12 +29,18 @@ class Hub(object):
         )
         self.dst_token = dst_token
         self.session = requests.Session()
+
+        # Note that the host will be refreshed if endpoint is set
+        self.dst_host = self.dst_type + ".com"
+        self.src_host = self.src_type + ".com"
         if self.dst_type == "gitee":
             self.dst_base = 'https://gitee.com/api/v5'
         elif self.dst_type == "github":
             self.dst_base = 'https://api.github.com'
         elif self.dst_type == "gitlab":
-            self.dst_base = 'https://gitlab.com/api/v4'
+            gitlab_host = dst_endpoint or "gitlab.com"
+            self.dst_base = "https://" + gitlab_host + '/api/v4'
+            self.dst_host = gitlab_host
         elif self.dst_type == "gitcode":
             self.dst_base = 'https://api.gitcode.com/api/v5'
 
@@ -45,14 +53,16 @@ class Hub(object):
             self.src_base = 'https://api.github.com'
             self.src_repo_base = prefix + 'github.com' + suffix
         elif self.src_type == "gitlab":
-            self.src_base = 'https://gitlab.com/api/v4'
-            self.src_repo_base = prefix + 'gitlab.com' + suffix
+            gitlab_host = src_endpoint or "gitlab.com"
+            self.src_base = "https://" + gitlab_host + '/api/v4'
+            self.src_host = gitlab_host
+            self.src_repo_base = prefix + gitlab_host + suffix
         elif self.src_type == "gitcode":
             self.src_base = 'https://api.gitcode.com/api/v5'
             self.src_repo_base = prefix + 'gitcode.com' + suffix
         self.src_repo_base = self.src_repo_base + self.src_account
         # TODO: toekn push support
-        prefix = "git@" + self.dst_type + ".com:"
+        prefix = "git@" + self.dst_host + ":"
         self.dst_repo_base = prefix + self.dst_account
 
     def _validate_account_type(self, platform_type, account_type, role):
