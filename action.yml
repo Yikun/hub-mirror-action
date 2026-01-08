@@ -36,8 +36,8 @@ inputs:
     description: "The git clone style, https or ssh."
     default: 'https'
   cache_path:
-    description: "The path to cache the source repos code."
-    default: '/github/workspace/hub-mirror-cache'
+    description: "The path to cache the source repos code. Relative paths will be prefixed with `github.workspace`."
+    default: 'hub-mirror-cache'
   black_list:
     description: "Hight priority, the back list of mirror repo. like 'repo1,repo2,repo3'"
     default: ''
@@ -66,26 +66,74 @@ inputs:
     description: "Enable Git LFS support."
     default: false
 runs:
-  using: "docker"
-  image: "Dockerfile"
-  args:
-    - ${{ inputs.dst_key }}
-    - ${{ inputs.dst_token }}
-    - ${{ inputs.src }}
-    - ${{ inputs.src_endpoint }}
-    - ${{ inputs.dst }}
-    - ${{ inputs.dst_endpoint }}
-    - ${{ inputs.account_type }}
-    - ${{ inputs.src_account_type }}
-    - ${{ inputs.dst_account_type }}
-    - ${{ inputs.clone_style }}
-    - ${{ inputs.cache_path }}
-    - ${{ inputs.black_list }}
-    - ${{ inputs.white_list }}
-    - ${{ inputs.static_list }}
-    - ${{ inputs.force_update}}
-    - ${{ inputs.debug}}
-    - ${{ inputs.timeout}}
-    - ${{ inputs.api_timeout }}
-    - ${{ inputs.mappings}}
-    - ${{ inputs.lfs }}
+  using: "composite"
+  steps:
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.x'
+
+    - uses: actions/cache@v4
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+
+    - name: Install dependencies
+      run: |
+        pip install -r ${{ github.action_path }}/hub-mirror/requirements.txt
+      shell: bash
+
+    - name: Configure SSH
+      run: |
+        mkdir -p ~/.ssh
+        echo "${{ inputs.dst_key }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        # Try to modify system config with sudo, fallback to user config
+        sudo sh -c 'echo "StrictHostKeyChecking no" >> /etc/ssh/ssh_config' 2>/dev/null || echo "StrictHostKeyChecking no" >> ~/.ssh/config
+      shell: bash
+
+    - name: Run Hub Mirror
+      run: |
+        # Set debug mode if requested
+        if [[ "${{ inputs.debug }}" == "true" ]]; then
+          set -x
+        fi
+        
+        # Ensure git lfs is available
+        if ! command -v git-lfs &> /dev/null; then
+             sudo apt-get update && sudo apt-get install -y git-lfs
+        fi
+        git lfs install
+
+        # Resolve cache path to a writable workspace location
+        CACHE_PATH="${{ inputs.cache_path }}"
+        if [[ "$CACHE_PATH" == /github/workspace* ]]; then
+            CACHE_PATH="${{ github.workspace }}${CACHE_PATH#/github/workspace}"
+        fi
+        if [[ "$CACHE_PATH" != /* ]]; then
+            CACHE_PATH="${{ github.workspace }}/$CACHE_PATH"
+        fi
+        mkdir -p "$CACHE_PATH"
+        echo "Using CACHE_PATH: $CACHE_PATH"
+
+        python3 ${{ github.action_path }}/hub-mirror/hubmirror.py \
+          --src "${{ inputs.src }}" \
+          --dst "${{ inputs.dst }}" \
+          --dst-token "${{ inputs.dst_token }}" \
+          --account-type "${{ inputs.account_type }}" \
+          --src-account-type "${{ inputs.src_account_type }}" \
+          --dst-account-type "${{ inputs.dst_account_type }}" \
+          --clone-style "${{ inputs.clone_style }}" \
+          --cache-path "$CACHE_PATH" \
+          --black-list "${{ inputs.black_list }}" \
+          --white-list "${{ inputs.white_list }}" \
+          --static-list "${{ inputs.static_list }}" \
+          --force-update "${{ inputs.force_update }}" \
+          --debug "${{ inputs.debug }}" \
+          --timeout "${{ inputs.timeout }}" \
+          --api-timeout "${{ inputs.api_timeout }}" \
+          --mappings "${{ inputs.mappings }}" \
+          --lfs "${{ inputs.lfs }}"
+      shell: bash

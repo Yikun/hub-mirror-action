@@ -48,7 +48,7 @@ More than [100+](https://github.com/search?p=2&q=hub-mirror-action+%22account_ty
 - `src_endpoint` (optional) only for self-hosted GitLab source, used for self-hosted GitLab endpoint like `gitlab.example.com` (no https:// prefix), default is empty.
 - `dst_endpoint` (optional) only for self-hosted GitLab destination, used for self-hosted GitLab endpoint like `gitlab.example.com` (no https:// prefix), default is `gitlab.com`.
 - `clone_style` (optional) default is `https`, can be set to `ssh` or `https`.When you are using ssh clone style, you need to configure the public key of `dst_key` to both source end and destination end.
-- `cache_path` (optional) let code clone in specific path, can be used with actions/cache to speed up mirror.
+- `cache_path` (optional) defaults to `hub-mirror-cache`, let code clone in specific path, can be used with actions/cache to speed up mirror. If it is a relative path, it will be prefixed with `${{ github.workspace }}`.
 - `black_list` (optional) the black list, such as “repo1,repo2,repo3”.
 - `white_list` (optional) the white list, such as “repo1,repo2,repo3”.
 - `static_list` (optional) Only mirror repos in the static list, but don't get list from repo api dynamically (the white/black list is still available). like 'repo1,repo2,repo3'
@@ -128,6 +128,7 @@ Note: please configure the public key of `dst_key` to the source (github in here
 ```
 
 #### set sepecific cache
+Note: see also the real example in `.github/workflows/verify-on-ubuntu-user-cache.yml`
 ```yaml
 - name: Mirror with specific cache
   uses: Yikun/hub-mirror-action@master
@@ -136,7 +137,7 @@ Note: please configure the public key of `dst_key` to the source (github in here
     dst: gitee/yikunkero
     dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
     dst_token: ${{ secrets.GITEE_TOKEN }}
-    cache_path: /github/workspace/hub-mirror-cache
+    cache_path: hub-mirror-cache
 ```
 
 #### Force udpate and enable the debug flag
