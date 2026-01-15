@@ -64,6 +64,7 @@ class HubMirror(object):
             clone_style=self.args.clone_style,
             src_account_type=self.args.src_account_type,
             dst_account_type=self.args.dst_account_type,
+            dst_visibility=self.args.dst_visibility,
             src_endpoint=self.args.src_endpoint,
             dst_endpoint=self.args.dst_endpoint,
             api_timeout=int(self.args.api_timeout),
@@ -96,6 +97,8 @@ class HubMirror(object):
                     mirror.download()
                     mirror.create()
                     mirror.push()
+                    if hub.dst_type == 'gitee':
+                        hub.update_dst_repo_visibility(dst_repo)
                     success += 1
                 except Exception as e:
                     print(e)
