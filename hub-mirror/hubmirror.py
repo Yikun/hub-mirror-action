@@ -49,9 +49,7 @@ class HubMirror(object):
             return False
 
         if self.white_list and repo not in self.white_list:
-            logger.info(
-                f"Skip, {repo} not in white list: {self.white_list}"
-            )
+            logger.info(f"Skip, {repo} not in white list: {self.white_list}")
             return False
 
         return True
@@ -107,8 +105,7 @@ class HubMirror(object):
                 skip += 1
         failed: int = total - success - skip
         logger.info(
-            f"Total: {total}, skip: {skip}, successed: {success}, "
-            f"failed: {failed}."
+            f"Total: {total}, skip: {skip}, successed: {success}, " f"failed: {failed}."
         )
         logger.info(f"Failed: {failed_list}")
         if failed_list:
@@ -116,7 +113,7 @@ class HubMirror(object):
 
 
 def add_options(
-    options: List[Callable[[Callable[..., None]], Callable[..., None]]]
+    options: List[Callable[[Callable[..., None]], Callable[..., None]]],
 ) -> Callable[[Callable[..., None]], Callable[..., None]]:
     def decorator(func: Callable[..., None]) -> Callable[..., None]:
         for option in reversed(options):
@@ -190,8 +187,6 @@ def main(**params: Any) -> None:
         raise click.BadParameter(str(exc))
     logging.basicConfig(
         level=log_level,
-        format="{levelname}:{name}:{message}",
-        style="{",
     )
     params["debug"] = logging.getLevelName(log_level)
     config = MirrorConfig(**params)
