@@ -104,9 +104,11 @@ class HubMirror(object):
             else:
                 skip += 1
         failed: int = total - success - skip
-        logger.info(
-            f"Total: {total}, skip: {skip}, successed: {success}, " f"failed: {failed}."
+        summary = (
+            f"Total: {total}, skip: {skip}, successed: {success}, "
+            f"failed: {failed}."
         )
+        logger.info(summary)
         logger.info(f"Failed: {failed_list}")
         if failed_list:
             sys.exit(1)
@@ -126,18 +128,31 @@ def add_options(
 CLI_OPTIONS = [
     click.option("--src", required=True, help="Source name."),
     click.option("--dst", required=True, help="Destination name."),
-    click.option("--dst-token", required=True, help="Token for destination hub."),
+    click.option(
+        "--dst-token",
+        required=True,
+        help="Token for destination hub.",
+    ),
     click.option("--account-type", default="user", show_default=True),
     click.option("--src-account-type", default="", show_default=True),
     click.option("--dst-account-type", default="", show_default=True),
     click.option("--src-endpoint", default="", show_default=True),
     click.option("--dst-endpoint", default="", show_default=True),
     click.option("--clone-style", default="https", show_default=True),
-    click.option("--cache-path", default="hub-mirror-cache", show_default=True),
+    click.option(
+        "--cache-path",
+        default="hub-mirror-cache",
+        show_default=True,
+    ),
     click.option("--black-list", default="", show_default=True),
     click.option("--white-list", default="", show_default=True),
     click.option("--static-list", default="", show_default=True),
-    click.option("--force-update", default=False, type=bool, show_default=True),
+    click.option(
+        "--force-update",
+        default=False,
+        type=bool,
+        show_default=True,
+    ),
     click.option(
         "--debug",
         default="INFO",

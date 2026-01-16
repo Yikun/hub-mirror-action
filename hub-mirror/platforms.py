@@ -242,5 +242,7 @@ def get_platform(name: str, endpoint: str = "") -> GitPlatform:
     platform_cls = platforms.get(name)
     if not platform_cls:
         supported = ", ".join(sorted(platforms.keys()))
-        raise ValueError(f"Unsupported platform_type '{name}'. Supported: {supported}")
+        raise ValueError(
+            f"Unsupported platform_type '{name}'. Supported: {supported}"
+        )
     return platform_cls(endpoint)

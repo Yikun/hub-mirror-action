@@ -7,6 +7,7 @@ from typing import List
 import git
 from tenacity import retry, stop_after_attempt, wait_exponential
 
+from hub import Hub
 from utils import cov2sec
 
 logger = logging.getLogger(__name__)
@@ -15,7 +16,7 @@ logger = logging.getLogger(__name__)
 class Mirror(object):
     def __init__(
         self,
-        hub: "Hub",
+        hub: Hub,
         src_name: str,
         dst_name: str,
         cache: str = ".",
@@ -23,7 +24,7 @@ class Mirror(object):
         force_update: bool = False,
         lfs: bool = False,
     ) -> None:
-        self.hub: "Hub" = hub
+        self.hub: Hub = hub
         self.src_name: str = src_name
         self.dst_name: str = dst_name
         self.src_url: str = hub.src_repo_base + "/" + src_name + ".git"
