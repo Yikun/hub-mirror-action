@@ -28,10 +28,6 @@ class Hub(object):
         self.account_type: str = account_type
         self.src_account_type: str = src_account_type or account_type
         self.dst_account_type: str = dst_account_type or account_type
-        self.src_type: str
-        self.src_account: str
-        self.dst_type: str
-        self.dst_account: str
         self.src_type, self.src_account = src.split("/")
         self.dst_type, self.dst_account = dst.split("/")
         self.src_platform: GitPlatform = get_platform(
