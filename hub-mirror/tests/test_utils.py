@@ -4,7 +4,7 @@ from utils import str2map
 
 class TestUtils(unittest.TestCase):
 
-    def test_str2map(self):
+    def test_str2map(self) -> None:
         self.assertEqual(str2map("a=>b, c=>d"), {'a': 'b', 'c': 'd'})
         self.assertEqual(str2map("a=>b,c=>d"), {'a': 'b', 'c': 'd'})
         # No transitivity
