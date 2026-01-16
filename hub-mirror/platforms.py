@@ -134,7 +134,8 @@ class GitcodePlatform(GitPlatform):
     name = "gitcode"
     repo_field = "repos"
 
-    def __init__(self, endpoint: str = "") -> None:
+    def __init__(self, _endpoint: str = "") -> None:
+        # _endpoint is kept for interface compatibility with other platforms.
         self.host: str = "gitcode.com"
         self.api_base: str = "https://api.gitcode.com/api/v5"
 
@@ -195,6 +196,12 @@ class GitLabPlatform(GitPlatform):
             group_id: Optional[int] = self._get_group_id(
                 session, account, token, api_timeout
             )
+            if group_id is None:
+                logger.error(
+                    f"Failed to create repository '{repo_name}': "
+                    f"group '{account}' not found."
+                )
+                return False
             data["namespace_id"] = group_id
         response: requests.Response = session.post(
             url,

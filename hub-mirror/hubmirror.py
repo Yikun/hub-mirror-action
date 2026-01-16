@@ -150,7 +150,7 @@ CLI_OPTIONS = [
     click.option(
         "--force-update",
         default=False,
-        type=bool,
+        type=click.BOOL,
         show_default=True,
     ),
     click.option(
@@ -163,7 +163,7 @@ CLI_OPTIONS = [
     click.option("--timeout", default="30m", show_default=True),
     click.option("--api-timeout", default=60, type=int, show_default=True),
     click.option("--mappings", default="", show_default=True),
-    click.option("--lfs", default=False, type=bool, show_default=True),
+    click.option("--lfs", default=False, type=click.BOOL, show_default=True),
 ]
 
 
