@@ -183,9 +183,7 @@ def parse_log_level(value: Optional[Any]) -> int:
 
 @click.command()
 @add_options(CLI_OPTIONS)
-@click.pass_context
-def main(ctx: click.Context) -> None:
-    params: Dict[str, Any] = ctx.params
+def main(**params: Any) -> None:
     try:
         log_level = parse_log_level(params.get("debug"))
     except ValueError as exc:
