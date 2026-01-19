@@ -76,10 +76,30 @@ runs:
     - name: Set up uv
       uses: astral-sh/setup-uv@v3
 
+    - name: Compute uv cache key
+      id: uv-cache
+      uses: actions/github-script@v8
+      with:
+        script: |
+          const fs = require('fs');
+          const path = require('path');
+          const crypto = require('crypto');
+
+          const actionPath = process.env.GITHUB_ACTION_PATH;
+          const files = [
+            path.join(actionPath, 'hub-mirror', 'uv.lock'),
+            path.join(actionPath, 'hub-mirror', 'pyproject.toml'),
+          ];
+          const hash = crypto.createHash('sha256');
+          for (const file of files) {
+            hash.update(fs.readFileSync(file));
+          }
+          core.setOutput('uv_cache_key', hash.digest('hex'));
+
     - uses: actions/cache@v4
       with:
         path: ~/.cache/uv
-        key: ${{ runner.os }}-uv-${{ hashFiles('**/uv.lock', '**/pyproject.toml') }}
+        key: ${{ runner.os }}-uv-${{ steps.uv-cache.outputs.uv_cache_key }}
         restore-keys: |
           ${{ runner.os }}-uv-
 
