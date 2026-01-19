@@ -29,6 +29,42 @@ steps:
 
 有疑问、想法、问题、建议，可以通过[![Gitter](https://badges.gitter.im/hub-mirror-action/community.svg)](https://gitter.im/hub-mirror-action/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)找到我们。
 
+## GitLab CI/CD Component
+
+该仓库提供 GitLab CI/CD component：`hub-mirror`（见 `templates/hub-mirror.yml`）。
+
+### GitLab.com 示例
+```yaml
+include:
+  - component: $CI_SERVER_FQDN/your-group/hub-mirror-action/hub-mirror@2.0.0
+    inputs:
+      image: $CI_REGISTRY/your-group/hub-mirror-action:latest
+      src: "github/kunpengcompute"
+      dst: "gitee/kunpengcompute"
+      dst-key: $GITEE_PRIVATE_KEY
+      dst-token: $GITEE_TOKEN
+      account-type: "org"
+```
+
+组件必须托管在与你的 pipeline 相同的 GitLab 实例中，因此请先将本仓库镜像到 gitlab.com 再引用。
+
+### 自托管 GitLab
+请先将本仓库镜像到你的 GitLab 实例，然后使用 `$CI_SERVER_FQDN/<group>/<project>/hub-mirror@<version>` 引用，并在 inputs 中设置 `image` 指向该仓库构建的镜像（见下方 Docker 镜像说明）。
+
+若源或目的端是自托管 GitLab，请在 inputs 中设置 `src-endpoint`/`dst-endpoint`。
+
+## Docker 镜像（GitLab Container Registry）
+
+仓库提供 `Dockerfile` 与 `.gitlab-ci.yml`，在 GitLab CI 中自动构建并推送镜像到当前项目的 Container Registry。
+
+镜像地址为：`$CI_REGISTRY_IMAGE:<tag>`，示例：`registry.gitlab.com/<group>/<project>:latest`  
+推送规则：
+- 默认分支会推送 `latest`
+- Git tag 会推送同名 tag
+- 每次构建都会推送 `CI_COMMIT_SHA` tag
+
+在 GitLab component 的 inputs 中，将 `image` 指向该镜像即可。
+
 ## 谁在使用？
 超过[100+](https://github.com/search?p=2&q=hub-mirror-action+%22account_type%22+%22org%22&type=Code)组织，[4000+](https://github.com/search?l=YAML&q=%22hub-mirror-action%22&type=Code)使用者正在使用，[50+](https://github.com/search?l=Markdown&q=%22hub-mirror-action%22&type=code)来自使用者的使用教程：
 
