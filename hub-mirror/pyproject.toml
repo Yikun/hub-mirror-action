@@ -1,0 +1,22 @@
+[project]
+name = "hub-mirror"
+version = "2.0.0"
+description = "Mirror repositories between Git hubs."
+requires-python = ">=3.8"
+dependencies = [
+  "PyYAML>=6.0.1",
+  "GitPython==3.1.13",
+  "requests==2.25.1",
+  "tenacity==6.3.1",
+  "click==8.1.7",
+]
+
+[project.scripts]
+hubmirror = "hubmirror:main"
+
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+py-modules = ["hubmirror", "hub", "mirror", "platforms", "utils"]

@@ -73,16 +73,39 @@ runs:
       with:
         python-version: '3.x'
 
+    - name: Set up uv
+      uses: astral-sh/setup-uv@v3
+
+    - name: Compute uv cache key
+      id: uv-cache
+      uses: actions/github-script@v8
+      with:
+        script: |
+          const fs = require('fs');
+          const path = require('path');
+          const crypto = require('crypto');
+
+          const actionPath = process.env.GITHUB_ACTION_PATH;
+          const files = [
+            path.join(actionPath, 'hub-mirror', 'uv.lock'),
+            path.join(actionPath, 'hub-mirror', 'pyproject.toml'),
+          ];
+          const hash = crypto.createHash('sha256');
+          for (const file of files) {
+            hash.update(fs.readFileSync(file));
+          }
+          core.setOutput('uv_cache_key', hash.digest('hex'));
+
     - uses: actions/cache@v4
       with:
-        path: ~/.cache/pip
-        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        path: ~/.cache/uv
+        key: ${{ runner.os }}-uv-${{ steps.uv-cache.outputs.uv_cache_key }}
         restore-keys: |
-          ${{ runner.os }}-pip-
+          ${{ runner.os }}-uv-
 
     - name: Install dependencies
       run: |
-        pip install -r ${{ github.action_path }}/hub-mirror/requirements.txt
+        uv sync --project ${{ github.action_path }}/hub-mirror --frozen
       shell: bash
 
     - name: Configure SSH
@@ -118,7 +141,7 @@ runs:
         mkdir -p "$CACHE_PATH"
         echo "Using CACHE_PATH: $CACHE_PATH"
 
-        python3 ${{ github.action_path }}/hub-mirror/hubmirror.py \
+        uv run --project ${{ github.action_path }}/hub-mirror hubmirror \
           --src "${{ inputs.src }}" \
           --dst "${{ inputs.dst }}" \
           --dst-token "${{ inputs.dst_token }}" \
