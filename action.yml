@@ -73,16 +73,19 @@ runs:
       with:
         python-version: '3.x'
 
+    - name: Set up uv
+      uses: astral-sh/setup-uv@v3
+
     - uses: actions/cache@v4
       with:
-        path: ~/.cache/pip
-        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        path: ~/.cache/uv
+        key: ${{ runner.os }}-uv-${{ hashFiles('**/uv.lock', '**/pyproject.toml') }}
         restore-keys: |
-          ${{ runner.os }}-pip-
+          ${{ runner.os }}-uv-
 
     - name: Install dependencies
       run: |
-        pip install -r ${{ github.action_path }}/hub-mirror/requirements.txt
+        uv sync --project ${{ github.action_path }}/hub-mirror --no-install-project --frozen
       shell: bash
 
     - name: Configure SSH
@@ -118,7 +121,7 @@ runs:
         mkdir -p "$CACHE_PATH"
         echo "Using CACHE_PATH: $CACHE_PATH"
 
-        python3 ${{ github.action_path }}/hub-mirror/hubmirror.py \
+        uv run --project ${{ github.action_path }}/hub-mirror python ${{ github.action_path }}/hub-mirror/hubmirror.py \
           --src "${{ inputs.src }}" \
           --dst "${{ inputs.dst }}" \
           --dst-token "${{ inputs.dst_token }}" \
