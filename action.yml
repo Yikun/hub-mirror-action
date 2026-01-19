@@ -105,7 +105,7 @@ runs:
 
     - name: Install dependencies
       run: |
-        uv sync --project ${{ github.action_path }}/hub-mirror --no-install-project --frozen
+        uv sync --project ${{ github.action_path }}/hub-mirror --frozen
       shell: bash
 
     - name: Configure SSH
@@ -141,7 +141,7 @@ runs:
         mkdir -p "$CACHE_PATH"
         echo "Using CACHE_PATH: $CACHE_PATH"
 
-        uv run --project ${{ github.action_path }}/hub-mirror python ${{ github.action_path }}/hub-mirror/hubmirror.py \
+        uv run --project ${{ github.action_path }}/hub-mirror hubmirror \
           --src "${{ inputs.src }}" \
           --dst "${{ inputs.dst }}" \
           --dst-token "${{ inputs.dst_token }}" \

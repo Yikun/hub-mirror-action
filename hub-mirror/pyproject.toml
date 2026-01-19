@@ -10,3 +10,13 @@ dependencies = [
   "tenacity==6.3.1",
   "click==8.1.7",
 ]
+
+[project.scripts]
+hubmirror = "hubmirror:main"
+
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+py-modules = ["hubmirror", "hub", "mirror", "platforms", "utils"]

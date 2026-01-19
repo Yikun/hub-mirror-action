@@ -68,7 +68,7 @@ wheels = [
 [[package]]
 name = "hub-mirror"
 version = "2.0.0"
-source = { virtual = "." }
+source = { editable = "." }
 dependencies = [
     { name = "click" },
     { name = "gitpython" },
