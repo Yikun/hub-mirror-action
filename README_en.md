@@ -28,6 +28,42 @@ Here is a workflow to mirror the kunpengcompute org repos from Github to Gitee, 
 
 Please refer to [scenarios](https://github.com/Yikun/hub-mirror-action/blob/master/README_en.md#scenarios) for more examples.
 
+## GitLab CI/CD Component
+
+This repository ships a GitLab CI/CD component named `hub-mirror` (see `templates/hub-mirror.yml`).
+
+### GitLab.com example
+```yaml
+include:
+  - component: $CI_SERVER_FQDN/your-group/hub-mirror-action/hub-mirror@2.0.0
+    inputs:
+      image: $CI_REGISTRY/your-group/hub-mirror-action:latest
+      src: "github/kunpengcompute"
+      dst: "gitee/kunpengcompute"
+      dst-key: $GITEE_PRIVATE_KEY
+      dst-token: $GITEE_TOKEN
+      account-type: "org"
+```
+
+Components must be hosted on the same GitLab instance as your pipeline, so mirror this repository to GitLab.com before using the include.
+
+### Self-managed GitLab
+Mirror this repository into your GitLab instance, then include it via `$CI_SERVER_FQDN/<group>/<project>/hub-mirror@<version>`, and set `image` to the container built from that repository (see the Docker Image section below).
+
+If the source or destination is a self-managed GitLab, set `src-endpoint`/`dst-endpoint` in inputs.
+
+## Docker Image (GitLab Container Registry)
+
+This repository includes a `Dockerfile` and `.gitlab-ci.yml` to build and push an image to the project's Container Registry in GitLab CI.
+
+Image address: `$CI_REGISTRY_IMAGE:<tag>` (example: `registry.gitlab.com/<group>/<project>:latest`)  
+Tagging rules:
+- Default branch pushes `latest`
+- Git tags push the same tag name
+- Every build pushes a `CI_COMMIT_SHA` tag
+
+Use that image in the GitLab component input `image`.
+
 ## Who are using?
 More than [100+](https://github.com/search?p=2&q=hub-mirror-action+%22account_type%22+%22org%22&type=Code) organizations，[4000+](https://github.com/search?l=YAML&q=%22hub-mirror-action%22&type=Code) users are using, [50+](https://github.com/search?l=Markdown&q=%22hub-mirror-action%22&type=code) related blogs from users：
 

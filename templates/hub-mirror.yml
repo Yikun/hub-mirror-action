@@ -1,0 +1,128 @@
+spec:
+  inputs:
+    job-name:
+      description: "Job name to run the mirror"
+      default: "hub-mirror"
+    stage:
+      description: "Pipeline stage for the job"
+      default: "sync"
+    image:
+      description: "Docker image with hubmirror CLI (built from this repo)"
+      type: string
+    cache-key:
+      description: "Cache key for mirror cache directories"
+      default: "hub-mirror-$CI_RUNNER_EXECUTABLE_ARCH"
+    cache-path:
+      description: "Directory to cache repo clones (relative to CI project dir)"
+      default: "hub-mirror-cache"
+    src:
+      description: "Source account, e.g. github/kunpengcompute"
+      type: string
+    dst:
+      description: "Destination account, e.g. gitee/kunpengcompute"
+      type: string
+    dst-key:
+      description: "SSH private key for destination"
+      type: string
+    dst-token:
+      description: "API token for destination"
+      type: string
+    account-type:
+      description: "Account type: user/org/group"
+      default: "user"
+    src-account-type:
+      description: "Source account type override"
+      default: ""
+    dst-account-type:
+      description: "Destination account type override"
+      default: ""
+    src-endpoint:
+      description: "Source GitLab endpoint for self-hosted"
+      default: ""
+    dst-endpoint:
+      description: "Destination GitLab endpoint for self-hosted"
+      default: ""
+    clone-style:
+      description: "Clone style: https or ssh"
+      default: "https"
+    black-list:
+      description: "Comma-separated blacklist of repos"
+      default: ""
+    white-list:
+      description: "Comma-separated whitelist of repos"
+      default: ""
+    static-list:
+      description: "Comma-separated static repo list"
+      default: ""
+    force-update:
+      description: "Force push to destination"
+      type: boolean
+      default: false
+    debug:
+      description: "Enable debug logs"
+      type: boolean
+      default: false
+    timeout:
+      description: "Timeout per git command, e.g. 30m"
+      default: "30m"
+    api-timeout:
+      description: "API request timeout in seconds"
+      type: number
+      default: 60
+    mappings:
+      description: "Repo mappings, e.g. A=>B, C=>CC"
+      default: ""
+    lfs:
+      description: "Enable Git LFS support"
+      type: boolean
+      default: false
+---
+"$[[ inputs.job-name ]]":
+  stage: $[[ inputs.stage ]]
+  image:
+    name: $[[ inputs.image ]]
+    entrypoint: [""]
+  variables:
+    GIT_STRATEGY: none
+  cache:
+    key: $[[ inputs.cache-key ]]
+    paths:
+      - $[[ inputs.cache-path ]]
+  script:
+    - set -eu
+    - LFS="$[[ inputs.lfs ]]"
+    - mkdir -p ~/.ssh
+    - printf "%s" "$[[ inputs.dst-key ]]" > ~/.ssh/id_rsa
+    - chmod 600 ~/.ssh/id_rsa
+    - printf "StrictHostKeyChecking no\n" >> ~/.ssh/config
+    - |
+      if [ "$LFS" = "true" ]; then
+        git lfs install
+      fi
+    - |
+      CACHE_PATH="$[[ inputs.cache-path ]]"
+      if [ "${CACHE_PATH#/}" = "$CACHE_PATH" ]; then
+        CACHE_PATH="$CI_PROJECT_DIR/$CACHE_PATH"
+      fi
+      mkdir -p "$CACHE_PATH"
+    - |
+      hubmirror \
+        --src "$[[ inputs.src ]]" \
+        --dst "$[[ inputs.dst ]]" \
+        --dst-token "$[[ inputs.dst-token ]]" \
+        --account-type "$[[ inputs.account-type ]]" \
+        --src-account-type "$[[ inputs.src-account-type ]]" \
+        --dst-account-type "$[[ inputs.dst-account-type ]]" \
+        --src-endpoint "$[[ inputs.src-endpoint ]]" \
+        --dst-endpoint "$[[ inputs.dst-endpoint ]]" \
+        --clone-style "$[[ inputs.clone-style ]]" \
+        --cache-path "$CACHE_PATH" \
+        --black-list "$[[ inputs.black-list ]]" \
+        --white-list "$[[ inputs.white-list ]]" \
+        --static-list "$[[ inputs.static-list ]]" \
+        --force-update "$[[ inputs.force-update ]]" \
+        --debug "$[[ inputs.debug ]]" \
+        --timeout "$[[ inputs.timeout ]]" \
+        --api-timeout "$[[ inputs.api-timeout ]]" \
+        --mappings "$[[ inputs.mappings ]]" \
+        --lfs "$[[ inputs.lfs ]]"
