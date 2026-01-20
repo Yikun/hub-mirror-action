@@ -40,13 +40,13 @@ steps:
 #### 必选参数
 - `src` 需要被同步的源端账户名，如github/kunpengcompute，表示Github的kunpengcompute账户。
 - `dst` 需要同步到的目的端账户名，如gitee/kunpengcompute，表示Gitee的kunpengcompute账户。
-- `src_key` 用于在源端拉取代码的私钥，对应公钥需配置在源端。`src_key` 优先于 `private_key`。
 - `dst_key` 用于在目的端推送代码的私钥，对应公钥需配置在目的端。`dst_key` 优先于 `private_key`。
 - `dst_token` 创建仓库的API tokens， 用于自动创建不存在的仓库，Github可以在[这里](https://github.com/settings/tokens)找到，Gitee可以在[这里](https://gitee.com/profile/personal_access_tokens)找到，Gitlab可以在[这里](https://gitlab.com/-/user_settings/personal_access_tokens)找到（Required scopes: api, read_api, read_repository, write_repository）。
 
-密钥规则：必须同时提供 `src_key` 和 `dst_key`，或提供 `private_key` 作为通用私钥。建议优先使用独立的 `src_key`/`dst_key`，`private_key` 仅作为兜底。
+密钥规则：`dst_key` 必须提供，除非设置了 `private_key`。当 `clone_style=ssh` 时，需要提供 `src_key` 或 `private_key`。建议优先使用独立的 `src_key`/`dst_key`，`private_key` 仅作为兜底。
 
 #### 可选参数
+- `src_key` 用于在源端拉取代码的私钥，对应公钥需配置在源端。`src_key` 优先于 `private_key`。当 `clone_style=ssh` 时必需（除非提供 `private_key`）。
 - `private_key` 通用私钥（可选）。当 `src_key` 或 `dst_key` 为空时使用。
 - `account_type` 默认为user，源和目的的账户类型，可以设置为org（组织）、user（用户）或者group（组），该参数支持**同类型账户**（即组织到组织，或用户到用户，或组到组）的同步。如果源目的仓库是不同类型，请单独使用`src_account_type`和`dst_account_type`配置。
 - `src_account_type` 默认为`account_type`，源账户类型，可以设置为org（组织）、user（用户）或者group（组）。

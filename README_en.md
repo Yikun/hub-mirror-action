@@ -39,13 +39,13 @@ More than [100+](https://github.com/search?p=2&q=hub-mirror-action+%22account_ty
 #### Required
 - `src` source account, such as `github/kunpengcompute`, is the Github kunpengcompute account.
 - `dst` Destination account, such as `/kunpengcompute`, is the Gitee kunpengcompute account.
-- `src_key` the private key used to fetch code from source. The public key must be added to the source side. `src_key` takes precedence over `private_key`.
 - `dst_key` the private key used to push code to destination. The public key must be added to the destination side. `dst_key` takes precedence over `private_key`.
 - `dst_token` the API token to create non-existent repo, You can get Github token in [here](https://github.com/settings/tokens), and the Gitee in [here](https://gitee.com/profile/personal_access_tokens). and for GitLab in [here](https://gitlab.com/-/user_settings/personal_access_tokens) ,and for GitCode in [here](https://gitcode.com/setting/token-classic) (Required scopes: api, read_api, read_repository, write_repository).
 
-Key rule: provide both `src_key` and `dst_key`, or provide `private_key` as a common fallback. Prefer separate `src_key`/`dst_key` for least privilege.
+Key rule: `dst_key` is required unless `private_key` is set. When `clone_style=ssh`, provide `src_key` or `private_key`. Prefer separate `src_key`/`dst_key` for least privilege.
 
 #### Optional
+- `src_key` the private key used to fetch code from source. The public key must be added to the source side. `src_key` takes precedence over `private_key`. Required when `clone_style=ssh` unless `private_key` is set.
 - `private_key` (optional) common private key. Used when `src_key` or `dst_key` is empty.
 - `account_type` (optional) default is `user`, the account type of src and dst account, can be set to `org` or `user`，For GitLab: can be set to `group` or `user`,only support mirror between same account type (that is "org to org" or "user to user" or "group to group"). if u wanna mirror difference account type, use the `src_account_type` and `dst_account_type` please.
 - `src_account_type` (optional) default is `account_type`, the account type of src account, can be set to `org` or `user` or `group`.
