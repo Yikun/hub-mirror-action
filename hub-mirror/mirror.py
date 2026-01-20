@@ -2,6 +2,7 @@ import logging
 import os
 import re
 import shutil
+import shlex
 from typing import List
 
 import git
@@ -30,33 +31,77 @@ class Mirror(object):
         self.src_url: str = hub.src_repo_base + "/" + src_name + ".git"
         self.dst_url: str = hub.dst_repo_base + "/" + dst_name + ".git"
         self.repo_path: str = os.path.join(cache, src_name)
+        self.src_key_path: str = os.path.expanduser("~/.ssh/id_rsa_src")
+        self.dst_key_path: str = os.path.expanduser("~/.ssh/id_rsa_dst")
         self.timeout: int = 0
         if re.match(r"^\d+[dhms]?$", timeout):
             self.timeout = cov2sec(timeout)
         self.force_update: bool = force_update
         self.lfs: bool = lfs
 
+    def _ssh_command(self, key_path: str) -> str:
+        options: List[str] = [
+            "-i",
+            key_path,
+            "-o",
+            "IdentitiesOnly=yes",
+            "-o",
+            "BatchMode=yes",
+            "-o",
+            "StrictHostKeyChecking=no",
+            "-o",
+            "UserKnownHostsFile=/dev/null",
+        ]
+        return "ssh " + " ".join(shlex.quote(option) for option in options)
+
+    def _uses_ssh_for_src(self) -> bool:
+        return self.src_url.startswith("git@")
+
     @retry(wait=wait_exponential(), reraise=True, stop=stop_after_attempt(3))
     def _clone(self) -> None:
         # TODO: process empty repo
         logger.info(f"Starting git clone {self.src_url}")
         mygit: git.cmd.Git = git.cmd.Git(os.getcwd())
-        mygit.clone(
-            git.cmd.Git.polish_url(self.src_url),
-            self.repo_path,
-            kill_after_timeout=self.timeout,
-        )
+        if self._uses_ssh_for_src():
+            with mygit.custom_environment(
+                GIT_SSH_COMMAND=self._ssh_command(self.src_key_path)
+            ):
+                mygit.clone(
+                    git.cmd.Git.polish_url(self.src_url),
+                    self.repo_path,
+                    kill_after_timeout=self.timeout,
+                )
+        else:
+            mygit.clone(
+                git.cmd.Git.polish_url(self.src_url),
+                self.repo_path,
+                kill_after_timeout=self.timeout,
+            )
         local_repo: git.Repo = git.Repo(self.repo_path)
         if self.lfs:
-            local_repo.git.lfs("fetch", "--all", "origin")
+            if self._uses_ssh_for_src():
+                with local_repo.git.custom_environment(
+                    GIT_SSH_COMMAND=self._ssh_command(self.src_key_path)
+                ):
+                    local_repo.git.lfs("fetch", "--all", "origin")
+            else:
+                local_repo.git.lfs("fetch", "--all", "origin")
         logger.info(f"Clone completed: {os.getcwd() + self.repo_path}")
 
     @retry(wait=wait_exponential(), reraise=True, stop=stop_after_attempt(3))
     def _update(self, local_repo: git.Repo) -> None:
         try:
-            local_repo.git.pull(kill_after_timeout=self.timeout)
-            if self.lfs:
-                local_repo.git.lfs("fetch", "--all", "origin")
+            if self._uses_ssh_for_src():
+                with local_repo.git.custom_environment(
+                    GIT_SSH_COMMAND=self._ssh_command(self.src_key_path)
+                ):
+                    local_repo.git.pull(kill_after_timeout=self.timeout)
+                    if self.lfs:
+                        local_repo.git.lfs("fetch", "--all", "origin")
+            else:
+                local_repo.git.pull(kill_after_timeout=self.timeout)
+                if self.lfs:
+                    local_repo.git.lfs("fetch", "--all", "origin")
         except git.exc.GitCommandError:
             # Cleanup local repo and re-clone
             logger.warning(f"Updating failed, re-clone {self.src_name}")
@@ -92,7 +137,13 @@ class Mirror(object):
             logger.info(f"Empty repo {self.src_url}, skip pushing.")
             return
         cmd: List[str] = ["set-head", "origin", "-d"]
-        local_repo.git.remote(*cmd)
+        if self._uses_ssh_for_src():
+            with local_repo.git.custom_environment(
+                GIT_SSH_COMMAND=self._ssh_command(self.src_key_path)
+            ):
+                local_repo.git.remote(*cmd)
+        else:
+            local_repo.git.remote(*cmd)
         try:
             local_repo.create_remote(self.hub.dst_type, self.dst_url)
         except git.exc.GitCommandError:
@@ -110,12 +161,18 @@ class Mirror(object):
         ]
         if not self.force_update:
             logger.info("(3/3) Pushing...")
-            local_repo.git.push(*cmd, kill_after_timeout=self.timeout)
-            if self.lfs:
-                git_cmd.lfs("push", self.hub.dst_type, "--all")
+            with git_cmd.custom_environment(
+                GIT_SSH_COMMAND=self._ssh_command(self.dst_key_path)
+            ):
+                git_cmd.push(*cmd, kill_after_timeout=self.timeout)
+                if self.lfs:
+                    git_cmd.lfs("push", self.hub.dst_type, "--all")
         else:
             logger.info("(3/3) Force pushing...")
-            if self.lfs:
-                git_cmd.lfs("push", self.hub.dst_type, "--all")
-            cmd = ["-f"] + cmd
-            local_repo.git.push(*cmd, kill_after_timeout=self.timeout)
+            with git_cmd.custom_environment(
+                GIT_SSH_COMMAND=self._ssh_command(self.dst_key_path)
+            ):
+                if self.lfs:
+                    git_cmd.lfs("push", self.hub.dst_type, "--all")
+                cmd = ["-f"] + cmd
+                git_cmd.push(*cmd, kill_after_timeout=self.timeout)
