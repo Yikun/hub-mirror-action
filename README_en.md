@@ -15,6 +15,7 @@ steps:
     src: github/kunpengcompute
     # Support gitee, github, gitlab and gitcode
     dst: gitee/kunpengcompute
+    src_key: ${{ secrets.GITHUB_PRIVATE_KEY }}
     dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
     dst_token: ${{ secrets.GITEE_TOKEN }}
     # Support github/gitee/gitcode user, org and gitlab group
@@ -38,16 +39,20 @@ More than [100+](https://github.com/search?p=2&q=hub-mirror-action+%22account_ty
 #### Required
 - `src` source account, such as `github/kunpengcompute`, is the Github kunpengcompute account.
 - `dst` Destination account, such as `/kunpengcompute`, is the Gitee kunpengcompute account.
-- `dst_key` the private key to push code in destination account (default in ~/.ssh/id_rsa), you can see [generating SSH keys](https://docs.github.com/articles/generating-an-ssh-key/) to generate the pri/pub key, and make sure the pub key has been added in destination. You can set Github ssh key in [here](https://github.com/settings/keys)，set the Gitee ssh key in [here](https://gitee.com/profile/sshkeys), set the Gitlab ssh key in [here](https://gitlab.com/-/user_settings/ssh_keys), set the Gitcode ssh key in [here](https://gitcode.com/setting/key-ssh).
+- `src_key` the private key used to fetch code from source. The public key must be added to the source side. `src_key` takes precedence over `private_key`.
+- `dst_key` the private key used to push code to destination. The public key must be added to the destination side. `dst_key` takes precedence over `private_key`.
 - `dst_token` the API token to create non-existent repo, You can get Github token in [here](https://github.com/settings/tokens), and the Gitee in [here](https://gitee.com/profile/personal_access_tokens). and for GitLab in [here](https://gitlab.com/-/user_settings/personal_access_tokens) ,and for GitCode in [here](https://gitcode.com/setting/token-classic) (Required scopes: api, read_api, read_repository, write_repository).
 
+Key rule: provide both `src_key` and `dst_key`, or provide `private_key` as a common fallback. Prefer separate `src_key`/`dst_key` for least privilege.
+
 #### Optional
+- `private_key` (optional) common private key. Used when `src_key` or `dst_key` is empty.
 - `account_type` (optional) default is `user`, the account type of src and dst account, can be set to `org` or `user`，For GitLab: can be set to `group` or `user`,only support mirror between same account type (that is "org to org" or "user to user" or "group to group"). if u wanna mirror difference account type, use the `src_account_type` and `dst_account_type` please.
 - `src_account_type` (optional) default is `account_type`, the account type of src account, can be set to `org` or `user` or `group`.
 - `dst_account_type` (optional) default is `account_type`, the account type of dst account, can be set to `org` or `user`r `group`.
 - `src_endpoint` (optional) only for self-hosted GitLab source, used for self-hosted GitLab endpoint like `gitlab.example.com` (no https:// prefix), default is empty.
 - `dst_endpoint` (optional) only for self-hosted GitLab destination, used for self-hosted GitLab endpoint like `gitlab.example.com` (no https:// prefix), default is `gitlab.com`.
-- `clone_style` (optional) default is `https`, can be set to `ssh` or `https`.When you are using ssh clone style, you need to configure the public key of `dst_key` to both source end and destination end.
+- `clone_style` (optional) default is `https`, can be set to `ssh` or `https`. When using ssh, add the public key of `src_key` to the source and `dst_key` to the destination; if using `private_key`, add its public key to both sides. The action injects `GIT_SSH_COMMAND` per git operation to bind the right key.
 - `cache_path` (optional) defaults to `hub-mirror-cache`, let code clone in specific path, can be used with actions/cache to speed up mirror. If it is a relative path, it will be prefixed with `${{ github.workspace }}`.
 - `black_list` (optional) the black list, such as “repo1,repo2,repo3”.
 - `white_list` (optional) the white list, such as “repo1,repo2,repo3”.
@@ -68,6 +73,7 @@ More than [100+](https://github.com/search?p=2&q=hub-mirror-action+%22account_ty
   with:
     src: github/kunpengcompute
     dst: gitee/kunpengcompute
+    src_key: ${{ secrets.GITHUB_PRIVATE_KEY }}
     dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
     dst_token: ${{ secrets.GITEE_TOKEN }}
     account_type: org
@@ -81,6 +87,7 @@ More than [100+](https://github.com/search?p=2&q=hub-mirror-action+%22account_ty
     dst: gitlab/group-name
     # Optional for self-hosted GitLab
     # dst_endpoint: gitlab.example.com
+    src_key: ${{ secrets.GITHUB_PRIVATE_KEY }}
     dst_key: ${{ secrets.GITLAB_PRIVATE_KEY }}
     dst_token: ${{ secrets.GITLAB_TOKEN }}
     account_type: group
@@ -95,6 +102,7 @@ More than [100+](https://github.com/search?p=2&q=hub-mirror-action+%22account_ty
   with:
     src: github/Yikun
     dst: gitee/yikunkero
+    src_key: ${{ secrets.GITHUB_PRIVATE_KEY }}
     dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
     dst_token: ${{ secrets.GITEE_TOKEN }}
     white_list: "hub-mirror-action"
@@ -108,13 +116,14 @@ More than [100+](https://github.com/search?p=2&q=hub-mirror-action+%22account_ty
   with:
     src: github/Yikun
     dst: gitee/yikunkero
+    src_key: ${{ secrets.GITHUB_PRIVATE_KEY }}
     dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
     dst_token: ${{ secrets.GITEE_TOKEN }}
     static_list: "hub-mirror-action,hashes"
 ```
 
 #### clone style, use `ssh` clone style
-Note: please configure the public key of `dst_key` to the source (github in here) and destination(gitee in here)
+Note: add the public key of `src_key` to the source (github in here) and `dst_key` to the destination (gitee in here). If using `private_key`, add its public key to both.
 
 ```yaml
 - name: ssh clone style
@@ -122,6 +131,7 @@ Note: please configure the public key of `dst_key` to the source (github in here
   with:
     src: github/Yikun
     dst: gitee/yikunkero
+    src_key: ${{ secrets.GITHUB_PRIVATE_KEY }}
     dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
     dst_token: ${{ secrets.GITEE_TOKEN }}
     clone_style: "ssh"
@@ -135,6 +145,7 @@ Note: see also the real example in `.github/workflows/verify-on-ubuntu-user-cach
   with:
     src: github/Yikun
     dst: gitee/yikunkero
+    src_key: ${{ secrets.GITHUB_PRIVATE_KEY }}
     dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
     dst_token: ${{ secrets.GITEE_TOKEN }}
     cache_path: hub-mirror-cache
@@ -147,6 +158,7 @@ Note: see also the real example in `.github/workflows/verify-on-ubuntu-user-cach
   with:
     src: github/Yikun
     dst: gitee/yikunkero
+    src_key: ${{ secrets.GITHUB_PRIVATE_KEY }}
     dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
     dst_token: ${{ secrets.GITEE_TOKEN }}
     force_update: true
@@ -160,6 +172,7 @@ Note: see also the real example in `.github/workflows/verify-on-ubuntu-user-cach
   with:
     src: github/Yikun
     dst: gitee/yikunkero
+    src_key: ${{ secrets.GITHUB_PRIVATE_KEY }}
     dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
     dst_token: ${{ secrets.GITEE_TOKEN }}
     force_update: true
@@ -173,6 +186,7 @@ Note: see also the real example in `.github/workflows/verify-on-ubuntu-user-cach
   with:
     src: github/yikun
     dst: gitee/yikunkero
+    src_key: ${{ secrets.GITHUB_PRIVATE_KEY }}
     dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
     dst_token: ${{ secrets.GITEE_TOKEN }}
     mappings: "yikun.github.com=>blog"
@@ -189,6 +203,7 @@ Note: see also the real example in `.github/workflows/verify-on-ubuntu-user-cach
   with:
     src: github/Yikun
     dst: gitee/yikunkero
+    src_key: ${{ secrets.GITHUB_PRIVATE_KEY }}
     dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
     dst_token: ${{ secrets.GITEE_TOKEN }}
     static_list: ${{ steps.repo.outputs.repoList }}
@@ -201,6 +216,7 @@ Note: see also the real example in `.github/workflows/verify-on-ubuntu-user-cach
   with:
     src: github/Yikun
     dst: gitee/yikunkero
+    src_key: ${{ secrets.GITHUB_PRIVATE_KEY }}
     dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
     dst_token: ${{ secrets.GITEE_TOKEN }}
     lfs: true
@@ -216,7 +232,7 @@ Note: see also the real example in `.github/workflows/verify-on-ubuntu-user-cach
   - Gitee: Configure and save your [ssh key](https://gitee.com/profile/sshkeys) and [token](https://gitee.com/profile/personal_access_tokens)
   - Gitlab: Configure and save your [ssh key](https://gitlab.com/-/user/settings/keys) and [token](https://gitlab.com/-/user_settings/personal_access_tokens)
   - Gitcode: Configure and save your [ssh key](https://gitcode.com/setting/key-ssh) and[token](https://gitcode.com/setting/token-classic)
-  2. **Add Secrets**，add settings-secrets in repo，like `GITEE_PRIVATE_KEY`、`GITEE_TOKEN` or `GITLAB_PRIVATE_KEY`、`GITLAB_TOKEN` or `GITCODE_PRIVATE_KEY`、`GITCODE_TOKEN`
+  2. **Add Secrets**，add settings-secrets in repo，like `GITHUB_PRIVATE_KEY`、`GITEE_PRIVATE_KEY`、`GITLAB_PRIVATE_KEY`、`GITCODE_PRIVATE_KEY`、`PRIVATE_KEY` and `GITEE_TOKEN`、`GITLAB_TOKEN`、`GITCODE_TOKEN`
   3. **Add workflow**，add the workflow file into .github/workflows.
 
 ## Reference

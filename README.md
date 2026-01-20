@@ -16,6 +16,7 @@ steps:
     src: github/kunpengcompute
     # 支持Gitee, Github, Gitlab and Gitcode
     dst: gitee/kunpengcompute
+    src_key: ${{ secrets.GITHUB_PRIVATE_KEY }}
     dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
     dst_token: ${{ secrets.GITEE_TOKEN }}
     # 支持Github/Gitee/Gitcode的用户、组织以及Gitlab的组
@@ -39,16 +40,20 @@ steps:
 #### 必选参数
 - `src` 需要被同步的源端账户名，如github/kunpengcompute，表示Github的kunpengcompute账户。
 - `dst` 需要同步到的目的端账户名，如gitee/kunpengcompute，表示Gitee的kunpengcompute账户。
-- `dst_key` 用于在目的端上传代码的私钥(默认可以从~/.ssh/id_rsa获取），可参考[生成/添加SSH公钥](https://gitee.com/help/articles/4181)或[generating SSH keys](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)生成，并确认对应公钥已经被正确配置在目的端。对应公钥，Github可以在[这里](https://github.com/settings/keys)配置，Gitee可以[这里](https://gitee.com/profile/sshkeys)配置，Gitlab可以在[这里](https://gitlab.com/-/user_settings/ssh_keys)配置。
+- `src_key` 用于在源端拉取代码的私钥，对应公钥需配置在源端。`src_key` 优先于 `private_key`。
+- `dst_key` 用于在目的端推送代码的私钥，对应公钥需配置在目的端。`dst_key` 优先于 `private_key`。
 - `dst_token` 创建仓库的API tokens， 用于自动创建不存在的仓库，Github可以在[这里](https://github.com/settings/tokens)找到，Gitee可以在[这里](https://gitee.com/profile/personal_access_tokens)找到，Gitlab可以在[这里](https://gitlab.com/-/user_settings/personal_access_tokens)找到（Required scopes: api, read_api, read_repository, write_repository）。
 
+密钥规则：必须同时提供 `src_key` 和 `dst_key`，或提供 `private_key` 作为通用私钥。建议优先使用独立的 `src_key`/`dst_key`，`private_key` 仅作为兜底。
+
 #### 可选参数
+- `private_key` 通用私钥（可选）。当 `src_key` 或 `dst_key` 为空时使用。
 - `account_type` 默认为user，源和目的的账户类型，可以设置为org（组织）、user（用户）或者group（组），该参数支持**同类型账户**（即组织到组织，或用户到用户，或组到组）的同步。如果源目的仓库是不同类型，请单独使用`src_account_type`和`dst_account_type`配置。
 - `src_account_type` 默认为`account_type`，源账户类型，可以设置为org（组织）、user（用户）或者group（组）。
 - `dst_account_type` 默认为`account_type`，目的账户类型，可以设置为org（组织）、user（用户）或者group（组）。
 - `src_endpoint` 默认为空，仅在源端为GitLab时生效，用于自托管GitLab地址，例如`gitlab.example.com`（无需包含`https://`前缀），为空时使用`gitlab.com`。
 - `dst_endpoint` 默认为空，仅在目的端为GitLab时生效，用于自托管GitLab地址，例如`gitlab.example.com`（无需包含`https://`前缀），为空时使用`gitlab.com`。
-- `clone_style` 默认为https，可以设置为ssh或者https。当设置为ssh时，你需要将`dst_key`所对应的公钥同时配置到源端和目的端。
+- `clone_style` 默认为https，可以设置为ssh或者https。当设置为ssh时，需要将 `src_key` 公钥配置到源端，将 `dst_key` 公钥配置到目的端；若使用 `private_key`，则其公钥需配置到两端。Action 会在 git 操作时注入 `GIT_SSH_COMMAND` 绑定对应私钥。
 - `cache_path` 默认为`hub-mirror-cache`，将代码缓存在指定目录，用于与actions/cache配合以加速镜像过程。若为相对路径，会自动拼接`${{ github.workspace }}`。
 - `black_list` 默认为'', 配置后，黑名单中的repos将不会被同步，如“repo1,repo2,repo3”。
 - `white_list` 默认为'', 配置后，仅同步白名单中的repos，如“repo1,repo2,repo3”。
@@ -73,6 +78,7 @@ steps:
   with:
     src: github/kunpengcompute
     dst: gitee/kunpengcompute
+    src_key: ${{ secrets.GITHUB_PRIVATE_KEY }}
     dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
     dst_token: ${{ secrets.GITEE_TOKEN }}
     account_type: org
@@ -88,6 +94,7 @@ steps:
   with:
     src: github/Yikun
     dst: gitee/yikunkero
+    src_key: ${{ secrets.GITHUB_PRIVATE_KEY }}
     dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
     dst_token: ${{ secrets.GITEE_TOKEN }}
     white_list: "hub-mirror-action"
@@ -104,6 +111,7 @@ steps:
   with:
     src: github/Yikun
     dst: gitee/yikunkero
+    src_key: ${{ secrets.GITHUB_PRIVATE_KEY }}
     dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
     dst_token: ${{ secrets.GITEE_TOKEN }}
     static_list: "hub-mirror-action"
@@ -113,7 +121,7 @@ steps:
 
 使用ssh方式进行clone
 
-说明：请把`dst_key`所的公钥配置到源端（在这里为github）及目的端（在这里为gitee）
+说明：请把 `src_key` 的公钥配置到源端（在这里为github），把 `dst_key` 的公钥配置到目的端（在这里为gitee）。若使用 `private_key`，其公钥需配置到两端。
 
 ```yaml
 - name: ssh clone style
@@ -121,6 +129,7 @@ steps:
   with:
     src: github/Yikun
     dst: gitee/yikunkero
+    src_key: ${{ secrets.GITHUB_PRIVATE_KEY }}
     dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
     dst_token: ${{ secrets.GITEE_TOKEN }}
     clone_style: "ssh"
@@ -134,6 +143,7 @@ steps:
   with:
     src: github/Yikun
     dst: gitee/yikunkero
+    src_key: ${{ secrets.GITHUB_PRIVATE_KEY }}
     dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
     dst_token: ${{ secrets.GITEE_TOKEN }}
     cache_path: hub-mirror-cache
@@ -146,6 +156,7 @@ steps:
   with:
     src: github/Yikun
     dst: gitee/yikunkero
+    src_key: ${{ secrets.GITHUB_PRIVATE_KEY }}
     dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
     dst_token: ${{ secrets.GITEE_TOKEN }}
     force_update: true
@@ -159,6 +170,7 @@ steps:
   with:
     src: github/Yikun
     dst: gitee/yikunkero
+    src_key: ${{ secrets.GITHUB_PRIVATE_KEY }}
     dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
     dst_token: ${{ secrets.GITEE_TOKEN }}
     force_update: true
@@ -172,6 +184,7 @@ steps:
   with:
     src: github/yikun
     dst: gitee/yikunkero
+    src_key: ${{ secrets.GITHUB_PRIVATE_KEY }}
     dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
     dst_token: ${{ secrets.GITEE_TOKEN }}
     mappings: "yikun.github.com=>blog"
@@ -188,6 +201,7 @@ steps:
   with:
     src: github/Yikun
     dst: gitee/yikunkero
+    src_key: ${{ secrets.GITHUB_PRIVATE_KEY }}
     dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
     dst_token: ${{ secrets.GITEE_TOKEN }}
     static_list: ${{ steps.repo.outputs.repoList }}
@@ -200,6 +214,7 @@ steps:
   with:
     src: github/Yikun
     dst: gitee/yikunkero
+    src_key: ${{ secrets.GITHUB_PRIVATE_KEY }}
     dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
     dst_token: ${{ secrets.GITEE_TOKEN }}
     lfs: true
@@ -214,6 +229,7 @@ steps:
     dst: gitlab/group-name
     # 自托管GitLab可选
     # dst_endpoint: gitlab.example.com
+    src_key: ${{ secrets.GITHUB_PRIVATE_KEY }}
     dst_key: ${{ secrets.GITLAB_PRIVATE_KEY }}
     dst_token: ${{ secrets.GITLAB_TOKEN }}
     account_type: group
@@ -223,15 +239,15 @@ steps:
 
 ## FAQ
 
-- 如何在secrets添加dst_token和dst_key？
+- 如何在secrets添加token和SSH key？
   下面是添加secrets的方法，也可以参考[secrets官方文档](https://help.github.com/en/actions/configuring-and-managing-workflows/creating-and-storing-encrypted-secrets)了解更多：
   1. **获取Token和Key**，例如
   - Github: 配置并保存[ssh key](https://github.com/settings/keys)和[token](https://github.com/settings/tokens)
   - Gitee: 配置并保存[ssh key](https://gitee.com/profile/sshkeys)和[token](https://gitee.com/profile/personal_access_tokens)
   - Gitlab: 配置并保存[ssh key](https://gitlab.com/-/user/settings/keys)和[token](https://gitlab.com/-/user_settings/personal_access_tokens)
   - Gitcode: 配置并保存[ssh key](https://gitcode.com/setting/key-ssh)和[token](https://gitcode.com/setting/token-classic)
-  2. **增加Secrets配置**，在配置仓库的Setting-Secrets中新增Secrets，例如`GITEE_PRIVATE_KEY`\`GITLAB_PRIVATE_KEY`\`GITCODE_PRIVATE_KEY`、`GITEE_TOKEN`\`GITLAB_TOKEN`\`GITCODE_TOKEN`。
-  3. **在Workflow中引用**， 可以用过类似`${{ secrets.GITEE_PRIVATE_KEY }}`来访问。
+  2. **增加Secrets配置**，在配置仓库的Setting-Secrets中新增Secrets，例如`GITHUB_PRIVATE_KEY`\`GITEE_PRIVATE_KEY`\`GITLAB_PRIVATE_KEY`\`GITCODE_PRIVATE_KEY`\`PRIVATE_KEY`、`GITEE_TOKEN`\`GITLAB_TOKEN`\`GITCODE_TOKEN`。
+  3. **在Workflow中引用**， 可以用过类似`${{ secrets.GITHUB_PRIVATE_KEY }}`或`${{ secrets.PRIVATE_KEY }}`来访问。
 
 ## 参考
 - [Hub mirror template](https://github.com/yi-Xu-0100/hub-mirror): 一个用于展示如何使用这个action的模板仓库. from @yi-Xu-0100
