@@ -5,9 +5,15 @@ branding:
   icon: "upload-cloud"
   color: "gray-dark"
 inputs:
+  src_key:
+    description: "The private SSH key used to fetch code from source hub. Required when clone_style=ssh unless private_key is set. Takes precedence over private_key."
+    required: false
   dst_key:
-    description: "The private SSH key which is used to to push code in destination hub."
-    required: true
+    description: "The private SSH key used to push code to destination hub. Takes precedence over private_key."
+    required: false
+  private_key:
+    description: "Fallback private SSH key used when src_key or dst_key is empty."
+    required: false
   dst_token:
     description: "The app token which is used to  create repo in destination hub."
     required: true
@@ -110,11 +116,36 @@ runs:
 
     - name: Configure SSH
       run: |
+        set -euo pipefail
         mkdir -p ~/.ssh
-        echo "${{ inputs.dst_key }}" > ~/.ssh/id_rsa
-        chmod 600 ~/.ssh/id_rsa
-        # Try to modify system config with sudo, fallback to user config
-        sudo sh -c 'echo "StrictHostKeyChecking no" >> /etc/ssh/ssh_config' 2>/dev/null || echo "StrictHostKeyChecking no" >> ~/.ssh/config
+
+        SRC_KEY="${{ inputs.src_key }}"
+        DST_KEY="${{ inputs.dst_key }}"
+        PRIVATE_KEY="${{ inputs.private_key }}"
+
+        CLONE_STYLE="${{ inputs.clone_style }}"
+
+        if [[ -z "$PRIVATE_KEY" ]]; then
+          if [[ -z "$DST_KEY" ]]; then
+            echo "Error: dst_key is required unless private_key is set." >&2
+            exit 1
+          fi
+          if [[ "$CLONE_STYLE" == "ssh" && -z "$SRC_KEY" ]]; then
+            echo "Error: src_key is required when clone_style=ssh unless private_key is set." >&2
+            exit 1
+          fi
+        fi
+
+        if [[ -z "$SRC_KEY" ]]; then
+          SRC_KEY="$PRIVATE_KEY"
+        fi
+        if [[ -z "$DST_KEY" ]]; then
+          DST_KEY="$PRIVATE_KEY"
+        fi
+
+        printf "%s" "$SRC_KEY" > ~/.ssh/id_rsa_src
+        printf "%s" "$DST_KEY" > ~/.ssh/id_rsa_dst
+        chmod 600 ~/.ssh/id_rsa_src ~/.ssh/id_rsa_dst
       shell: bash
 
     - name: Run Hub Mirror
