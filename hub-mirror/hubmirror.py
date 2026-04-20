@@ -17,6 +17,7 @@ class MirrorConfig:
     src: str
     dst: str
     dst_token: str
+    src_token: str = ""
     account_type: str = "user"
     src_account_type: str = ""
     dst_account_type: str = ""
@@ -60,6 +61,7 @@ class HubMirror(object):
             config.src,
             config.dst,
             config.dst_token,
+            src_token=config.src_token,
             account_type=config.account_type,
             clone_style=config.clone_style,
             src_account_type=config.src_account_type,
@@ -132,6 +134,11 @@ CLI_OPTIONS = [
         "--dst-token",
         required=True,
         help="Token for destination hub.",
+    ),
+    click.option(
+        "--src-token",
+        default="",
+        help="Token for source hub.",
     ),
     click.option("--account-type", default="user", show_default=True),
     click.option("--src-account-type", default="", show_default=True),

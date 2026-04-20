@@ -16,6 +16,7 @@ class Hub(object):
         src: str,
         dst: str,
         dst_token: str,
+        src_token: str = "",
         account_type: str = "user",
         clone_style: str = "https",
         src_account_type: str = "",
@@ -43,6 +44,7 @@ class Hub(object):
             self.dst_account_type, "destination"
         )
         self.dst_token: str = dst_token
+        self.src_token: str = src_token
         self.session: requests.Session = requests.Session()
         self.src_repo_base: str = self.src_platform.get_clone_repo_base(
             self.src_account, clone_style
@@ -89,9 +91,17 @@ class Hub(object):
     def _get_all_repo_names(self, url: str, page: int = 1) -> List[str]:
         per_page: int = 60
         api: str = url + f"?page={page}&per_page=" + str(per_page)
-        # TODO: src_token support
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        if self.src_token:
+            if self.src_type == "github":
+                headers["Authorization"] = f"token {self.src_token}"
+            elif self.src_type == "gitlab":
+                headers["PRIVATE-TOKEN"] = self.src_token
+            elif self.src_type in ("gitee", "gitcode"):
+                params["access_token"] = self.src_token
         response: requests.Response = self.session.get(
-            api, timeout=self.api_timeout
+            api, headers=headers, params=params, timeout=self.api_timeout
         )
         all_items: List[str] = []
         if response.status_code != 200:

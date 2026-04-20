@@ -11,6 +11,10 @@ inputs:
   dst_token:
     description: "The app token which is used to  create repo in destination hub."
     required: true
+  src_token:
+    description: "The app token which is used to get repo list from source hub."
+    required: false
+    default: ''
   dst:
     description: "Destination name. Such as `gitee/kunpengcompute`."
     required: true
@@ -145,6 +149,7 @@ runs:
           --src "${{ inputs.src }}" \
           --dst "${{ inputs.dst }}" \
           --dst-token "${{ inputs.dst_token }}" \
+          --src-token "${{ inputs.src_token }}" \
           --account-type "${{ inputs.account_type }}" \
           --src-account-type "${{ inputs.src_account_type }}" \
           --dst-account-type "${{ inputs.dst_account_type }}" \
