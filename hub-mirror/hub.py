@@ -91,7 +91,7 @@ class Hub(object):
     def _get_all_repo_names(self, url: str, page: int = 1) -> List[str]:
         per_page: int = 60
         api: str = url + f"?page={page}&per_page=" + str(per_page)
-        # Different platforms require different authentication mechanisms for API requests.
+        # Different platforms require different authentication mechanisms.
         # - GitHub: Uses Authorization header with 'token' prefix.
         # - GitLab: Uses PRIVATE-TOKEN header.
         # - Gitee/GitCode: Uses access_token as a query parameter.
