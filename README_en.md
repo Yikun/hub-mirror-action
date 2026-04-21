@@ -17,6 +17,8 @@ steps:
     dst: gitee/kunpengcompute
     dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
     dst_token: ${{ secrets.GITEE_TOKEN }}
+    # If source requires authentication (e.g., organization or private repos), configure src_token
+    # src_token: ${{ secrets.GITHUB_TOKEN }}
     # Support github/gitee/gitcode user, org and gitlab group
     account_type: org
     # Supporte set account type speparately
@@ -42,6 +44,7 @@ More than [100+](https://github.com/search?p=2&q=hub-mirror-action+%22account_ty
 - `dst_token` the API token to create non-existent repo, You can get Github token in [here](https://github.com/settings/tokens), and the Gitee in [here](https://gitee.com/profile/personal_access_tokens). and for GitLab in [here](https://gitlab.com/-/user_settings/personal_access_tokens) ,and for GitCode in [here](https://gitcode.com/setting/token-classic) (Required scopes: api, read_api, read_repository, write_repository).
 
 #### Optional
+- `src_token` (optional) the API token used to fetch the repository list from the source hub. Required if the source is a private organization or has API rate limits (e.g., GitCode, Gitee). You can get Github token in [here](https://github.com/settings/tokens), and the Gitee in [here](https://gitee.com/profile/personal_access_tokens). and for GitLab in [here](https://gitlab.com/-/user_settings/personal_access_tokens).
 - `account_type` (optional) default is `user`, the account type of src and dst account, can be set to `org` or `user`，For GitLab: can be set to `group` or `user`,only support mirror between same account type (that is "org to org" or "user to user" or "group to group"). if u wanna mirror difference account type, use the `src_account_type` and `dst_account_type` please.
 - `src_account_type` (optional) default is `account_type`, the account type of src account, can be set to `org` or `user` or `group`.
 - `dst_account_type` (optional) default is `account_type`, the account type of dst account, can be set to `org` or `user`r `group`.
