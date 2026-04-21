@@ -57,7 +57,9 @@ class Hub(object):
         url: str = self.dst_platform.repo_list_url(
             self.dst_account, self.dst_account_type
         )
-        repo_names: List[str] = self._get_all_repo_names(url)
+        repo_names: List[str] = self._get_all_repo_names(
+            url, token=self.dst_token, platform_type=self.dst_type
+        )
         if not repo_names:
             logger.warning("Destination repos is [].")
             return False
@@ -85,10 +87,18 @@ class Hub(object):
         url: str = self.src_platform.repo_list_url(
             self.src_account, self.src_account_type
         )
-        return self._get_all_repo_names(url)
+        return self._get_all_repo_names(
+            url, token=self.src_token, platform_type=self.src_type
+        )
 
     @functools.lru_cache
-    def _get_all_repo_names(self, url: str, page: int = 1) -> List[str]:
+    def _get_all_repo_names(
+        self,
+        url: str,
+        token: str = "",
+        platform_type: str = "",
+        page: int = 1,
+    ) -> List[str]:
         per_page: int = 60
         api: str = url + f"?page={page}&per_page=" + str(per_page)
         # Different platforms require different authentication mechanisms.
@@ -97,13 +107,13 @@ class Hub(object):
         # - Gitee/GitCode: Uses access_token as a query parameter.
         headers: Dict[str, str] = {}
         params: Dict[str, str] = {}
-        if self.src_token:
-            if self.src_type == "github":
-                headers["Authorization"] = f"token {self.src_token}"
-            elif self.src_type == "gitlab":
-                headers["PRIVATE-TOKEN"] = self.src_token
-            elif self.src_type in ("gitee", "gitcode"):
-                params["access_token"] = self.src_token
+        if token:
+            if platform_type == "github":
+                headers["Authorization"] = f"token {token}"
+            elif platform_type == "gitlab":
+                headers["PRIVATE-TOKEN"] = token
+            elif platform_type in ("gitee", "gitcode"):
+                params["access_token"] = token
         response: requests.Response = self.session.get(
             api, headers=headers, params=params, timeout=self.api_timeout
         )
@@ -114,5 +124,7 @@ class Hub(object):
         items: List[Dict[str, Any]] = response.json()
         if items:
             names: List[str] = [i["name"] for i in items]
-            return names + self._get_all_repo_names(url, page=page + 1)
+            return names + self._get_all_repo_names(
+                url, token=token, platform_type=platform_type, page=page + 1
+            )
         return all_items
