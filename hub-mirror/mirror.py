@@ -22,6 +22,7 @@ class Mirror(object):
         cache: str = ".",
         timeout: str = "0",
         force_update: bool = False,
+        force_clean: bool = False,
         lfs: bool = False,
     ) -> None:
         self.hub: Hub = hub
@@ -34,6 +35,7 @@ class Mirror(object):
         if re.match(r"^\d+[dhms]?$", timeout):
             self.timeout = cov2sec(timeout)
         self.force_update: bool = force_update
+        self.force_clean: bool = force_clean
         self.lfs: bool = lfs
 
     @retry(wait=wait_exponential(), reraise=True, stop=stop_after_attempt(3))
@@ -119,3 +121,21 @@ class Mirror(object):
                 git_cmd.lfs("push", self.hub.dst_type, "--all")
             cmd = ["-f"] + cmd
             local_repo.git.push(*cmd, kill_after_timeout=self.timeout)
+
+    def clean(self) -> None:
+        if not self.force_clean:
+            return
+        logger.info(f"Force clean source repo cache: {self.repo_path}")
+        if not os.path.exists(self.repo_path):
+            logger.info(
+                f"No local cache found for {self.src_name}, nothing to clean."
+            )
+            return
+        try:
+            shutil.rmtree(self.repo_path, ignore_errors=False)
+        except Exception as error:
+            logger.warning(
+                f"Failed to clean cache for {self.src_name} at {self.repo_path}: {error}"
+            )
+        else:
+            logger.info(f"Local cache cleaned for {self.src_name}.")

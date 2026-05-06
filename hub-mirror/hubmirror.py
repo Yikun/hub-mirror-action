@@ -29,6 +29,7 @@ class MirrorConfig:
     white_list: str = ""
     static_list: str = ""
     force_update: bool = False
+    force_clean: bool = False
     debug: str = "INFO"
     timeout: str = "30m"
     api_timeout: int = 60
@@ -85,16 +86,17 @@ class HubMirror(object):
             logger.info(f"Map {src_repo} to {dst_repo}")
             if self.test_black_white_list(src_repo):
                 logger.info(f"Backup {src_repo}")
+                mirror = Mirror(
+                    hub,
+                    src_repo,
+                    dst_repo,
+                    cache=config.cache_path,
+                    timeout=config.timeout,
+                    force_update=config.force_update,
+                    force_clean=config.force_clean,
+                    lfs=config.lfs,
+                )
                 try:
-                    mirror = Mirror(
-                        hub,
-                        src_repo,
-                        dst_repo,
-                        cache=config.cache_path,
-                        timeout=config.timeout,
-                        force_update=config.force_update,
-                        lfs=config.lfs,
-                    )
                     mirror.download()
                     mirror.create()
                     mirror.push()
@@ -103,6 +105,8 @@ class HubMirror(object):
                     logger.error(f"Mirror failed for {src_repo}: {e}")
                     logger.debug("Mirror failure details", exc_info=True)
                     failed_list.append(src_repo)
+                finally:
+                    mirror.clean()
             else:
                 skip += 1
         failed: int = total - success - skip
@@ -156,6 +160,12 @@ CLI_OPTIONS = [
     click.option("--static-list", default="", show_default=True),
     click.option(
         "--force-update",
+        default=False,
+        type=click.BOOL,
+        show_default=True,
+    ),
+    click.option(
+        "--force-clean",
         default=False,
         type=click.BOOL,
         show_default=True,
