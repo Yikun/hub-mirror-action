@@ -73,16 +73,16 @@ runs:
   using: "composite"
   steps:
     - name: Set up Python
-      uses: actions/setup-python@v5
+      uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
       with:
         python-version: '3.x'
 
     - name: Set up uv
-      uses: astral-sh/setup-uv@v3
+      uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
 
     - name: Compute uv cache key
       id: uv-cache
-      uses: actions/github-script@v8
+      uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
       with:
         script: |
           const fs = require('fs');
@@ -100,7 +100,7 @@ runs:
           }
           core.setOutput('uv_cache_key', hash.digest('hex'));
 
-    - uses: actions/cache@v4
+    - uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
       with:
         path: ~/.cache/uv
         key: ${{ runner.os }}-uv-${{ steps.uv-cache.outputs.uv_cache_key }}

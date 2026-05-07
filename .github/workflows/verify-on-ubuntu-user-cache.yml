@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout source code
-      uses: actions/checkout@v1
+      uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
     - name: Get Time
       id: get-time
@@ -18,7 +18,7 @@ jobs:
       shell: bash
 
     - name: Cache src repos
-      uses: actions/cache@v4
+      uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
       id: cache
       with:
         path: ${{ github.workspace }}/hub-mirror-cache
