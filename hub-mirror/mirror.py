@@ -135,7 +135,7 @@ class Mirror(object):
             shutil.rmtree(self.repo_path, ignore_errors=False)
         except Exception as error:
             logger.warning(
-                f"Failed to clean cache for {self.src_name} at {self.repo_path}: {error}"
+                f"Failed to clean cache for {self.src_name}: {error}"
             )
         else:
             logger.info(f"Local cache cleaned for {self.src_name}.")
