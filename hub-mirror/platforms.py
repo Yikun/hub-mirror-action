@@ -1,11 +1,33 @@
 import json
 import logging
 from abc import ABC, abstractmethod
+from enum import Enum
 from typing import Any, Dict, List, Optional, Sequence, Type
 
 import requests
 
 logger = logging.getLogger(__name__)
+
+ALLOWED_VISIBILITY = ("auto", "public", "private")
+
+
+class RepoVisibility(str, Enum):
+    AUTO = "auto"
+    PUBLIC = "public"
+    PRIVATE = "private"
+
+    @classmethod
+    def from_str(cls, value: Any) -> "RepoVisibility":
+        if isinstance(value, RepoVisibility):
+            return value
+        normalized = str(value).strip().lower()
+        try:
+            return cls(normalized)
+        except ValueError as exc:
+            allowed = ", ".join(ALLOWED_VISIBILITY)
+            raise ValueError(
+                f"Invalid visibility '{value}'. Must be one of: {allowed}."
+            ) from exc
 
 
 class GitPlatform(ABC):
@@ -54,6 +76,18 @@ class GitPlatform(ABC):
     ) -> bool:
         raise NotImplementedError
 
+    @abstractmethod
+    def update_repo_visibility(
+        self,
+        session: requests.Session,
+        account: str,
+        repo_name: str,
+        visibility: RepoVisibility,
+        token: str,
+        api_timeout: int,
+    ) -> bool:
+        raise NotImplementedError
+
 
 class GitHubPlatform(GitPlatform):
     name = "github"
@@ -90,6 +124,49 @@ class GitHubPlatform(GitPlatform):
             logger.info("Destination repo creating accepted.")
             return True
         logger.error(f"Destination repo creating failed: {response.text}")
+        return False
+
+    def update_repo_visibility(
+        self,
+        session: requests.Session,
+        account: str,
+        repo_name: str,
+        visibility: RepoVisibility,
+        token: str,
+        api_timeout: int,
+    ) -> bool:
+        """Update repository visibility for GitHub.
+
+        Endpoint: PATCH https://api.github.com/repos/{owner}/{repo}
+        Docs: https://docs.github.com/en/rest/repos/repos#update-a-repository
+        """
+        try:
+            visibility_enum = RepoVisibility.from_str(visibility)
+        except ValueError as exc:
+            logger.error(str(exc))
+            return False
+
+        if visibility_enum == RepoVisibility.AUTO:
+            return True
+
+        logger.info(
+            f"Updating repo visibility to {visibility_enum.value}..."
+        )
+        url: str = f"{self.api_base}/repos/{account}/{repo_name}"
+        response: requests.Response = session.patch(
+            url,
+            headers={
+                "Authorization": "token " + token,
+                "Accept": "application/vnd.github+json",
+                "X-GitHub-Api-Version": "2022-11-28",
+            },
+            json={"private": visibility_enum == RepoVisibility.PRIVATE},
+            timeout=api_timeout,
+        )
+        if response.status_code == 200:
+            logger.info("Repo visibility updated.")
+            return True
+        logger.error(f"Repo visibility update failed: {response.text}")
         return False
 
 
@@ -129,6 +206,47 @@ class GiteePlatform(GitPlatform):
         logger.error(f"Destination repo creating failed: {response.text}")
         return False
 
+    def update_repo_visibility(
+        self,
+        session: requests.Session,
+        account: str,
+        repo_name: str,
+        visibility: RepoVisibility,
+        token: str,
+        api_timeout: int,
+    ) -> bool:
+        """Update repository visibility for Gitee.
+
+        Docs: https://gitee.com/api/v5/swagger
+        """
+        try:
+            visibility_enum = RepoVisibility.from_str(visibility)
+        except ValueError as exc:
+            logger.error(str(exc))
+            return False
+
+        if visibility_enum == RepoVisibility.AUTO:
+            return True
+
+        logger.info(f"Updating repo visibility to {visibility_enum.value}...")
+        url: str = f"{self.api_base}/repos/{account}/{repo_name}"
+        is_private: bool = visibility_enum == RepoVisibility.PRIVATE
+        response: requests.Response = session.patch(
+            url,
+            headers={"Content-Type": "application/json;charset=UTF-8"},
+            params={
+                "access_token": token,
+                "name": repo_name,
+                "private": is_private,
+            },
+            timeout=api_timeout,
+        )
+        if response.status_code == 200:
+            logger.info("Repo visibility updated.")
+            return True
+        logger.error(f"Repo visibility update failed: {response.text}")
+        return False
+
 
 class GitcodePlatform(GitPlatform):
     name = "gitcode"
@@ -165,6 +283,49 @@ class GitcodePlatform(GitPlatform):
             logger.info("Destination repo creating accepted.")
             return True
         logger.error(f"Destination repo creating failed: {response.text}")
+        return False
+
+    def update_repo_visibility(
+        self,
+        session: requests.Session,
+        account: str,
+        repo_name: str,
+        visibility: RepoVisibility,
+        token: str,
+        api_timeout: int,
+    ) -> bool:
+        """Update repository visibility for GitCode.
+
+        Endpoint: PATCH https://api.gitcode.com/api/v5/repos/{owner}/{repo}
+        Docs: https://docs.gitcode.com/en/docs/repos/
+        """
+        try:
+            visibility_enum = RepoVisibility.from_str(visibility)
+        except ValueError as exc:
+            logger.error(str(exc))
+            return False
+
+        if visibility_enum == RepoVisibility.AUTO:
+            return True
+
+        logger.info(
+            f"Updating repo visibility to {visibility_enum.value}..."
+        )
+        url: str = f"{self.api_base}/repos/{account}/{repo_name}"
+        response: requests.Response = session.patch(
+            url,
+            headers={"Content-Type": "application/json;charset=UTF-8"},
+            params={"access_token": token},
+            json={
+                "name": repo_name,
+                "private": visibility_enum == RepoVisibility.PRIVATE,
+            },
+            timeout=api_timeout,
+        )
+        if response.status_code == 200:
+            logger.info("Repo visibility updated.")
+            return True
+        logger.error(f"Repo visibility update failed: {response.text}")
         return False
 
 
@@ -237,6 +398,48 @@ class GitLabPlatform(GitPlatform):
             logger.error("Failed to get groups list.")
             logger.error(f"Error message: {response.text}")
         return None
+
+    def update_repo_visibility(
+        self,
+        session: requests.Session,
+        account: str,
+        repo_name: str,
+        visibility: RepoVisibility,
+        token: str,
+        api_timeout: int,
+    ) -> bool:
+        """Update repository visibility for GitLab.
+
+        Endpoint: PUT https://{host}/api/v4/projects/:id
+        Docs: https://docs.gitlab.com/api/projects/#edit-a-project
+        """
+        try:
+            visibility_enum = RepoVisibility.from_str(visibility)
+        except ValueError as exc:
+            logger.error(str(exc))
+            return False
+
+        if visibility_enum == RepoVisibility.AUTO:
+            return True
+
+        logger.info(
+            f"Updating repo visibility to {visibility_enum.value}..."
+        )
+        project_path = f"{account}/{repo_name}"
+        encoded_project = requests.utils.quote(project_path, safe="")
+        url: str = f"{self.api_base}/projects/{encoded_project}"
+        headers: Dict[str, str] = {"PRIVATE-TOKEN": token}
+        response: requests.Response = session.put(
+            url,
+            data={"visibility": visibility_enum.value},
+            headers=headers,
+            timeout=api_timeout,
+        )
+        if response.status_code == 200:
+            logger.info("Repo visibility updated.")
+            return True
+        logger.error(f"Repo visibility update failed: {response.text}")
+        return False
 
 
 def get_platform(name: str, endpoint: str = "") -> GitPlatform:
