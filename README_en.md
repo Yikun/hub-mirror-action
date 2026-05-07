@@ -56,6 +56,7 @@ More than [100+](https://github.com/search?p=2&q=hub-mirror-action+%22account_ty
 - `white_list` (optional) the white list, such as “repo1,repo2,repo3”.
 - `static_list` (optional) Only mirror repos in the static list, but don't get list from repo api dynamically (the white/black list is still available). like 'repo1,repo2,repo3'
 - `force_update` (optional) Force to update the destination repo, use '-f' flag do 'git push'
+- `force_clean` (optional) Default is false, delete the local cloned source repo cache after mirroring completes.
 - `timeout` (optional) Default is '30m', set the timeout for every git command, like '600'=>600s, '30m'=>30 mins, '1h'=>1 hours
 - `mappings` (optional) Default is empty, the source repos mappings, such as 'A=>B, C=>CC', source repo name would be mapped follow the rule: A to B, C to CC. Mapping is not transitive.
 - `lfs` (optional) Default is false, support [git lfs](https://git-lfs.com/), call `git lfs fetch --all` and `git lfs push --all` to support lfs mirror.
