@@ -1,0 +1,24 @@
+on:
+  push:
+  pull_request_target:
+    branches: [master]
+name: Tests / test-gitcode-mirror-user
+jobs:
+  run:
+    name: Run
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout source codes
+      uses: actions/checkout@v1
+    - name: Mirror GitHub to GitCode with white list
+      uses: ./.
+      with:
+        src: github/Yikun
+        dst: gitcode/Yikunkero
+        dst_key: ${{ secrets.GITCODE_PRIVATE_KEY }}
+        dst_token: ${{ secrets.GITCODE_TOKEN }}
+        src_token:  ${{ secrets.GH_TOKEN }}
+        static_list: 'hub-mirror-action,hashes, simple-spring'
+        force_update: true
+        debug: true
+        mappings: 'hashes=>hashes_gitcode'
